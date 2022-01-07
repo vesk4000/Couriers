@@ -1,3 +1,10 @@
+CREATE DATABASE CouriersDB
+COLLATE Cyrillic_General_CI_AS
+GO
+
+USE CouriersDB;
+GO
+
 CREATE TABLE [Clients] (
 	ID int NOT NULL,
 	FirstName varchar(50) NOT NULL,
