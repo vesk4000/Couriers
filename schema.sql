@@ -1,3 +1,9 @@
+use master
+go
+
+drop database CouriersDB
+go
+
 CREATE DATABASE CouriersDB
 COLLATE Cyrillic_General_CI_AS
 GO
