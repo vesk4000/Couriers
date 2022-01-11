@@ -12,7 +12,7 @@ USE CouriersDB;
 GO
 
 CREATE TABLE [Clients] (
-	ID int NOT NULL,
+	ID int identity(1, 1) NOT NULL,
 	FirstName varchar(50) NOT NULL,
 	LastName varchar(50) NOT NULL,
 	PhoneNumber varchar(10) NOT NULL,
@@ -24,7 +24,7 @@ CREATE TABLE [Clients] (
 GO
 
 CREATE TABLE [Dispatchers] (
-	ID int NOT NULL,
+	ID int identity(1, 1) NOT NULL,
 	FirstName varchar(50) NOT NULL,
 	LastName varchar(50) NOT NULL,
 	PhoneNumber varchar(10) NOT NULL,
@@ -35,7 +35,7 @@ CREATE TABLE [Dispatchers] (
 )
 GO
 CREATE TABLE [Couriers] (
-	ID int NOT NULL,
+	ID int identity(1, 1) NOT NULL,
 	FirstName varchar(50) NOT NULL,
 	LastName varchar(50) NOT NULL,
 	PhoneNumber varchar(10) NOT NULL,
@@ -47,7 +47,7 @@ CREATE TABLE [Couriers] (
 GO
 
 CREATE TABLE [Orders] (
-	ID int NOT NULL,
+	ID int identity(1, 1) NOT NULL,
 	OrderDate date NOT NULL,
 	ReceiveDate date NOT NULL,
 	Total int NOT NULL,
@@ -63,7 +63,7 @@ CREATE TABLE [Orders] (
 )
 GO
 CREATE TABLE [Recipients] (
-	ID int NOT NULL,
+	ID int identity(1, 1) NOT NULL,
 	FirstName varchar(50) NOT NULL,
 	LastName varchar(50) NOT NULL,
 	CONSTRAINT [PK_RECIPIENTS] PRIMARY KEY CLUSTERED (
@@ -74,7 +74,7 @@ CREATE TABLE [Recipients] (
 GO
 
 CREATE TABLE [TypesOfService] (
-	ID int NOT NULL,
+	ID int identity(1, 1) NOT NULL,
 	Type varchar(50) unique NOT NULL,
 	CONSTRAINT [PK_TYPESOFSERVICE] PRIMARY KEY CLUSTERED (
 		[ID] ASC
@@ -83,7 +83,7 @@ CREATE TABLE [TypesOfService] (
 GO
 
 CREATE TABLE [Addresses] (
-	ID int NOT NULL,
+	ID int identity(1, 1) NOT NULL,
 	Address varchar(100) unique NOT NULL,
 	CONSTRAINT [PK_ADDRESSES] PRIMARY KEY CLUSTERED (
 		[ID] ASC
