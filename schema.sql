@@ -13,36 +13,33 @@ GO
 
 CREATE TABLE [Clients] (
 	ID int identity(1, 1) NOT NULL,
-	FirstName varchar(50) NOT NULL,
-	LastName varchar(50) NOT NULL,
+	Name varchar(50) NOT NULL,
 	PhoneNumber varchar(10) NOT NULL,
 	CONSTRAINT [PK_CLIENTS] PRIMARY KEY CLUSTERED (
 		[ID] ASC
 	) WITH (IGNORE_DUP_KEY = OFF),
-	unique(FirstName, LastName, PhoneNumber)
+	unique(Name, PhoneNumber)
 )
 GO
 
 CREATE TABLE [Dispatchers] (
 	ID int identity(1, 1) NOT NULL,
-	FirstName varchar(50) NOT NULL,
-	LastName varchar(50) NOT NULL,
+	Name varchar(50) NOT NULL,
 	PhoneNumber varchar(10) NOT NULL,
 	CONSTRAINT [PK_DISPATCHERS] PRIMARY KEY CLUSTERED (
 		[ID] ASC
 	) WITH (IGNORE_DUP_KEY = OFF),
-	unique(FirstName, LastName, PhoneNumber)
+	unique(Name, PhoneNumber)
 )
 GO
 CREATE TABLE [Couriers] (
 	ID int identity(1, 1) NOT NULL,
-	FirstName varchar(50) NOT NULL,
-	LastName varchar(50) NOT NULL,
+	Name varchar(50) NOT NULL,
 	PhoneNumber varchar(10) NOT NULL,
 	CONSTRAINT [PK_COURIERS] PRIMARY KEY CLUSTERED (
 		[ID] ASC
 	) WITH (IGNORE_DUP_KEY = OFF),
-	unique(FirstName, LastName, PhoneNumber)
+	unique(Name, PhoneNumber)
 )
 GO
 
@@ -64,12 +61,10 @@ CREATE TABLE [Orders] (
 GO
 CREATE TABLE [Recipients] (
 	ID int identity(1, 1) NOT NULL,
-	FirstName varchar(50) NOT NULL,
-	LastName varchar(50) NOT NULL,
+	Name varchar(50) UNIQUE NOT NULL,
 	CONSTRAINT [PK_RECIPIENTS] PRIMARY KEY CLUSTERED (
 		[ID] ASC
 	) WITH (IGNORE_DUP_KEY = OFF),
-	unique(FirstName, LastName)
 )
 GO
 
