@@ -1,4 +1,8 @@
-﻿create or alter procedure usp_CheckByDispNameOrDateOfDelivery( @input nvarchar(50) )
+﻿use CouriersDB
+
+go
+
+create or alter procedure usp_CheckByDispNameOrDateOfDelivery( @input nvarchar(50) )
 as
 begin
 	
@@ -50,7 +54,7 @@ begin
 		inner join TypesOfService as t
 		on o.TypeID = t.ID
 		
-		where CHARINDEX(@input, co.Name) > 0
+		where @input = d.Name
 		
 		return
 	end
@@ -60,4 +64,14 @@ end
 
 go
 
-exec usp_CheckByDispNameOrDateOfDelivery 'Дон'
+use master
+
+go
+
+/* Example
+-- This displays all orders of a specific dispatcher by name or on a certain date of delivery
+
+exec usp_CheckByDispNameOrDateOfDelivery '09-15-2021'
+exec usp_CheckByDispNameOrDateOfDelivery 'Асен Донев'
+
+*/
