@@ -1,10 +1,14 @@
+﻿use CouriersDB
+
+go
+
 create or alter procedure usp_CheckByDispNameOrDateOfDelivery( @input nvarchar(50) )
 as
 begin
 	
 	if( ISDATE(@input) = 1 )
 	begin
-		select * from Orders as o
+		select * from Orders as o    --- TODO: Replace * with specific names
 
 		inner join Addresses as a
 		on o.AddressID = a.ID
@@ -30,7 +34,7 @@ begin
 	
 	else
 	begin
-		select * from Orders as o
+		select * from Orders as o    --- TODO: Replace * with specific names
 
 		inner join Addresses as a
 		on o.AddressID = a.ID
@@ -50,7 +54,7 @@ begin
 		inner join TypesOfService as t
 		on o.TypeID = t.ID
 		
-		where CHARINDEX(@input, co.Name) > 0
+		where @input = d.Name
 		
 		return
 	end
@@ -60,4 +64,14 @@ end
 
 go
 
---exec usp_CheckByDispNameOrDateOfDelivery 'idk i don't have a fucking filled table'
+use master
+
+go
+
+/* Example
+-- This displays all orders of a specific dispatcher by name or on a certain date of delivery
+
+exec usp_CheckByDispNameOrDateOfDelivery '09-15-2021'
+exec usp_CheckByDispNameOrDateOfDelivery 'Асен Донев'
+
+*/

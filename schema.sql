@@ -32,6 +32,7 @@ CREATE TABLE [Dispatchers] (
 	unique(Name, PhoneNumber)
 )
 GO
+
 CREATE TABLE [Couriers] (
 	ID int identity(1, 1) NOT NULL,
 	Name varchar(50) NOT NULL,
@@ -59,6 +60,7 @@ CREATE TABLE [Orders] (
 	) WITH (IGNORE_DUP_KEY = OFF)
 )
 GO
+
 CREATE TABLE [Recipients] (
 	ID int identity(1, 1) NOT NULL,
 	Name varchar(50) UNIQUE NOT NULL,
