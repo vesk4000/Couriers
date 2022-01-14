@@ -1,16 +1,17 @@
+﻿use CouriersDB
+
+go
+
 create or alter function _udf_CheckPhoneNumber (@PhoneNumber nvarchar(50))
 returns bit as begin
 	if not @PhoneNumber like '%[^0-9]%'
 		return 1;
 	return 0;
 end;
+
 go
 
---print dbo._udf_CheckPhoneNumber('sdasfhdsfghadsghafgh4656556460')
-go
-
-
-create or alter procedure usp_CheckPartOfNameOrPhone( @input nvarchar(50) )
+create or alter procedure usp_CheckClientPartOfNameOrPhone( @input nvarchar(50) )
 as
 begin
 	
@@ -22,7 +23,7 @@ begin
 	end
 	
 	select * from Clients
-	where CHARINDEX(@input, FirstName) > 0
+	where CHARINDEX(@input, Name) > 0
 	return
 	
 
@@ -30,5 +31,14 @@ end
 
 go
 
-exec usp_CheckPartOfNameOrPhone 'peta'
-exec usp_CheckPartOfNameOrPhone '131'
+use master
+
+go
+
+/* Example
+-- This displays a client's name and phone number via searching by part of name or phone number
+
+exec usp_CheckClientPartOfNameOrPhone 'Шон'
+exec usp_CheckClientPartOfNameOrPhone '0888'
+
+*/
