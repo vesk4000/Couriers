@@ -1,10 +1,10 @@
-create or alter procedure usp_CheckByDispNameOrDateOfDelivery( @input nvarchar(50) )
+﻿create or alter procedure usp_CheckByDispNameOrDateOfDelivery( @input nvarchar(50) )
 as
 begin
 	
 	if( ISDATE(@input) = 1 )
 	begin
-		select * from Orders as o
+		select * from Orders as o    --- TODO: Replace * with specific names
 
 		inner join Addresses as a
 		on o.AddressID = a.ID
@@ -30,7 +30,7 @@ begin
 	
 	else
 	begin
-		select * from Orders as o
+		select * from Orders as o    --- TODO: Replace * with specific names
 
 		inner join Addresses as a
 		on o.AddressID = a.ID
@@ -60,4 +60,4 @@ end
 
 go
 
---exec usp_CheckByDispNameOrDateOfDelivery 'idk i don't have a fucking filled table'
+exec usp_CheckByDispNameOrDateOfDelivery 'Дон'

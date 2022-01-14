@@ -57,7 +57,7 @@ CREATE TABLE [Orders] (
 	ID int identity(1, 1) NOT NULL,
 	OrderDate date NOT NULL,
 	ReceiveDate date NOT NULL,
-	Total int NOT NULL,
+	Total money NOT NULL,
 	AddressID int NOT NULL,
 	TypeID int NOT NULL,
 	DispatcherID int NOT NULL,
