@@ -11,23 +11,13 @@ GO
 USE CouriersDB;
 GO
 
-/*CREATE TABLE [Clients] (
+CREATE TABLE [Clients] (
 	ID int identity(1, 1) NOT NULL,
 	Name varchar(50) NOT NULL,
 	PhoneNumber varchar(10) NOT NULL,
 	CONSTRAINT [PK_CLIENTS] PRIMARY KEY CLUSTERED (
 		[ID] ASC
 	) WITH (IGNORE_DUP_KEY = OFF),
-	unique(Name, PhoneNumber)
-)
-GO*/
-
-drop table if exists Clients
-
-CREATE TABLE Clients (
-	ID int identity(1, 1) NOT NULL primary key,
-	Name varchar(50) NOT NULL,
-	PhoneNumber varchar(10) NOT NULL,
 	unique(Name, PhoneNumber)
 )
 GO
@@ -57,7 +47,7 @@ CREATE TABLE [Orders] (
 	ID int identity(1, 1) NOT NULL,
 	OrderDate date NOT NULL,
 	ReceiveDate date NOT NULL,
-	Total int NOT NULL,
+	Total money NOT NULL,
 	AddressID int NOT NULL,
 	TypeID int NOT NULL,
 	DispatcherID int NOT NULL,
