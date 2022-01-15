@@ -1,25 +1,50 @@
 @echo off
+setlocal
+pushd %~dp0\sql-compiler
 
-echo -- Successfully compiled > couriers.sql
+:: Call the argument-counting subroutine with all arguments received,
+:: without interfering with the ability to reference the arguments
+:: with %1, ... later.
+call :count_args %*
 
-::CALL :NORMALIZEPATH "..\..\..\foo\bar.txt"
-::SET BLAH=%RETVAL%
+:: Print the result.
+::echo %ReturnValue% argument(s) received
 
-::ECHO "%BLAH%"
+set /A a = %ReturnValue%
+if %a% == 0 (start "" sql-compiler.exe "courers.sql" "examples.sql" "compile.bat" "AllFiles")
+if %a% == 1 (start "" sql-compiler.exe %1 "examples.sql" "compile.bat" "AllFiles")
+if %a% == 2 (start "" sql-compiler.exe %1 %2 "compile.bat" "AllFiles")
+if %a% == 3 (start "" sql-compiler.exe %1 %2 %3 "AllFiles")
+if %a% == 4 (start "" sql-compiler.exe %1 %2 %3 %4)
 
-for %%i in (
-	src\schemas\clients-table.sql
-	src\schemas\couriers-table.sql
-) do (
-	CALL :NORMALIZEPATH "%%i"
-	SET BLAH=%RETVAL%
-	echo "%BLAH%"
-)
+:: Exit the batch file.
+exit /b
 
-:: ========== FUNCTIONS ==========
-EXIT /B
+goto AllFiles
 
-:NORMALIZEPATH
-  SET RETVAL=%~f1
-  EXIT /B
+**/source/schemas/couriers-database.sql
+**/source/schemas/addresses-table.sql
+**/source/schemas/clients-table.sql
+**/source/schemas/couriers-table.sql
+**/source/schemas/dispatchers-table.sql
+**/source/schemas/recipients-table.sql
+**/source/schemas/types-of-service-table.sql
 
+:AllFiles
+
+goto comment
+**/source/**/*.sql
+:comment
+
+:: Subroutine that counts the arguments given.
+:: Returns the count in %ReturnValue%
+:count_args
+  set /a ReturnValue = 0
+  :count_args_for
+
+    if %1.==. goto :eof
+
+    set /a ReturnValue += 1
+
+    shift
+  goto count_args_for
