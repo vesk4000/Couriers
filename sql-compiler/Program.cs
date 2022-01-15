@@ -47,7 +47,7 @@ class Program {
 			foreach(string file in
 				Directory.GetFiles(Directory.GetCurrentDirectory(), "*", SearchOption.AllDirectories)
 			) {
-				if((!includedFiles.Contains(file)) && Glob.IsMatch(file, pattern)) {
+				if((!includedFiles.Contains(file)) && Glob.IsMatch(file, "**/source/" + pattern)) {
 					includedFiles.Add(file);
 					outputText += File.ReadAllText(file) + Environment.NewLine;
 					if(getTextBetweenStrings(File.ReadAllText(file), "/* Example", "*/") != "")

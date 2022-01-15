@@ -22,20 +22,27 @@ exit /b
 
 goto AllFiles
 
-**/source/schemas/couriers-database.sql
-**/source/schemas/addresses-table.sql
-**/source/schemas/clients-table.sql
-**/source/schemas/couriers-table.sql
-**/source/schemas/dispatchers-table.sql
-**/source/schemas/recipients-table.sql
-**/source/schemas/types-of-service-table.sql
-**/source/schemas/orders-table.sql
+schemas/couriers-database.sql
+schemas/addresses-table.sql
+schemas/clients-table.sql
+schemas/couriers-table.sql
+schemas/dispatchers-table.sql
+schemas/recipients-table.sql
+schemas/types-of-service-table.sql
+schemas/orders-table.sql
+
+data/addresses-data.sql
+data/clients-data.sql
+data/couriers-data.sql
+data/dispatchers-data.sql
+data/recipients-data.sql
+data/types-of-service-data.sql
+data/orders-data.sql
+
+private/*.sql
+**/*.sql
 
 :AllFiles
-
-goto comment
-**/source/**/*.sql
-:comment
 
 :: Subroutine that counts the arguments given.
 :: Returns the count in %ReturnValue%
