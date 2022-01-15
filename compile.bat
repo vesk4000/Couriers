@@ -11,7 +11,7 @@ call :count_args %*
 ::echo %ReturnValue% argument(s) received
 
 set /A a = %ReturnValue%
-if %a% == 0 (start "" sql-compiler.exe "courers.sql" "examples.sql" "compile.bat" "AllFiles")
+if %a% == 0 (start "" sql-compiler.exe "couriers.sql" "examples.sql" "compile.bat" "AllFiles")
 if %a% == 1 (start "" sql-compiler.exe %1 "examples.sql" "compile.bat" "AllFiles")
 if %a% == 2 (start "" sql-compiler.exe %1 %2 "compile.bat" "AllFiles")
 if %a% == 3 (start "" sql-compiler.exe %1 %2 %3 "AllFiles")
@@ -29,6 +29,7 @@ goto AllFiles
 **/source/schemas/dispatchers-table.sql
 **/source/schemas/recipients-table.sql
 **/source/schemas/types-of-service-table.sql
+**/source/schemas/orders-table.sql
 
 :AllFiles
 

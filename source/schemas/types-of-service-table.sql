@@ -10,3 +10,4 @@ CREATE TABLE TypesOfService (
 GO
 
 use master
+go

@@ -10,3 +10,4 @@ CREATE TABLE Addresses (
 GO
 
 use master
+go

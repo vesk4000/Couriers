@@ -10,3 +10,4 @@ CREATE TABLE Recipients (
 GO
 
 use master
+go
