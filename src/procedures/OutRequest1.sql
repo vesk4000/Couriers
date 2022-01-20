@@ -17,12 +17,12 @@ begin
 	
 	if( dbo._udf_CheckPhoneNumber(@input) = 1 )
 	begin
-		select * from Clients
+		select Name as [Client Name], PhoneNumber as [Phone Number] from Clients
 		where CHARINDEX(@input, PhoneNumber) > 0
 		return
 	end
 	
-	select * from Clients
+	select Name as [Client Name], PhoneNumber as [Phone Number] from Clients
 	where CHARINDEX(@input, Name) > 0
 	return
 	
@@ -30,6 +30,7 @@ begin
 end
 
 go
+exec usp_CheckClientPartOfNameOrPhone 'Шон'
 
 use master
 
@@ -37,8 +38,6 @@ go
 
 /* Example
 -- This displays a client's name and phone number via searching by part of name or phone number
-
 exec usp_CheckClientPartOfNameOrPhone 'Шон'
 exec usp_CheckClientPartOfNameOrPhone '0888'
-
 */

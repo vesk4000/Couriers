@@ -8,7 +8,22 @@ begin
 	
 	if( ISDATE(@input) = 1 )
 	begin
-		select * from Orders as o    --- TODO: Replace * with specific names
+		select 
+			o.ID as [Order ID],
+			o.OrderDate as [Order Date],
+			d.Name as [Dispatcher Name], 
+			d.PhoneNumber as [Dispatcher Phone], 
+			cl.Name as [Client Name], 
+			cl.PhoneNumber as [Client Phone], 
+			t.Type as [Type of Service], 
+			o.Total as [Total], 
+			co.Name as [Courier Name], 
+			co.PhoneNumber as [Courier Phone], 
+			a.Address as [Delivery Address],
+			r.Name as [Recipient Name],
+			o.ReceiveDate as [Date of Delivery]
+
+		from Orders as o
 
 		inner join Addresses as a
 		on o.AddressID = a.ID
@@ -34,7 +49,22 @@ begin
 	
 	else
 	begin
-		select * from Orders as o    --- TODO: Replace * with specific names
+		select 
+			o.ID as [Order ID],
+			o.OrderDate as [Order Date],
+			d.Name as [Dispatcher Name], 
+			d.PhoneNumber as [Dispatcher Phone], 
+			cl.Name as [Client Name], 
+			cl.PhoneNumber as [Client Phone], 
+			t.Type as [Type of Service], 
+			o.Total as [Total], 
+			co.Name as [Courier Name], 
+			co.PhoneNumber as [Courier Phone], 
+			a.Address as [Delivery Address],
+			r.Name as [Recipient Name],
+			o.ReceiveDate as [Date of Delivery]
+
+		from Orders as o
 
 		inner join Addresses as a
 		on o.AddressID = a.ID
@@ -70,8 +100,6 @@ go
 
 /* Example
 -- This displays all orders of a specific dispatcher by name or on a certain date of delivery
-
 exec usp_CheckByDispNameOrDateOfDelivery '09-15-2021'
 exec usp_CheckByDispNameOrDateOfDelivery 'Асен Донев'
-
 */
