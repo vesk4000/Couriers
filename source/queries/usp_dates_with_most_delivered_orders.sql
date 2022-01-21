@@ -1,4 +1,3 @@
-<<<<<<< HEAD:ReportProcedures/usp_dates_with_most_delivered_orders.sql
 USE CouriersDB
 GO
 

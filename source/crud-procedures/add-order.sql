@@ -1,7 +1,7 @@
 use CouriersDB
 go
 
-create or alter proc udp_AddOrders
+create or alter proc udp_AddOrder
 	@OrderDate Date,
 	@ReceiveDate Date,
 	@Total money,
@@ -126,5 +126,5 @@ go
 
 /* Example
 -- Add an order to the database
-exec udp_AddOrder 'Tom Scott', '0888888888';
+--exec udp_AddOrder 'Tom Scott', '0888888888';
 */
