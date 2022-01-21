@@ -65,6 +65,8 @@ CREATE TABLE Clients (
 )
 ```
 
+>NOTE: The ```Name``` and ```PhoneNumber``` columns are combined into a composite ```unique``` key to ensure that there are not any duplicate records when inserting values into ```dbo.Clients```
+
 | Column Name | Data Type | Descriprtion |
 | ---------------- | --------------- | ----------- |
 | ID | INT | The identification number (```PRIMARY KEY```) |
@@ -81,6 +83,8 @@ CREATE TABLE Dispatchers (
 	unique(Name, PhoneNumber)
 )
 ```
+
+>NOTE: The ```Name``` and ```PhoneNumber``` columns are combined into a composite ```unique``` key to ensure that there are not any duplicate records when inserting values into ```dbo.Dispatchers```
 
 | Column Name | Data Type | Descriprtion |
 | ---------------- | --------------- | ----------- |
@@ -104,6 +108,8 @@ CREATE TABLE Couriers (
 | ID | INT | The identification number (```PRIMARY KEY```) |
 | Name | VARCHAR(50) | The name of the courier |
 | PhoneNumber | VARCHAR(10) | The phone number of the courier |
+
+>NOTE: The ```Name``` and ```PhoneNumber``` columns are combined into a composite ```unique``` key to ensure that there are not any duplicate records when inserting values into ```dbo.Couriers```
 
 ### **dbo.Recipients**
 
