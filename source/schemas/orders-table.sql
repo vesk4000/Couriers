@@ -8,12 +8,12 @@ CREATE TABLE Orders (
 	OrderDate date NOT NULL,
 	ReceiveDate date NOT NULL,
 	Total money NOT NULL,
-	AddressID int NOT NULL foreign key references Addresses(ID),
-	TypeID int NOT NULL foreign key references TypesOfService(ID),
-	DispatcherID int NOT NULL foreign key references Dispatchers(ID),
-	ClientID int NOT NULL foreign key references Clients(ID),
-	CourierID int NOT NULL foreign key references Couriers(ID),
-	RecipientID int NOT NULL foreign key references Recipients(ID),
+	AddressID int foreign key references Addresses(ID),
+	TypeID int foreign key references TypesOfService(ID),
+	DispatcherID int foreign key references Dispatchers(ID),
+	ClientID int foreign key references Clients(ID),
+	CourierID int foreign key references Couriers(ID),
+	RecipientID int foreign key references Recipients(ID),
 )
 GO
 
