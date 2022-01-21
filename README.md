@@ -11,8 +11,6 @@ The system has the ability to ```read```, ```add```, ```update```, and ```delete
 
 We designed the schema of our database ```CouriersDB``` by transforming a table in 1FN[^1] into 7 tables that meet the 3NF[^2] standards.
 
---to be considered if it's going to be included
-
 This is the given 1FN table with some sample data:
 
 | Order # | Order Date | Dispatcher Name | Phone Number - Dispatcher | Client Name | Phone Number - Client | Type of Service | Total | Courier Name | Phone Number - Courier | Delivery Address | Recipient Name | Delivery Date |
@@ -22,12 +20,9 @@ This is the given 1FN table with some sample data:
 | 3                | 9/9/2021        | Колю Колев       | 0888987555         | Джим Шон       | 0888555222       | Колетна пратка над 2 до 5 кг | 6.72 лв. | Мони Иванова  | 0876555222       | ул. Вардар 8              | Шон Джим         | 15.9.2021 г.     |
 | 4                | 9/14/2021       | Маша Малишкина   | 0881122678         | Галин Христов  | 0888555111       | Колетна пратка над 2 до 5 кг | 6.72 лв. | Димана Донева | 0876555555       | ул. Бук 18                | Христо Галев     | 17.9.2021 г.     |
 
--- end of considered part
-
 The ```CouriersDB```, which consists of 7 3NF tables has the following schema:
 
 -- IMAGE_SCHEMA
-
 
 
 ### **dbo.Orders**
@@ -47,8 +42,6 @@ CREATE TABLE Orders (
 )
 ```
 
-### Columns:
-
 | Column Name | Data Type | Descriprtion |
 | ---------------- | --------------- | ----------- |
 | ID | INT | The identification number (```PRIMARY KEY```) |
@@ -61,6 +54,98 @@ CREATE TABLE Orders (
 | CourierID | INT | The identification number of the type of service of the courier, who has to deliver the order (```FOREIGN KEY``` linked to the ```ID``` of ```dbo.Couriers```) |
 | RecipientID | INT | The identification number of the recipient, who has to receive the order (```FOREIGN KEY``` linked to the ```ID``` of ```dbo.Recipients```) |
 
+### **dbo.Clients**
+
+```sql
+CREATE TABLE Clients (
+	ID int identity(1, 1) NOT NULL primary key,
+	Name varchar(50) NOT NULL,
+	PhoneNumber varchar(10) NOT NULL,
+	unique(Name, PhoneNumber)
+)
+```
+
+| Column Name | Data Type | Descriprtion |
+| ---------------- | --------------- | ----------- |
+| ID | INT | The identification number (```PRIMARY KEY```) |
+| Name | VARCHAR(50) | The name of the client |
+| PhoneNumber | VARCHAR(10) | The phone number of the client |
+
+### **dbo.Dispatchers**
+
+```sql
+CREATE TABLE Dispatchers (
+	ID int identity(1, 1) NOT NULL primary key,
+	Name varchar(50) NOT NULL,
+	PhoneNumber varchar(10) NOT NULL,
+	unique(Name, PhoneNumber)
+)
+```
+
+| Column Name | Data Type | Descriprtion |
+| ---------------- | --------------- | ----------- |
+| ID | INT | The identification number (```PRIMARY KEY```) |
+| Name | VARCHAR(50) | The name of the dispatcher |
+| PhoneNumber | VARCHAR(10) | The phone number of the dispatcher |
+
+### **dbo.Couriers**
+
+```sql
+CREATE TABLE Couriers (
+	ID int identity(1, 1) NOT NULL primary key,
+	Name varchar(50) NOT NULL,
+	PhoneNumber varchar(10) NOT NULL,
+	unique(Name, PhoneNumber)
+)
+```
+
+| Column Name | Data Type | Descriprtion |
+| ---------------- | --------------- | ----------- |
+| ID | INT | The identification number (```PRIMARY KEY```) |
+| Name | VARCHAR(50) | The name of the courier |
+| PhoneNumber | VARCHAR(10) | The phone number of the courier |
+
+### **dbo.Recipients**
+
+```sql
+CREATE TABLE Recipients (
+	ID int identity(1, 1) NOT NULL primary key,
+	Name varchar(50) NOT NULL
+)
+```
+
+| Column Name | Data Type | Descriprtion |
+| ---------------- | --------------- | ----------- |
+| ID | INT | The identification number (```PRIMARY KEY```) |
+| Name | VARCHAR(50) | The name of the recipient |
+
+### **dbo.Addresses**
+
+```sql
+CREATE TABLE Addresses (
+	ID int identity(1, 1) NOT NULL primary key,
+	Address varchar(50) NOT NULL unique,
+)
+```
+
+| Column Name | Data Type | Descriprtion |
+| ---------------- | --------------- | ----------- |
+| ID | INT | The identification number (```PRIMARY KEY```) |
+| Address | VARCHAR(50) | The details (street, number, etc.) of the address |
+
+### **dbo.TypesOfService**
+
+```sql
+CREATE TABLE TypesOfService (
+	ID int identity(1, 1) NOT NULL primary key,
+	Type varchar(50) NOT NULL unique,
+)
+```
+
+| Column Name | Data Type | Descriprtion |
+| ---------------- | --------------- | ----------- |
+| ID | INT | The identification number (```PRIMARY KEY```) |
+| Type | VARCHAR(50) | The type of the service that needs to be performed |
 
 ## Project Structure
 In order to facilitate for easier collaboration and overall code development, we split up all of the SQL code into many files. All of them are located in the ```source``` folder in the root of the repository. In there you will find the files grouped into the ```crud-procedures```, ```data```, ```private```, ```queries``` and ```schemas``` folders. All of them contain a number of ```.sql``` files, which themselves are all either a definition of a single procedure, function, table or database, or in the case of the files in the ```data``` folder the ```INSERT``` queries used to populate the different tables with their respective data.
@@ -123,6 +208,6 @@ table generator: https://www.tablesgenerator.com/markdown_tables
 ## Conclusion
 
 
-[^1]: 1NF - First Normal Form*
+[^1]: 1NF - First Normal Form
 
-*2 3NF - Third Normal Form*
+[^2]: 3NF - Third Normal Form
