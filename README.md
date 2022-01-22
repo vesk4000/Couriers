@@ -211,6 +211,129 @@ table generator: https://www.tablesgenerator.com/markdown_tables
 
 ## Development
 
+### **Delete Procedures**
+
+```CouriersDB``` has 2 types of delete procedures:
+
+### *Type 1:* Delete procedures for parent tables
+
+```CouriersDB``` has 6 parent tables (```dbo.Clients```, ```dbo.Dispatchers```, ```dbo.Couriers```, ```dbo.Recipients```, ```dbo.Addresses```, and ```dbo.TypesOfService```).
+
+>NOTE: The following sql statements are part of the **delete procedure** ```dbo.delete_couriers```. Given that all delete procedures for the parent tables almost completely overlap, it is unnecessary to show all 6 of them here.
+
+For each one of those parent tables we have created a **delete procedure**, which deletes the records from a certain parent table by a given ```@OldID``` (unless ```@OldID``` is invalid, which is a case discussed below).
+
+```sql
+DELETE FROM Couriers
+WHERE ID = @OldID;
+```
+
+In addition to the above and based on the entered parameters, the delete procedure will be executed in 5 different ways:
+
+1. If the user enters an invalid ```@OldID```
+
+In this case, the procedure will ```PRINT``` a message which says: 'No such [some object] exists', and the procedure will exit without making any alterations to any of the tables of ```CouriersDB```
+
+```sql
+IF NOT EXISTS (SELECT * FROM Couriers WHERE ID = @OldID)
+BEGIN
+	PRINT 'No such courier exists';
+	RETURN
+END;
+```
+
+2. If the user enters only a valid ```@OldID```
+```sql
+EXEC dbo.delete_couriers 1;
+```
+
+In this case, the procedure will ```DELETE``` the records from ```dbo.Orders``` where the ```FOREIGN KEY``` (```courierID``` in the given example) linked to a certain table is equal to ```@OldID```
+```sql
+IF (@WantToDeleteFromOrders = 1)
+BEGIN
+	SET @DeleteOrUpdate = 1;
+
+	DELETE FROM Orders
+	WHERE courierID = @OldID;
+END;
+```
+
+3. If the user enters ```OldID``` and ```@WantToDeleteFromOrders``` 
+
+>NOTE: ```@WantToDeleteFromOrders``` is a ```BIT``` variable, which indicates whether the user wants to ```DELETE``` some of the records from ```dbo.Orders``` (like in the example above) **OR** ```UPDATE``` ```dbo.Orders``` by setting a new value to the ```FOREIGN KEY``` (```courierID``` in the given example), which is linked to a certain table. ```@WantToDeleteFromOrders``` is set to 1 (```DELETE```) by default
+
+```sql
+EXEC dbo.delete_couriers 2, 0;
+```
+
+In this case, the procedure will ```UPDATE``` the records from ```dbo.Orders``` where the ```FOREIGN KEY``` (```courierID``` in the given example) linked to a certain table is equal to ```@OldID``` and set that ```FOREIGN KEY``` to ```NULL```
+```sql
+ELSE IF EXISTS (SELECT * FROM Couriers WHERE ID = @NewID)
+		UPDATE Orders
+		SET courierID = @NewID
+		WHERE courierID = @OldID;
+```
+
+>NOTE: ```@NewID``` is the ```ID``` which the new value of the ```FOREIGN KEY``` is set to. It is ```NULL``` by default 
+
+4. If the user enters ```OldID```, ```@WantToDeleteFromOrders```, and a valid ```@NewID``` 
+
+>NOTE: ```@NewID``` is considered as valid when a certain parent table (```dbo.Couriers``` in the given example) which has ```ID``` equal to ```@NewID```. In all other cases ```@NewID``` is invalid.
+
+```sql
+EXEC dbo.delete_couriers 3, 0, 4;
+```
+
+In this case, the procedure will ```UPDATE``` the records from ```dbo.Orders``` where the ```FOREIGN KEY``` (```courierID``` in the given example) linked to a certain table is equal to ```@OldID``` and set that ```FOREIGN KEY``` to ```@NewID```
+
+The code is the same as in 2.
+```sql
+ELSE IF EXISTS (SELECT * FROM Couriers WHERE ID = @NewID)
+		UPDATE Orders
+		SET courierID = @NewID
+		WHERE courierID = @OldID;
+```
+
+5. If the user enters ```OldID```, ```@WantToDeleteFromOrders```, and a invalid ```@NewID```
+
+```sql
+EXEC dbo.delete_couriers 3, 0, 4;
+```
+
+In this case, the procedure will ```UPDATE``` the records from ```dbo.Orders``` where the ```FOREIGN KEY``` (```courierID``` in the given example) linked to a certain table is equal to ```@OldID``` and set that ```FOREIGN KEY``` to ```NULL```
+
+```sql
+ELSE
+BEGIN
+	SET @NewID = NULL;
+
+	UPDATE Orders
+	SET courierID = NULL
+	WHERE courierID = @OldID;
+END;
+```
+
+### *Type 2*: Delete procedure for ```dbo.Orders```
+
+The delete procedure ```dbo.delete_orders``` deletes a record from ```dbo.Orders``` by a given ```@OldID``` (unless the ```@OldID``` is invalid; in that case, the procedure will ```PRINT``` a 'No such order exists' message and exit without making any alterations to ```dbo.Orders```)
+
+```sql
+CREATE OR ALTER PROC delete_orders @OldID INT
+AS
+BEGIN
+	IF NOT EXISTS (SELECT * FROM Orders WHERE ID = @OldID)
+	BEGIN
+		PRINT 'No such order exists';
+		RETURN;
+	END;
+	
+	DELETE FROM Orders
+	WHERE ID = @OldID;
+
+	PRINT 'Deleted order with ID = ' + CAST(@OldID AS VARCHAR);
+END;
+```
+
 ## Conclusion
 
 
