@@ -228,7 +228,7 @@ DELETE FROM Couriers
 WHERE ID = @OldID;
 ```
 
-In addition to the above and based on the entered parameters, the delete procedure will be executed in 5 different ways:
+In addition to the above and based on the entered parameters, the type-1 delete procedures can be executed in 5 different ways:
 
 1. If the user enters an invalid ```@OldID```
 
