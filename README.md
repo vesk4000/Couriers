@@ -334,6 +334,12 @@ BEGIN
 END;
 ```
 
+Example:
+
+```sql
+EXEC dbo.delete_orders 1;
+```
+
 ## Conclusion
 
 
