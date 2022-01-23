@@ -286,7 +286,7 @@ EXEC dbo.delete_couriers 3, 0, 4;
 
 In this case, the procedure will ```UPDATE``` the records from ```dbo.Orders``` where the ```FOREIGN KEY``` (```courierID``` in the given example) linked to a certain table is equal to ```@OldID``` and set that ```FOREIGN KEY``` to ```@NewID```
 
-The code is the same as in 2.
+The code is the same as in 3.
 ```sql
 ELSE IF EXISTS (SELECT * FROM Couriers WHERE ID = @NewID)
 		UPDATE Orders
