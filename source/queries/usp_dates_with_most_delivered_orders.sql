@@ -4,14 +4,17 @@ GO
 CREATE OR ALTER Proc usp_dates_with_most_delivered_orders
 AS
 BEGIN
+	SELECT COUNT(*) AS [count]
+	INTO TempOrders
+	FROM Orders
+	GROUP BY ReceiveDate;
+
 	SELECT ReceiveDate, COUNT(*) as [Count of delivered orders]
 	FROM Orders AS o1
 	GROUP BY ReceiveDate
 	HAVING COUNT(*) >= ALL (
-	SELECT COUNT(*)
-	FROM Orders AS o2
-	WHERE o1.ReceiveDate <> o2.ReceiveDate
-	GROUP BY ReceiveDate)
+		SELECT [count]
+		FROM TempOrders);
 END
 GO
 USE master

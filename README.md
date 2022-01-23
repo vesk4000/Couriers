@@ -211,6 +211,73 @@ table generator: https://www.tablesgenerator.com/markdown_tables
 
 ## Development
 
+### **Read Procedures**
+
+```CouriersDB``` has 10 read procedures. Each one of them is used as a report, containing information about:
+
+1. a client's ```Name``` and ```PhoneNumber``` via searching by part of ```Name``` or ```PhoneNumber``` (columns in ```dbo.Clients```)
+
+TODO:
+
+2. all orders of a specific dispatcher by ```Name``` (column in ```dbo.Dispatchers```) or on a certain ```ReceiveDate``` (column in ```dbo.Order```)
+
+TODO:
+
+3. the ```Total``` (column in ```dbo.Order```) of all orders by a specific customer
+
+TODO:
+
+4. all orders made on a specific ```OrderDate``` (column in ```dbo.Order```)
+
+TODO:
+
+5. all orders of a specific courier by ```Name``` (column in ```dbo.Courier```)
+
+TODO:
+
+6. the date(s) with most orders grouped by ```ReceiveDate``` (column in ```dbo.Orders```)
+
+```sql
+CREATE OR ALTER Proc usp_dates_with_most_delivered_orders
+AS
+BEGIN
+	SELECT COUNT(*) AS [count]
+	INTO TempOrders
+	FROM Orders
+	GROUP BY ReceiveDate;
+
+	SELECT ReceiveDate, COUNT(*) as [Count of delivered orders]
+	FROM Orders AS o1
+	GROUP BY ReceiveDate
+	HAVING COUNT(*) >= ALL (
+		SELECT [count]
+		FROM TempOrders);
+END
+```
+
+### Work Principle
+
+The first ```SELECT``` statement inside ```usp_dates_with_most_delivered_orders``` creates a temporary table (```dbo.TempOrders```) and inserts into that table the ```COUNT``` of all orders grouped by ```ReceiveDate```.
+
+The second ```SELECT``` statement displays the ```COUNT``` of the dates(s), during which most orders were received, as well as the ```ReceiveDate``` themselves. This happens by grouping the records by ```ReceiveDate```. Then, only those records, which have ```COUNT(*)``` greater or equal to all the other records, are shown. Using ```ALL``` guarantees that only those date(s), which has/have the largest ```COUNT(*)```, are being shown.
+
+
+7. the names of all the recipients who have received more orders than ```@MinOrdersCount```
+
+
+
+8. the count of all the orders grouped by ```ReceiveDate``` (column in ```dbo.Order```)
+
+
+
+9. the profit of all the orders grouped by ```Type[^3]``` (column in ```dbo.TypesOfService```)
+
+
+
+10. the names, phone numbers, and categories (client, dispatcher, courier) of all the people registered in ```CouriersDB```
+
+
+
 ### **Delete Procedures**
 
 ```CouriersDB``` has 2 types of delete procedures:
@@ -221,14 +288,14 @@ table generator: https://www.tablesgenerator.com/markdown_tables
 
 >NOTE: The following sql statements are part of the **delete procedure** ```dbo.delete_couriers```. Given that all delete procedures for the parent tables almost completely overlap, it is unnecessary to show all 6 of them here.
 
-For each one of those parent tables we have created a **delete procedure**, which deletes the records from a certain parent table by a given ```@OldID``` (unless ```@OldID``` is invalid, which is a case discussed below).
+For each one of those parent tables we have created a **delete procedure**, which deletes the records from a specific parent table by a given ```@OldID``` (unless ```@OldID``` is invalid, which is a case discussed below).
 
 ```sql
 DELETE FROM Couriers
 WHERE ID = @OldID;
 ```
 
-In addition to the above and based on the entered parameters, the delete procedure will be executed in 5 different ways:
+In addition to the above and based on the entered parameters, the delete procedure can be executed in 5 different ways:
 
 1. If the user enters an invalid ```@OldID```
 
@@ -247,7 +314,7 @@ END;
 EXEC dbo.delete_couriers 1;
 ```
 
-In this case, the procedure will ```DELETE``` the records from ```dbo.Orders``` where the ```FOREIGN KEY``` (```courierID``` in the given example) linked to a certain table is equal to ```@OldID```
+In this case, the procedure will ```DELETE``` the records from ```dbo.Orders``` where the ```FOREIGN KEY``` (```courierID``` in the given example) linked to a specific table is equal to ```@OldID```
 ```sql
 IF (@WantToDeleteFromOrders = 1)
 BEGIN
@@ -260,13 +327,13 @@ END;
 
 3. If the user enters ```OldID``` and ```@WantToDeleteFromOrders``` 
 
->NOTE: ```@WantToDeleteFromOrders``` is a ```BIT``` variable, which indicates whether the user wants to ```DELETE``` some of the records from ```dbo.Orders``` (like in the example above) **OR** ```UPDATE``` ```dbo.Orders``` by setting a new value to the ```FOREIGN KEY``` (```courierID``` in the given example), which is linked to a certain table. ```@WantToDeleteFromOrders``` is set to 1 (```DELETE```) by default
+>NOTE: ```@WantToDeleteFromOrders``` is a ```BIT``` variable, which indicates whether the user wants to ```DELETE``` some of the records from ```dbo.Orders``` (like in the example above) **OR** ```UPDATE``` ```dbo.Orders``` by setting a new value to the ```FOREIGN KEY``` (```courierID``` in the given example), which is linked to a specific table. ```@WantToDeleteFromOrders``` is set to 1 (```DELETE```) by default
 
 ```sql
 EXEC dbo.delete_couriers 2, 0;
 ```
 
-In this case, the procedure will ```UPDATE``` the records from ```dbo.Orders``` where the ```FOREIGN KEY``` (```courierID``` in the given example) linked to a certain table is equal to ```@OldID``` and set that ```FOREIGN KEY``` to ```NULL```
+In this case, the procedure will ```UPDATE``` the records from ```dbo.Orders``` where the ```FOREIGN KEY``` (```courierID``` in the given example) linked to a specific table is equal to ```@OldID``` and set that ```FOREIGN KEY``` to ```NULL```
 ```sql
 ELSE IF EXISTS (SELECT * FROM Couriers WHERE ID = @NewID)
 		UPDATE Orders
@@ -278,13 +345,13 @@ ELSE IF EXISTS (SELECT * FROM Couriers WHERE ID = @NewID)
 
 4. If the user enters ```OldID```, ```@WantToDeleteFromOrders```, and a valid ```@NewID``` 
 
->NOTE: ```@NewID``` is considered as valid when a certain parent table (```dbo.Couriers``` in the given example) which has ```ID``` equal to ```@NewID```. In all other cases ```@NewID``` is invalid.
+>NOTE: ```@NewID``` is considered as valid when a specific parent table (```dbo.Couriers``` in the given example) which has ```ID``` equal to ```@NewID```. In all other cases ```@NewID``` is invalid.
 
 ```sql
 EXEC dbo.delete_couriers 3, 0, 4;
 ```
 
-In this case, the procedure will ```UPDATE``` the records from ```dbo.Orders``` where the ```FOREIGN KEY``` (```courierID``` in the given example) linked to a certain table is equal to ```@OldID``` and set that ```FOREIGN KEY``` to ```@NewID```
+In this case, the procedure will ```UPDATE``` the records from ```dbo.Orders``` where the ```FOREIGN KEY``` (```courierID``` in the given example) linked to a specific table is equal to ```@OldID``` and set that ```FOREIGN KEY``` to ```@NewID```
 
 The code is the same as in 2.
 ```sql
@@ -300,7 +367,7 @@ ELSE IF EXISTS (SELECT * FROM Couriers WHERE ID = @NewID)
 EXEC dbo.delete_couriers 3, 0, 4;
 ```
 
-In this case, the procedure will ```UPDATE``` the records from ```dbo.Orders``` where the ```FOREIGN KEY``` (```courierID``` in the given example) linked to a certain table is equal to ```@OldID``` and set that ```FOREIGN KEY``` to ```NULL```
+In this case, the procedure will ```UPDATE``` the records from ```dbo.Orders``` where the ```FOREIGN KEY``` (```courierID``` in the given example) that is linked to a specific table is equal to ```@OldID``` and set that ```FOREIGN KEY``` to ```NULL```
 
 ```sql
 ELSE
@@ -340,3 +407,5 @@ END;
 [^1]: 1NF - First Normal Form
 
 [^2]: 3NF - Third Normal Form
+
+[^3]: Type - Type of Service
