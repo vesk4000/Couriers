@@ -258,7 +258,7 @@ BEGIN
 END;
 ```
 
-3. If the user enters ```OldID``` and ```@WantToDeleteFromOrders``` 
+3. If the user enters ```@OldID``` and ```@WantToDeleteFromOrders``` 
 
 >NOTE: ```@WantToDeleteFromOrders``` is a ```BIT``` variable, which indicates whether the user wants to ```DELETE``` some of the records from ```dbo.Orders``` (like in the example above) **OR** ```UPDATE``` ```dbo.Orders``` by setting a new value to the ```FOREIGN KEY``` (```courierID``` in the given example), which is linked to a certain table. ```@WantToDeleteFromOrders``` is set to 1 (```DELETE```) by default
 
@@ -276,7 +276,7 @@ ELSE IF EXISTS (SELECT * FROM Couriers WHERE ID = @NewID)
 
 >NOTE: ```@NewID``` is the ```ID``` which the new value of the ```FOREIGN KEY``` is set to. It is ```NULL``` by default 
 
-4. If the user enters ```OldID```, ```@WantToDeleteFromOrders```, and a valid ```@NewID``` 
+4. If the user enters ```@OldID```, ```@WantToDeleteFromOrders```, and a valid ```@NewID``` 
 
 >NOTE: ```@NewID``` is considered as valid when a certain parent table (```dbo.Couriers``` in the given example) which has ```ID``` equal to ```@NewID```. In all other cases ```@NewID``` is invalid.
 
@@ -294,7 +294,7 @@ ELSE IF EXISTS (SELECT * FROM Couriers WHERE ID = @NewID)
 		WHERE courierID = @OldID;
 ```
 
-5. If the user enters ```OldID```, ```@WantToDeleteFromOrders```, and a invalid ```@NewID```
+5. If the user enters ```@OldID```, ```@WantToDeleteFromOrders```, and a invalid ```@NewID```
 
 ```sql
 EXEC dbo.delete_couriers 3, 0, 4;
