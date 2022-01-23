@@ -4,7 +4,7 @@
 
 The goal of the 'Couriers' project is to help a delivery company manage orders by utilizing an SQL database.
 
-The system has the ability to ```read```, ```add```, ```update```, and ```delete``` (CRUD) the data from tables which store information about orders, clients, dispatchers, orders, etc.
+The system has the ability to ```create```, ```read```, ```update```, and ```delete``` (CRUD) the data from tables which store information about orders, clients, dispatchers, orders, etc.
 (more info can be found in the Database Design part of this documentation)
 
 ## Database Design
@@ -295,7 +295,7 @@ DELETE FROM Couriers
 WHERE ID = @OldID;
 ```
 
-In addition to the above and based on the entered parameters, the delete procedure can be executed in 5 different ways:
+In addition to the above and based on the entered parameters, the type-1 delete procedures can be executed in 5 different ways:
 
 1. If the user enters an invalid ```@OldID```
 
@@ -325,7 +325,7 @@ BEGIN
 END;
 ```
 
-3. If the user enters ```OldID``` and ```@WantToDeleteFromOrders``` 
+3. If the user enters ```@OldID``` and ```@WantToDeleteFromOrders``` 
 
 >NOTE: ```@WantToDeleteFromOrders``` is a ```BIT``` variable, which indicates whether the user wants to ```DELETE``` some of the records from ```dbo.Orders``` (like in the example above) **OR** ```UPDATE``` ```dbo.Orders``` by setting a new value to the ```FOREIGN KEY``` (```courierID``` in the given example), which is linked to a specific table. ```@WantToDeleteFromOrders``` is set to 1 (```DELETE```) by default
 
@@ -343,7 +343,7 @@ ELSE IF EXISTS (SELECT * FROM Couriers WHERE ID = @NewID)
 
 >NOTE: ```@NewID``` is the ```ID``` which the new value of the ```FOREIGN KEY``` is set to. It is ```NULL``` by default 
 
-4. If the user enters ```OldID```, ```@WantToDeleteFromOrders```, and a valid ```@NewID``` 
+4. If the user enters ```@OldID```, ```@WantToDeleteFromOrders```, and a valid ```@NewID``` 
 
 >NOTE: ```@NewID``` is considered as valid when a specific parent table (```dbo.Couriers``` in the given example) which has ```ID``` equal to ```@NewID```. In all other cases ```@NewID``` is invalid.
 
@@ -353,7 +353,7 @@ EXEC dbo.delete_couriers 3, 0, 4;
 
 In this case, the procedure will ```UPDATE``` the records from ```dbo.Orders``` where the ```FOREIGN KEY``` (```courierID``` in the given example) linked to a specific table is equal to ```@OldID``` and set that ```FOREIGN KEY``` to ```@NewID```
 
-The code is the same as in 2.
+The code is the same as in 3.
 ```sql
 ELSE IF EXISTS (SELECT * FROM Couriers WHERE ID = @NewID)
 		UPDATE Orders
@@ -361,7 +361,7 @@ ELSE IF EXISTS (SELECT * FROM Couriers WHERE ID = @NewID)
 		WHERE courierID = @OldID;
 ```
 
-5. If the user enters ```OldID```, ```@WantToDeleteFromOrders```, and a invalid ```@NewID```
+5. If the user enters ```@OldID```, ```@WantToDeleteFromOrders```, and a invalid ```@NewID```
 
 ```sql
 EXEC dbo.delete_couriers 3, 0, 4;
@@ -401,6 +401,12 @@ BEGIN
 END;
 ```
 
+Example:
+
+```sql
+EXEC dbo.delete_orders 1;
+```
+
 ## Conclusion
 
 
@@ -409,3 +415,4 @@ END;
 [^2]: 3NF - Third Normal Form
 
 [^3]: Type - Type of Service
+
