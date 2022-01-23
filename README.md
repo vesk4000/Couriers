@@ -211,6 +211,8 @@ table generator: https://www.tablesgenerator.com/markdown_tables
 
 ## Development
 
+### **Create Procedures**
+
 ### **Read Procedures**
 
 ```CouriersDB``` has 10 read procedures. Each one of them is used as a report, containing information about:
@@ -259,24 +261,120 @@ END
 
 The first ```SELECT``` statement inside ```usp_dates_with_most_delivered_orders``` creates a temporary table (```dbo.TempOrders```) and inserts into that table the ```COUNT``` of all orders grouped by ```ReceiveDate```.
 
-The second ```SELECT``` statement displays the ```COUNT``` of the dates(s), during which most orders were received, as well as the ```ReceiveDate``` themselves. This happens by grouping the records by ```ReceiveDate```. Then, only those records, which have ```COUNT(*)``` greater or equal to all the other records, are shown. Using ```ALL``` guarantees that only those date(s), which has/have the largest ```COUNT(*)```, are being shown.
+The second ```SELECT``` statement displays the ```COUNT``` of the dates(s), during which most orders were received, as well as the ```ReceiveDate``` themselves. This happens by grouping the records by ```ReceiveDate```. Then, only those records, which have ```COUNT(*)``` greater or equal to all the other records, are shown. Using ```>= ALL``` guarantees that only those date(s), which has/have the largest ```COUNT(*)```, are being shown.
 
+### Usage
+
+```sql
+EXEC dbo.usp_dates_with_most_delivered_orders;
+```
 
 7. the names of all the recipients who have received more orders than ```@MinOrdersCount```
 
+```sql
+CREATE OR ALTER Proc usp_names_of_recipients_by_order_count @MinOrdersCount INT
+AS
+BEGIN
+	SELECT COUNT(RecipientID) AS [Count of orders], Name
+	FROM Orders
+	JOIN Recipients
+	ON RecipientID = Recipients.ID
+	GROUP BY Name
+	HAVING COUNT(RecipientID) > @MinOrdersCount
+END
+```
 
+### Work Principle
+
+The ```SELECT``` statement displays the ```COUNT``` of the orders and ```Name``` (column in ```dbo.Recipients```). Those orders are grouped by ```Name``` (column in ```dbo.Recipients```). Then, only the records with ```COUNT``` greater that ```@MinOrdersCount``` are shown.
+
+>NOTE: ```@MinOrdersCount``` (```INT```) + 1 is the minimum amount of orders that a recipient must receive in order to be displayed when ```usp_names_of_recipients_by_order_count``` is executed
+
+### Usage
+
+```sql
+EXEC dbo.usp_names_of_recipients_by_order_count 1;
+```
+```sql
+EXEC dbo.usp_names_of_recipients_by_order_count 2;
+```
 
 8. the count of all the orders grouped by ```ReceiveDate``` (column in ```dbo.Order```)
 
+```sql
+CREATE OR ALTER Proc usp_orders_count_by_order_date
+AS
+BEGIN
+	SELECT COUNT(*) AS [Count of Orders], OrderDate
+	FROM Orders
+	GROUP BY OrderDate
+END
+```
 
+### Work Principle
+
+The ```SELECT``` statement displays the ```COUNT``` of the orders, grouped by ```OrderDate```, as well as the ```OrderDate```.
+
+### Usage
+
+```sql
+EXEC dbo.usp_orders_count_by_order_date;
+```
 
 9. the profit of all the orders grouped by ```Type[^3]``` (column in ```dbo.TypesOfService```)
 
+```sql
+CREATE OR ALTER Proc usp_orders_profit_by_tos
+AS
+BEGIN
+	SELECT FORMAT(SUM(Total), 'C', 'bg-BG') AS [Profit], Type
+	FROM Orders
+	JOIN TypesOfService
+	ON Orders.TypeID = TypesOfService.ID
+	GROUP BY Type
+END
+```
 
+### Work Principle
+
+The ```SELECT``` statement displays the ```SUM``` of the totals of the orders, grouped by ```Type``` (column in ```dbo.TypesOfService```), as well as the ```Type```.
+
+>NOTE: The function ```FORMAT``` is used to display the ```SUM``` in BGN[^4].
+
+### Usage
+
+```sql
+EXEC dbo.usp_orders_profit_by_tos;
+```
 
 10. the names, phone numbers, and categories (client, dispatcher, courier) of all the people registered in ```CouriersDB```
 
+```sql
+CREATE OR ALTER Proc usp_name_phonenumber_category
+AS
+BEGIN
+	SELECT Name, PhoneNumber, 'Courier' AS [Category]
+	FROM Couriers
+	UNION
+	SELECT Name, PhoneNumber, 'Client'
+	FROM Clients
+	UNION
+	SELECT Name, PhoneNumber, 'Dispatcher'
+	FROM Dispatchers
+END
+```
 
+### Work Principle
+
+The ```SELECT``` statement displays ```Name```, ```PhoneNumber```, and ```Category```. The data is fetched from the union of three tables (```dbo.Courier```, ```dbo.Client```, and ```dbo.Dispatcher```).
+
+### Usage
+
+```sql
+EXEC dbo.usp_name_phonenumber_category;
+```
+
+### **Update Procedures**
 
 ### **Delete Procedures**
 
@@ -416,3 +514,4 @@ EXEC dbo.delete_orders 1;
 
 [^3]: Type - Type of Service
 
+[^4]: BGN - Bulgarian Lev
