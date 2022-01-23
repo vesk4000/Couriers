@@ -22,5 +22,5 @@ GO
 
 /* Example
 -- reads and prints the names and the count of the orders of each recipient
-EXEC dbo.usp_dates_with_most_delivered_orders
+EXEC dbo.usp_dates_with_most_delivered_orders 1
 */
