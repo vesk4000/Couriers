@@ -419,7 +419,7 @@ EXEC dbo.usp_orders_count_by_order_date;
 
 #### **9. dbo.usp_orders_profit_by_tos**
 
-This procedure displays the profit of all the orders grouped by ```Type[^tp]``` (column in ```dbo.TypesOfService```)
+This procedure displays the profit of all the orders grouped by ```Type[^type]``` (column in ```dbo.TypesOfService```)
 
 ```sql
 EXEC dbo.usp_orders_profit_by_tos;
@@ -533,7 +533,7 @@ BEGIN
 END
 ```
 
-The ```SELECT``` statement displays the ```Type[^tp]``` and the ```SUM``` of the totals of the orders, grouped by ```Type``` (column in ```dbo.TypesOfService```).
+The ```SELECT``` statement displays the ```Type[^type]``` and the ```SUM``` of the totals of the orders, grouped by ```Type``` (column in ```dbo.TypesOfService```).
 
 > **Note:** The function ```FORMAT``` is used to display the ```SUM``` in BGN[^bgn].
 
@@ -646,6 +646,6 @@ ELSE
 
 [^3nf]: 3NF - Third Normal Form
 
-[^tp]: Type - Type of Service
+[^type]: Type - Type of Service
 
 [^bgn]: BGN - Bulgarian Lev
