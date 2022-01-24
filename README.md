@@ -1,15 +1,15 @@
 # Couriers
 
-## Overview
+## **Overview**
 
 The goal of the 'Couriers' project is to help a delivery company manage orders by utilizing an SQL database.
 
 The system has the ability to ```create```, ```read```, ```update```, and ```delete``` (CRUD) the data from tables which store information about orders, clients, dispatchers, orders, etc.
 (more info can be found in the Database Design part of this documentation)
 
-## Database Design
+## **Database Design**
 
-We designed the schema of our database ```CouriersDB``` by transforming a table in 1FN[^1] into 7 tables that meet the 3NF[^2] standards.
+We designed the schema of our database ```CouriersDB``` by transforming a table in 1NF[^1nf] into 7 tables that meet the 3NF[^3nf] standards.
 
 This is the given 1FN table with some sample data:
 
@@ -153,7 +153,7 @@ CREATE TABLE TypesOfService (
 | ID | INT | The identification number (```PRIMARY KEY```) |
 | Type | VARCHAR(50) | The type of the service that needs to be performed |
 
-## Project Structure
+## **Project Structure**
 In order to facilitate for easier collaboration and overall code development, we split up all of the SQL code into many files. All of them are located in the ```source``` folder in the root of the repository. In there you will find the files grouped into the ```crud-procedures```, ```data```, ```private```, ```queries``` and ```schemas``` folders. All of them contain a number of ```.sql``` files, which themselves are all either a definition of a single procedure, function, table or database, or in the case of the files in the ```data``` folder the ```INSERT``` queries used to populate the different tables with their respective data.
 
 Here's a brief description of what each of the folders contain:
@@ -207,19 +207,15 @@ table generator: https://www.tablesgenerator.com/markdown_tables
  ┗ 📄README.md
 ```
 
-## Guide
+## **Guide**
 
-## Development
+## *Create procedures*
 
-### **Create Procedures**
+## *Read procedures*
 
-### **Read Procedures**
-
-```CouriersDB``` has 10 read procedures. Each one of them is used as a report, containing information about:
+```CouriersDB``` has 10 read procedures. Each one of them is used as a report. Those procedures are:
 
 1. a client's ```Name``` and ```PhoneNumber``` via searching by part of ```Name``` or ```PhoneNumber``` (columns in ```dbo.Clients```)
-
-TODO:
 
 2. all orders of a specific dispatcher by ```Name``` (column in ```dbo.Dispatchers```) or on a certain ```ReceiveDate``` (column in ```dbo.Order```)
 
@@ -237,146 +233,55 @@ TODO:
 
 TODO:
 
-6. the date(s) with most orders grouped by ```ReceiveDate``` (column in ```dbo.Orders```)
+### **6. dbo.usp_dates_with_most_delivered_orders**
 
-```sql
-CREATE OR ALTER Proc usp_dates_with_most_delivered_orders
-AS
-BEGIN
-	SELECT COUNT(*) AS [count]
-	INTO TempOrders
-	FROM Orders
-	GROUP BY ReceiveDate;
-
-	SELECT ReceiveDate, COUNT(*) as [Count of delivered orders]
-	FROM Orders AS o1
-	GROUP BY ReceiveDate
-	HAVING COUNT(*) >= ALL (
-		SELECT [count]
-		FROM TempOrders);
-END
-```
-
-### Work Principle
-
-The first ```SELECT``` statement inside ```usp_dates_with_most_delivered_orders``` creates a temporary table (```dbo.TempOrders```) and inserts into that table the ```COUNT``` of all orders grouped by ```ReceiveDate```.
-
-The second ```SELECT``` statement displays the ```COUNT``` of the dates(s), during which most orders were received, as well as the ```ReceiveDate``` themselves. This happens by grouping the records by ```ReceiveDate```. Then, only those records, which have ```COUNT(*)``` greater or equal to all the other records, are shown. Using ```>= ALL``` guarantees that only those date(s), which has/have the largest ```COUNT(*)```, are being shown.
-
-### Usage
+This procedure displays the date(s) with most orders grouped by ```ReceiveDate``` (column in ```dbo.Orders```)
 
 ```sql
 EXEC dbo.usp_dates_with_most_delivered_orders;
 ```
 
-7. the names of all the recipients who have received more orders than ```@MinOrdersCount```
+### **7. usp_names_of_recipients_by_order_count**
+
+This procedure displays the names of all the recipients who have received more orders than [some ```INTEGER``` value]
 
 ```sql
-CREATE OR ALTER Proc usp_names_of_recipients_by_order_count @MinOrdersCount INT
-AS
-BEGIN
-	SELECT COUNT(RecipientID) AS [Count of orders], Name
-	FROM Orders
-	JOIN Recipients
-	ON RecipientID = Recipients.ID
-	GROUP BY Name
-	HAVING COUNT(RecipientID) > @MinOrdersCount
-END
+EXEC dbo.usp_names_of_recipients_by_order_count [some ```INTEGER``` value];
 ```
 
-### Work Principle
+Example:
 
-The ```SELECT``` statement displays the ```COUNT``` of the orders and ```Name``` (column in ```dbo.Recipients```). Those orders are grouped by ```Name``` (column in ```dbo.Recipients```). Then, only the records with ```COUNT``` greater that ```@MinOrdersCount``` are shown.
-
->NOTE: ```@MinOrdersCount``` (```INT```) + 1 is the minimum amount of orders that a recipient must receive in order to be displayed when ```usp_names_of_recipients_by_order_count``` is executed
-
-### Usage
-
-```sql
-EXEC dbo.usp_names_of_recipients_by_order_count 1;
-```
 ```sql
 EXEC dbo.usp_names_of_recipients_by_order_count 2;
 ```
 
-8. the count of all the orders grouped by ```ReceiveDate``` (column in ```dbo.Order```)
+### **8. dbo.usp_orders_count_by_order_date**
 
-```sql
-CREATE OR ALTER Proc usp_orders_count_by_order_date
-AS
-BEGIN
-	SELECT COUNT(*) AS [Count of Orders], OrderDate
-	FROM Orders
-	GROUP BY OrderDate
-END
-```
-
-### Work Principle
-
-The ```SELECT``` statement displays the ```COUNT``` of the orders, grouped by ```OrderDate```, as well as the ```OrderDate```.
-
-### Usage
+the count of all the orders grouped by ```ReceiveDate``` (column in ```dbo.Order```)
 
 ```sql
 EXEC dbo.usp_orders_count_by_order_date;
 ```
 
-9. the profit of all the orders grouped by ```Type[^3]``` (column in ```dbo.TypesOfService```)
+### **9. dbo.usp_orders_profit_by_tos**
 
-```sql
-CREATE OR ALTER Proc usp_orders_profit_by_tos
-AS
-BEGIN
-	SELECT FORMAT(SUM(Total), 'C', 'bg-BG') AS [Profit], Type
-	FROM Orders
-	JOIN TypesOfService
-	ON Orders.TypeID = TypesOfService.ID
-	GROUP BY Type
-END
-```
-
-### Work Principle
-
-The ```SELECT``` statement displays the ```SUM``` of the totals of the orders, grouped by ```Type``` (column in ```dbo.TypesOfService```), as well as the ```Type```.
-
->NOTE: The function ```FORMAT``` is used to display the ```SUM``` in BGN[^4].
-
-### Usage
+the profit of all the orders grouped by ```Type[^tp]``` (column in ```dbo.TypesOfService```)
 
 ```sql
 EXEC dbo.usp_orders_profit_by_tos;
 ```
 
-10. the names, phone numbers, and categories (client, dispatcher, courier) of all the people registered in ```CouriersDB```
+### **10. dbo.usp_name_phonenumber_category**
 
-```sql
-CREATE OR ALTER Proc usp_name_phonenumber_category
-AS
-BEGIN
-	SELECT Name, PhoneNumber, 'Courier' AS [Category]
-	FROM Couriers
-	UNION
-	SELECT Name, PhoneNumber, 'Client'
-	FROM Clients
-	UNION
-	SELECT Name, PhoneNumber, 'Dispatcher'
-	FROM Dispatchers
-END
-```
-
-### Work Principle
-
-The ```SELECT``` statement displays ```Name```, ```PhoneNumber```, and ```Category```. The data is fetched from the union of three tables (```dbo.Courier```, ```dbo.Client```, and ```dbo.Dispatcher```).
-
-### Usage
+This the names, phone numbers, and categories (client, dispatcher, courier) of all the people registered in ```CouriersDB```
 
 ```sql
 EXEC dbo.usp_name_phonenumber_category;
 ```
 
-### **Update Procedures**
+## *Update Procedures*
 
-### **Delete Procedures**
+## *Delete Procedures*
 
 ```CouriersDB``` has 2 types of delete procedures:
 
@@ -384,16 +289,11 @@ EXEC dbo.usp_name_phonenumber_category;
 
 ```CouriersDB``` has 6 parent tables (```dbo.Clients```, ```dbo.Dispatchers```, ```dbo.Couriers```, ```dbo.Recipients```, ```dbo.Addresses```, and ```dbo.TypesOfService```).
 
->NOTE: The following sql statements are part of the **delete procedure** ```dbo.delete_couriers```. Given that all delete procedures for the parent tables almost completely overlap, it is unnecessary to show all 6 of them here.
+>NOTE: The following examples are part of the **delete procedure** ```dbo.delete_couriers```. Given that all delete procedures for the parent tables almost completely overlap, it is unnecessary to show all 6 of them here.
 
-For each one of those parent tables we have created a **delete procedure**, which deletes the records from a specific parent table by a given ```@OldID``` (unless ```@OldID``` is invalid, which is a case discussed below).
+For each one of those parent tables we have created a **delete procedure** (```dbo.delete_couriers```, ```dbo.delete_clients```, ```dbo.delete_dispatchers```, ```dbo.delete_recipients```, ```dbo.delete_addresses```, ```dbo.delete_types```), which deletes the records from a specific parent table by a given ```ID``` (unless ```@OldID``` is invalid, which is a case discussed below).
 
-```sql
-DELETE FROM Couriers
-WHERE ID = @OldID;
-```
-
-In addition to the above and based on the entered parameters, the type-1 delete procedures can be executed in 5 different ways:
+Based on the entered parameters, the type-1 delete procedures can be executed in 5 different ways:
 
 1. If the user enters an invalid ```@OldID```
 
@@ -505,13 +405,146 @@ Example:
 EXEC dbo.delete_orders 1;
 ```
 
+## **Development**
+
+In this part you can learn more about the development process (work principles of the procedures, problems we encountered while writing the queries, etc.).
+
+### **Create Procedures**
+
+### **Read Procedures**
+
+TODO: Roomba, add your stuff here
+
+#### **dbo.usp_dates_with_most_delivered_orders**
+```sql
+CREATE OR ALTER Proc usp_dates_with_most_delivered_orders
+AS
+BEGIN
+	SELECT COUNT(*) AS [count]
+	INTO TempOrders
+	FROM Orders
+	GROUP BY ReceiveDate;
+
+	SELECT ReceiveDate, COUNT(*) as [Count of delivered orders]
+	FROM Orders AS o1
+	GROUP BY ReceiveDate
+	HAVING COUNT(*) >= ALL (
+		SELECT [count]
+		FROM TempOrders);
+END
+```
+
+The first ```SELECT``` statement inside ```usp_dates_with_most_delivered_orders``` creates a temporary table (```dbo.TempOrders```) and inserts into that table the ```COUNT``` of all orders grouped by ```ReceiveDate```.
+
+The second ```SELECT``` statement displays the ```COUNT``` of the dates(s), during which most orders were received, as well as the ```ReceiveDate``` themselves. This happens by grouping the records by ```ReceiveDate```. Then, only those records, which have ```COUNT(*)``` greater or equal to all the other records, are shown. Using ```>= ALL``` guarantees that only those date(s), which has/have the largest ```COUNT(*)```, are being shown.
+
+#### **Encountered problems**
+
+At first, the whole procedure included this statement:
+
+```sql
+SELECT ReceiveDate, COUNT(*) as [Count of delivered orders]
+	FROM Orders AS o1
+	GROUP BY ReceiveDate
+	HAVING COUNT(*) >= ALL (
+		SELECT COUNT(*)
+		FROM Orders AS o2
+		WHERE o1.ReceiveDate <> o2.ReceiveDate
+		GROUP BY ReceiveDate)
+```
+
+>NOTE: Yes, the "```WHERE o1.ReceiveDate <> o2.ReceiveDate```" is completely redundant :D
+
+However, this code was highly inefficient due to the fact that the subquery groups the record of ```dbo.Orders``` by ```ReceiveDate``` a lot of times, which is time consuming. That is why we changed the approach and added a temporary table (```dbo.TempOrders```), which stores the ```COUNT``` of all the orders grouped by ```ReceiveDate```. This increases the used memory, but significantly reduces the time of the execution of the procedure (this might not be noted when having a small database such as ```CouriersDB```, but the difference will be apparent when working with a lot of data).
+
+
+#### **dbo.usp_names_of_recipients_by_order_count**
+
+```sql
+CREATE OR ALTER Proc usp_names_of_recipients_by_order_count @MinOrdersCount INT
+AS
+BEGIN
+	SELECT COUNT(RecipientID) AS [Count of orders], Name
+	FROM Orders
+	JOIN Recipients
+	ON RecipientID = Recipients.ID
+	GROUP BY Name
+	HAVING COUNT(RecipientID) > @MinOrdersCount
+END
+```
+
+The ```SELECT``` statement displays the ```COUNT``` of the orders and ```Name``` (column in ```dbo.Recipients```). Those orders are grouped by ```Name``` (column in ```dbo.Recipients```). Then, only the records with ```COUNT``` greater that ```@MinOrdersCount``` are shown.
+
+>NOTE: ```@MinOrdersCount``` (```INT```) + 1 is the minimum amount of orders that a recipient must receive in order to be displayed when ```usp_names_of_recipients_by_order_count``` is executed
+
+#### **dbo.usp_orders_count_by_order_date**
+
+```sql
+CREATE OR ALTER Proc usp_orders_count_by_order_date
+AS
+BEGIN
+	SELECT COUNT(*) AS [Count of Orders], OrderDate
+	FROM Orders
+	GROUP BY OrderDate
+END
+```
+
+The ```SELECT``` statement displays the ```COUNT``` of the orders, grouped by ```OrderDate```, as well as the ```OrderDate```.
+
+### **dbo.usp_orders_profit_by_tos**
+
+```sql
+CREATE OR ALTER Proc usp_orders_profit_by_tos
+AS
+BEGIN
+	SELECT FORMAT(SUM(Total), 'C', 'bg-BG') AS [Profit], Type
+	FROM Orders
+	JOIN TypesOfService
+	ON Orders.TypeID = TypesOfService.ID
+	GROUP BY Type
+END
+```
+
+The ```SELECT``` statement displays the ```Type[^tp]``` and the ```SUM``` of the totals of the orders, grouped by ```Type``` (column in ```dbo.TypesOfService```).
+
+>NOTE: The function ```FORMAT``` is used to display the ```SUM``` in BGN[^bgn].
+
+### **dbo.usp_name_phonenumber_category**
+
+```sql
+CREATE OR ALTER Proc usp_name_phonenumber_category
+AS
+BEGIN
+	SELECT Name, PhoneNumber, 'Courier' AS [Category]
+	FROM Couriers
+	UNION
+	SELECT Name, PhoneNumber, 'Client'
+	FROM Clients
+	UNION
+	SELECT Name, PhoneNumber, 'Dispatcher'
+	FROM Dispatchers
+END
+```
+
+The ```SELECT``` statement displays ```Name```, ```PhoneNumber```, and ```Category```. The data is fetched from the union of three tables (```dbo.Courier```, ```dbo.Client```, and ```dbo.Dispatcher```).
+
+### **Update Procedures**
+
+### **Delete Procedures**
+
+```sql
+DELETE FROM Couriers
+WHERE ID = @OldID;
+```
+
+
 ## Conclusion
 
 
-[^1]: 1NF - First Normal Form
+[^1nf]: 1NF - First Normal Form
 
-[^2]: 3NF - Third Normal Form
+[^3nf]: 3NF - Third Normal Form
 
-[^3]: Type - Type of Service
+[^tp]: Type - Type of Service
 
-[^4]: BGN - Bulgarian Lev
+[^bgn]: BGN - Bulgarian Lev
