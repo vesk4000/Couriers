@@ -200,6 +200,15 @@ In order to facilitate for easier collaboration and overall code development, we
 
 NON BREAKING HYPHEN ‑ (COPY PASTE FROM HERE)
 table generator: https://www.tablesgenerator.com/markdown_tables
+## h2
+## **bold h2**
+
+### h3
+### **bold h3**
+
+#### h4
+#### **bold h4**
+
 
 Here's a brief description of what each of the folders contain:
 | Folder | Contains |
