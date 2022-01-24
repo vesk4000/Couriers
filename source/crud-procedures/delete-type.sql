@@ -10,12 +10,8 @@ BEGIN
 		RETURN
 	END;
 	
-	DECLARE @DeleteOrUpdate BIT = 0;
-
 	IF (@WantToDeleteFromOrders = 1)
 	BEGIN
-		SET @DeleteOrUpdate = 1;
-
 		DELETE FROM Orders
 		WHERE typeID = @OldID;
 	END;
@@ -37,7 +33,7 @@ BEGIN
 
 	PRINT 'Deleted type with ID = ' + CAST(@OldID AS VARCHAR);
 
-	IF (@DeleteOrUpdate = 1)
+	IF (@WantToDeleteFromOrders = 1)
 		PRINT 'Deleted rows from Orders with typeID = ' + CAST(@OldID AS VARCHAR);
 	ELSE
 		PRINT 'Updated row(s) in Orders with typeID = ' + CAST(@OldID AS VARCHAR) + ' by setting typeID = ' + IIF(@NewID IS NULL, 'NULL', CAST(@NewID AS VARCHAR));
