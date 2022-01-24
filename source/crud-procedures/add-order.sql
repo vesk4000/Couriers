@@ -101,30 +101,11 @@ as begin
 end
 go
 
-select * from Orders as o
-
-inner join Addresses as a
-on o.AddressID = a.ID
-
-inner join Clients as cl
-on o.ClientID = cl.ID
-
-inner join Couriers as co
-on o.CourierID = co.ID
-
-inner join Dispatchers as d
-on o.DispatcherID = d.ID
-
-inner join Recipients as r
-on o.RecipientID = r.ID
-
-inner join TypesOfService as t
-on o.TypeID = t.ID
-
 use master
 go
 
+
 /* Example
 -- Add an order to the database
---exec udp_AddOrder 'Tom Scott', '0888888888';
+exec udp_AddOrder '01-25-2022', '01-30-2022', 5000, 5, 2, 4, 1, 2, 3
 */

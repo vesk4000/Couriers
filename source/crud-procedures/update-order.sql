@@ -82,17 +82,10 @@ as begin
 end
 go
 
-exec udp_UpdateOrder 3, @Total = 10000
-select * from Orders
-
 use master
 go
 
 /* Example
 -- Update a Clients' Credentials
-exec udp_UpdateClient 5, 'Tom', '089899898'
-exec udp_UpdateClient 5, 'Don'
-exec udp_UpdateClient 5, NULL, '798797898'
-exec udp_UpdateClient 5, @PhoneNumber = '456465456'
-exec udp_UpdateClient 1000
+exec udp_UpdateOrder 3, @ReceiveDate = '01-31-2022', @TypeID = 2
 */

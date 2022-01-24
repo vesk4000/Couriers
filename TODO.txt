@@ -1,3 +1,0 @@
-TODO:
-Fix AddOrder example
-Fix examples.sql to include use CouriersDB

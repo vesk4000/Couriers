@@ -1,13 +1,81 @@
 # Couriers
 
-## **Overview**
+## Overview
 
 The goal of the 'Couriers' project is to help a delivery company manage orders by utilizing an SQL database.
 
 The system has the ability to ```create```, ```read```, ```update```, and ```delete``` (CRUD) the data from tables which store information about orders, clients, dispatchers, orders, etc.
 (more info can be found in the Database Design part of this documentation)
 
-## **Database Design**
+## Project Structure
+
+```
+📦Couriers
+ ┣ 📂source
+ ┃ ┣ 📂crud-procedures
+ ┃ ┃ ┣ 📄add-client.sql
+ ┃ ┃ ┣ 📄delete-client.sql
+ ┃ ┃ ┣ 📄update-client.sql
+ ┃ ┃ ┗ ...
+ ┃ ┣ 📂data
+ ┃ ┃ ┣ 📄addresses-data.sql
+ ┃ ┃ ┣ 📄clients-data.sql
+ ┃ ┃ ┗ ...
+ ┃ ┣ 📂private
+ ┃ ┃ ┗ 📄check-phone-number.sql
+ ┃ ┣ 📂queries
+ ┃ ┃ ┣ 📄OutRequest1.sql
+ ┃ ┃ ┣ 📄OutRequest2.sql
+ ┃ ┃ ┣ 📄OutRequest3.sql
+ ┃ ┃ ┣ 📄OutRequest4.sql
+ ┃ ┃ ┣ 📄OutRequest5.sql
+ ┃ ┃ ┣ 📄usp_dates_with_most_delivered_orders.sql
+ ┃ ┃ ┣ 📄usp_names_of_recipients_by_order_count.sql
+ ┃ ┃ ┣ 📄usp_name_phonenumber_category.sql
+ ┃ ┃ ┣ 📄usp_orders_count_by_order_date.sql
+ ┃ ┃ ┗ 📄usp_orders_profit_by_tos.sql
+ ┃ ┗ 📂schemas
+ ┃ ┃ ┣ 📄addresses-table.sql
+ ┃ ┃ ┣ 📄clients-table.sql
+ ┃ ┃ ┗ ...
+ ┣ 📂sql-compiler
+ ┃ ┣ 📄Program.cs
+ ┃ ┣ 📄sql-compiler.csproj
+ ┃ ┗ 📄sql-compiler.exe
+ ┣ 📄.gitignore
+ ┣ 📄compile.bat
+ ┣ 📄couriers-project_data.xlsx
+ ┣ 📄couriers.sql
+ ┣ 📄examples.sql
+ ┗ 📄README.md
+```
+
+In order to facilitate for easier collaboration and overall code development, we split up all of the SQL code into many files. All of them are located in the ```source``` folder in the root of the repository. In there you will find the files grouped into the ```crud-procedures```, ```data```, ```private```, ```queries``` and ```schemas``` folders. All of those folders contain a number of ```.sql``` files, which themselves are all either a definition of a single procedure, function, table or database, or in the case of the files in the ```data``` folder - the ```INSERT``` queries used to populate the different tables with their respective data.
+
+NON BREAKING HYPHEN ‑ (COPY PASTE FROM HERE)
+table generator: https://www.tablesgenerator.com/markdown_tables
+
+Here's a brief description of what each of the folders contain:
+| Folder | Contains |
+|:---:|---|
+| ```source/crud‑procedures``` | CRUD[^crud] procedures, except for the Read part, so basically different procedures for every table, which can each ```Add```, ```Update``` or ```Delete``` any data within that table |
+| ```source/data``` | SQL queries which insert the original data from the Excel table (```couriers‑project_data.xlsx```) into the different tables of the database |
+| ```source/private``` | Procedures and functions which are not meant to be used by the end user, but rather by other procedures and functions in the database |
+| ```source/queries``` | Various procedures which read certain data from the database and display it to the user in different ways |
+| ```source/schemas``` | SQL queries which create each of the tables in the database and the database itself |
+
+The ```couriers‑project_data.xlsx``` Excel file, which is contained in the root directory of the repo, includes all of the original data for the database.
+> **Note:** The file is there only for completeness purposes. Changing it does not change the data in the database or what data the ```.sql``` files in the ```source/data``` folder insert into the database when executed. All of that data is hardcoded in those files.
+
+The folder ```sql-compiler``` contains the source code and executable for a small SQL "compiler", written in C#. All it does is it takes all of the SQL files (in a certain order) and it combines them into a single SQL file. This makes it easy for both the developers and the end-user to execute all of the files at once and immediately have the database up and running, while at the same time allowing for the separation of the SQL code, which as we mentioned earlier facilities for more efficient development and code cleanliness. Another thing that the compiler does is that it creates a single file with all of the examples for each SQL file, which contains such examples. This makes it much easier for the end user to get to grips with the various things that they can do with the database, while also making it easier for developers to write examples as it allows them to do so within the actual file that they are working on at the moment.
+
+To prevent clutter, the actual C# project for the compiler isn't a part of a Visual Studio Solution File (```.sln```) as it was created with the ```dotnet``` CLI tool which only requires a C# Project File (```sql-compiler.csproj```) and a C# Source File (```Program.cs```). The exe is a completely standalone executable that doesn't require the .NET runtime to work as it was created with the very useful .NET tool called [```dotnet-warp```](https://www.nuget.org/packages/dotnet-warp/).
+
+To actually use the compiler you can pass arguments to it, but you can simply run the ```compile.bat``` file which will run the compiler with some default arguments. You can configure those arguments within the file and also you can configure which SQL files are compiled and in what order that is done, as that may be important depending on the files (e.g. you'd want the tables to be created, before you create the database). That particular thing is actually not passed to the compiler as an argument, but rather the ```compile.bat``` file passes itself as an argument and the compiler reads a comment within the ```.bat``` file which contains the names and relative paths of the files which are to be compiled (you can also use glob style wildcards such as `*` and `**`, just like in a `.gitignore` file thanks to the very useful .NET NuGet package [```Glob```](https://www.nuget.org/packages/Glob/1.2.0-alpha0037)).
+
+By default, the compiler generates 2 SQL files with the names `couriers.sql` and `example.sql` in the root directory of the repository. However, they are included in the `.gitignore` of the repo as to not cause any merge conflicts. The ```couriers.sql``` contains all of the code from all of the ```.sql``` files in the ```source``` directory. You can run the whole file at once to generete the whole database with all of its tables, data and features. The ```examlpes.sql``` is just a file with examples to all of the different features of the database.
+
+## Database Design
 
 We designed the schema of our database ```CouriersDB``` by transforming a table in 1NF[^1nf] into 7 tables that meet the 3NF[^3nf] standards.
 
@@ -152,77 +220,6 @@ CREATE TABLE TypesOfService (
 | ID | INT | The identification number (```PRIMARY KEY```) |
 | Type | VARCHAR(50) | The type of the service that needs to be performed |
 
-## Project Structure
-
-```
-📦Couriers
- ┣ 📂source
- ┃ ┣ 📂crud-procedures
- ┃ ┃ ┣ 📄add-client.sql
- ┃ ┃ ┣ 📄delete-client.sql
- ┃ ┃ ┣ 📄update-client.sql
- ┃ ┃ ┗ ...
- ┃ ┣ 📂data
- ┃ ┃ ┣ 📄addresses-data.sql
- ┃ ┃ ┣ 📄clients-data.sql
- ┃ ┃ ┗ ...
- ┃ ┣ 📂private
- ┃ ┃ ┗ 📄check-phone-number.sql
- ┃ ┣ 📂queries
- ┃ ┃ ┣ 📄OutRequest1.sql
- ┃ ┃ ┣ 📄OutRequest2.sql
- ┃ ┃ ┣ 📄OutRequest3.sql
- ┃ ┃ ┣ 📄OutRequest4.sql
- ┃ ┃ ┣ 📄OutRequest5.sql
- ┃ ┃ ┣ 📄usp_dates_with_most_delivered_orders.sql
- ┃ ┃ ┣ 📄usp_names_of_recipients_by_order_count.sql
- ┃ ┃ ┣ 📄usp_name_phonenumber_category.sql
- ┃ ┃ ┣ 📄usp_orders_count_by_order_date.sql
- ┃ ┃ ┗ 📄usp_orders_profit_by_tos.sql
- ┃ ┗ 📂schemas
- ┃ ┃ ┣ 📄addresses-table.sql
- ┃ ┃ ┣ 📄clients-table.sql
- ┃ ┃ ┗ ...
- ┣ 📂sql-compiler
- ┃ ┣ 📄Program.cs
- ┃ ┣ 📄sql-compiler.csproj
- ┃ ┗ 📄sql-compiler.exe
- ┣ 📄.gitignore
- ┣ 📄compile.bat
- ┣ 📄couriers-project_data.xlsx
- ┣ 📄couriers.sql
- ┣ 📄examples.sql
- ┗ 📄README.md
-```
-
-In order to facilitate for easier collaboration and overall code development, we split up all of the SQL code into many files. All of them are located in the ```source``` folder in the root of the repository. In there you will find the files grouped into the ```crud-procedures```, ```data```, ```private```, ```queries``` and ```schemas``` folders. All of those folders contain a number of ```.sql``` files, which themselves are all either a definition of a single procedure, function, table or database, or in the case of the files in the ```data``` folder - the ```INSERT``` queries used to populate the different tables with their respective data.
-
-NON BREAKING HYPHEN ‑ (COPY PASTE FROM HERE)
-table generator: https://www.tablesgenerator.com/markdown_tables
-
-Here's a brief description of what each of the folders contain:
-| Folder | Contains |
-|:---:|---|
-| ```source/crud‑procedures``` | CRUD[^crud] procedures, except for the Read part, so basically different procedures for every table, which can each ```Add```, ```Update``` or ```Delete``` any data within that table |
-| ```source/data``` | SQL queries which insert the original data from the Excel table (```couriers‑project_data.xlsx```) into the different tables of the database |
-| ```source/private``` | Procedures and functions which are not meant to be used by the end user, but rather by other procedures and functions in the database |
-| ```source/queries``` | Various procedures which read certain data from the database and display it to the user in different ways |
-| ```source/schemas``` | SQL queries which create each of the tables in the database and the database itself |
-
-The ```couriers‑project_data.xlsx``` Excel file, which is contained in the root directory of the repo, includes all of the original data for the database.
-> **Note:** The file is there only for completeness purposes. Changing it does not change the data in the database or what data the ```.sql``` files in the ```source/data``` folder insert into the database when executed. All of that data is hardcoded in those files.
-
-The folder ```sql-compiler``` contains the source code and executable for a small SQL "compiler", written in C#. All it does is it takes all of the SQL files (in a certain order) and it combines them into a single SQL file. This makes it easy for both the developers and the end-user to execute all of the files at once and immediately have the database up and running, while at the same time allowing for the separation of the SQL code, which as we mentioned earlier facilities for more efficient development and code cleanliness. Another thing that the compiler does is that it creates a single file with all of the examples for each SQL file, which contains such examples. This makes it much easier for the end user to get to grips with the various things that they can do with the database, while also making it easier for developers to write examples as it allows them to do so within the actual file that they are working on at the moment.
-
-To prevent clutter, the actual C# project for the compiler isn't a part of a Visual Studio Solution File (```.sln```) as it was created with the ```dotnet``` CLI tool which only requires a C# Project File (```sql-compiler.csproj```) and a C# Source File (```Program.cs```). The exe is a completely standalone executable that doesn't require the .NET runtime to work as it was created with the very useful .NET tool called [```dotnet-warp```](https://www.nuget.org/packages/dotnet-warp/).
-
-To actually use the compiler you can pass arguments to it, but you can simply run the ```compile.bat``` file which will run the compiler with some default arguments. You can configure those arguments within the file and also you can configure which SQL files are compiled and in what order that is done, as that may be important depending on the files (e.g. you'd want the tables to be created, before you create the database). That particular thing is actually not passed to the compiler as an argument, but rather the ```compile.bat``` file passes itself as an argument and the compiler reads a comment within the ```.bat``` file which contains the names and relative paths of the files which are to be compiled (you can also use glob style wildcards such as `*` and `**`, just like in a `.gitignore` file thanks to the very useful .NET NuGet package [```Glob```](https://www.nuget.org/packages/Glob/1.2.0-alpha0037)).
-
-By default, the compiler generates 2 SQL files with the names `couriers.sql` and `example.sql` in the root directory of the repository. However, they are included in the `.gitignore` of the repo as to not cause any merge conflicts...
-
-
-
-
 
 ## Setup
 
@@ -258,10 +255,55 @@ To generate the database and all of its components by simply executing the ```co
 *Now that you have the database up and running this section will showcase all of the different features that the database has and how to use them.*
 
 ### Add
-entry into a table
+
+Add an entry into any of the tables in the database using one of the seven ```Add``` procedures (```udp_AddAddress```, ```udp_AddCourier```, ```udp_AddRecipient```, ```udp_AddDispatcher```, ```udp_AddClient```, ```udp_AddTypeOfService```). Each of them have different parameters depending on the table. You might get an error message if you try to create an entry which already exists in the specific table or if you pass invalid parameters to the procedure. If successful, the procedure will print out the ```ID``` of the newly created entry.
+
+#### Syntax
+
+```sql
+exec udp_AddAddress @Address
+exec udp_AddCourier @Name, @PhoneNumber
+exec udp_AddDispatcher @Name, @PhoneNumber
+exec udp_AddClient @Name, @PhoneNumber
+exec udp_AddRecipient @Name
+exec udp_AddTypeOfService @Type
+exec udp_AddOrder @OrderDate, @ReceiveDate, @Total, @AddressID, @CourierID, @DispatcherID, @ClientID, @RecipientID, @Type
+```
+
+#### Examples
+
+```sql
+exec udp_AddClient 'Tom Scott', '0888888888';
+exec udp_AddClient 'John Doe', 'not a phone number';
+exec udp_AddClient 'Tom Scott', '0888888888';
+exec udp_AddOrder '01-25-2022', '01-30-2022', 5000, 5, 2, 4, 1, 2, 3
+```
 
 ### Update
-an entry from a table
+
+Update an entry from any of the tables in the database using one of the seven ```Update``` procedures (```udp_AddAddress```, ```udp_AddCourier```, ```udp_AddRecipient```, ```udp_AddDispatcher```, ```udp_AddClient```, ```udp_AddTypeOfService```). All you have to do is pass on the ```ID``` of the entry that you are trying to update and the values that you want to update. If you leave any of the parameters ```NULL```, those values will simply not be updated. If you enter an invalid ```ID``` or any other invalid value, you may receive an error message.
+
+#### Syntax
+
+```sql
+exec udp_UpdateAddress @ID, @Address
+exec udp_UpdateCourier @ID, @Name, @PhoneNumber
+exec udp_UpdateDispatcher @ID, @Name, @PhoneNumber
+exec udp_UpdateClient @ID, @Name, @PhoneNumber
+exec udp_UpdateRecipient @ID, @Name
+exec udp_UpdateTypeOfService @ID, @Type
+```
+
+#### Examples
+
+```sql
+exec udp_UpdateClient 5, 'Tom', '089899898'
+exec udp_UpdateClient 5, 'Don'
+exec udp_UpdateClient 5, NULL, '798797898'
+exec udp_UpdateClient 5, @PhoneNumber = '456465456'
+exec udp_UpdateClient 1000
+exec udp_UpdateOrder 3, @ReceiveDate = '01-31-2022', @TypeID = 2
+```
 
 ### Delete (Parent Tables)
 
@@ -347,7 +389,7 @@ Example:
 EXEC dbo.delete_couriers 3, 0, 4;
 ```
 
-### Delete from ```dbo.Orders```
+### Delete (```dbo.Orders```)
 
 The delete procedure ```dbo.delete_orders``` deletes a record from ```dbo.Orders``` by a given ```OldID``` (unless the given ```OldID``` is invalid; in this case, the procedure will ```PRINT``` a 'No such order exists' message and exit without making any alterations to ```dbo.Orders```)
 
@@ -435,15 +477,25 @@ EXEC dbo.usp_name_phonenumber_category;
 
 ## Development
 
-In this part you can learn more about the development process (work principles of the procedures, problems we encountered while writing the queries, etc.).
+*In this section you can learn more about the development process (work principles of the procedures, problems we encountered while writing the queries, etc.).*
 
-## *Create Procedures*
+### Creating the database
+TODO for rumbata: Just write a tiny bit about how you used that one tool to genereate the sql database, even though I rewrote that code later
 
-## *Read Procedures*
+### Insert 
+TODO for rumbata: Write a bit about how you used SQLizer
+
+### Git
+
+### Add & Update
+
+### Compiler
+
+### Queries
 
 TODO: Roomba, add your stuff here
 
-#### **dbo.usp_dates_with_most_delivered_orders**
+#### dbo.usp_dates_with_most_delivered_orders
 ```sql
 CREATE OR ALTER Proc usp_dates_with_most_delivered_orders
 AS
@@ -466,7 +518,7 @@ The first ```SELECT``` statement inside ```usp_dates_with_most_delivered_orders`
 
 The second ```SELECT``` statement displays the ```COUNT``` of the dates(s), during which most orders were received, as well as the ```ReceiveDate``` themselves. This happens by grouping the records by ```ReceiveDate```. Then, only those records, which have ```COUNT(*)``` greater or equal to all the other records, are shown. Using ```>= ALL``` guarantees that only those date(s), which has/have the largest ```COUNT(*)```, are being shown.
 
-#### **Encountered problems**
+#### Encountered problems
 
 At first, the whole procedure included this statement:
 
@@ -486,7 +538,7 @@ SELECT ReceiveDate, COUNT(*) as [Count of delivered orders]
 However, this code was highly inefficient due to the fact that the subquery groups the record of ```dbo.Orders``` by ```ReceiveDate``` a lot of times, which is time consuming. That is why we changed the approach and added a temporary table (```dbo.TempOrders```), which stores the ```COUNT``` of all the orders grouped by ```ReceiveDate```. This increases the used memory, but significantly reduces the time of the execution of the procedure (this might not be noted when having a small database such as ```CouriersDB```, but the difference will be apparent when working with a lot of data).
 
 
-#### **dbo.usp_names_of_recipients_by_order_count**
+#### dbo.usp_names_of_recipients_by_order_count
 
 ```sql
 CREATE OR ALTER Proc usp_names_of_recipients_by_order_count @MinOrdersCount INT
@@ -505,7 +557,7 @@ The ```SELECT``` statement displays the ```COUNT``` of the orders and ```Name```
 
 > **Note:** ```@MinOrdersCount``` (```INT```) + 1 is the minimum amount of orders that a recipient must receive in order to be displayed when ```usp_names_of_recipients_by_order_count``` is executed
 
-#### **dbo.usp_orders_count_by_order_date**
+#### dbo.usp_orders_count_by_order_date
 
 ```sql
 CREATE OR ALTER Proc usp_orders_count_by_order_date
@@ -519,7 +571,7 @@ END
 
 The ```SELECT``` statement displays the ```COUNT``` of the orders, grouped by ```OrderDate```, as well as the ```OrderDate```.
 
-### **dbo.usp_orders_profit_by_tos**
+#### dbo.usp_orders_profit_by_tos
 
 ```sql
 CREATE OR ALTER Proc usp_orders_profit_by_tos
@@ -537,7 +589,7 @@ The ```SELECT``` statement displays the ```Type[^tp]``` and the ```SUM``` of the
 
 > **Note:** The function ```FORMAT``` is used to display the ```SUM``` in BGN[^bgn].
 
-### **dbo.usp_name_phonenumber_category**
+#### dbo.usp_name_phonenumber_category
 
 ```sql
 CREATE OR ALTER Proc usp_name_phonenumber_category
@@ -556,9 +608,7 @@ END
 
 The ```SELECT``` statement displays ```Name```, ```PhoneNumber```, and ```Category```. The data is fetched from the union of three tables (```dbo.Courier```, ```dbo.Client```, and ```dbo.Dispatcher```).
 
-## *Update Procedures*
-
-## *Delete Procedures*
+### Delete Procedures
 
 The delete procedures are divided into two types:
 
@@ -567,7 +617,7 @@ The delete procedures are divided into two types:
 
 > **Note:** You can find more information about the two types in [**Guide**](#guide)
 
->NOTE 2: In the following subheading (```Delete Procedures```) of **```Development```** there is going to be an explanation about how the delete procedures work (```dbo.delete_couriers``` is the example delete procedure used below).
+> **Note:** In the following subheading (```Delete Procedures```) of **```Development```** there is going to be an explanation about how the delete procedures work (```dbo.delete_couriers``` is the example delete procedure used below).
 
 Both type-1 and type-2 delete procedures delete a row from the specific table where the ```ID``` of that table equals to ```@OldID```:
 
@@ -578,7 +628,7 @@ WHERE ID = @OldID;
 
 The type-1 delete procedures are writen in a way, which covers 5 different scenarios:
 
-### **1. When the user enters an invalid ```@OldID```**
+#### 1. When the user enters an invalid ```@OldID```
 
 ```sql
 IF NOT EXISTS (SELECT * FROM Couriers WHERE ID = @OldID)
@@ -590,7 +640,7 @@ END;
 
 The code snippet above checks whether there is a record in ```dbo.Couriers``` which has an ```ID``` = ```@OldID``` and if there isn't one, a 'No such courier exists' is printed. This is the second similarity between type-1 and type-2 delete procedures as in ```dbo.delete_orders``` (Type 2 delete procedure) there is a similar statement as the one above.
 
-### **2. When the user enters a valid ```@OldID```**
+#### 2. When the user enters a valid ```@OldID```
 
 ```sql
 IF (@WantToDeleteFromOrders = 1)
@@ -602,7 +652,7 @@ END;
 
 The code fragment above checks whether the user wants to delete the records from ```dbo.Orders``` where the ```courierID``` (a ```FOREIGN KEY``` linked to ```dbo.Couriers```) is equal to ```@OldID``` (```@WantToDeleteFromOrders``` = 1) **OR** ```UPDATE``` ```dbo.Orders``` by setting a new value to ```courierID``` (```@WantToDeleteFromOrders``` = 0). ```WantToDeleteFromOrders``` is set to 1 (```DELETE```) by default. So, when the user enters only ```@OldID```, the code bit above will be executed.
 
-### **3. When the user enters ```OldID```, ```WantToDeleteFromOrders```, and a valid ```NewID```** 
+#### 3. When the user enters ```OldID```, ```WantToDeleteFromOrders```, and a valid ```NewID```
 
 ```sql
 ELSE IF EXISTS (SELECT * FROM Couriers WHERE ID = @NewID)
@@ -614,7 +664,7 @@ ELSE IF EXISTS (SELECT * FROM Couriers WHERE ID = @NewID)
 In this case, the procedure will ```UPDATE``` the records from ```dbo.Orders``` where ```courierID``` = ```@OldID``` and set ```courierID``` = ```NewID```.
 
 
-### **4. When the user enters ```OldID``` and ```WantToDeleteFromOrders``` = 0 *OR* the user enters @OldID, @WantToDeleteFromOrders, and an invalid @NewID**
+#### 4. When the user enters ```OldID``` and ```WantToDeleteFromOrders``` = 0 *OR* the user enters @OldID, @WantToDeleteFromOrders, and an invalid @NewID
 
 ```sql
 ELSE
@@ -640,6 +690,8 @@ ELSE
 
 ## Conclusion
 
+## Credits
+
 
 [^1nf]: 1NF - First Normal Form
 
@@ -648,3 +700,5 @@ ELSE
 [^tp]: Type - Type of Service
 
 [^bgn]: BGN - Bulgarian Lev
+
+[^crud]: CRUD - Create, Add, Update, Delete
