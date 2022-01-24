@@ -314,52 +314,88 @@ Based on the entered parameters, the type-1 delete procedures can be executed in
 
 ### **1. If the user enters an invalid ```OldID```**
 
+In this case, the procedure will ```PRINT``` a message which says: 'No such [some object] exists', and the procedure will exit without making any alterations to any of the tables of ```CouriersDB```
+
+```sql
+EXEC dbo.delete_couriers OldID;
+```
+
+Example:
+
 ```sql
 EXEC dbo.delete_couriers -1;
 ```
 
-In this case, the procedure will ```PRINT``` a message which says: 'No such [some object] exists', and the procedure will exit without making any alterations to any of the tables of ```CouriersDB```
-
 ### **2. If the user enters only a valid ```OldID```**
+
+In this case, the procedure will ```DELETE``` the records from ```dbo.Orders``` where the ```FOREIGN KEY``` (```courierID``` in the given example), which is linked to a specific table, is equal to ```OldID```
+
+```sql
+EXEC dbo.delete_couriers OldID;
+```
+
+Example:
 
 ```sql
 EXEC dbo.delete_couriers 1;
 ```
-
-In this case, the procedure will ```DELETE``` the records from ```dbo.Orders``` where the ```FOREIGN KEY``` (```courierID``` in the given example), which is linked to a specific table, is equal to ```OldID```
 
 ### **3. If the user enters ```OldID``` and ```WantToDeleteFromOrders``` = 0**
 
 >NOTE: ```@WantToDeleteFromOrders``` is a ```BIT``` parameter, which indicates whether the user wants to ```DELETE``` some of the records from ```dbo.Orders``` (like in the example above) **OR** ```UPDATE``` ```dbo.Orders``` by setting a new value to the ```FOREIGN KEY``` (```courierID``` in the given example), which is linked to a specific table. ```WantToDeleteFromOrders``` is set to 1 (```DELETE```) by default.
  Also, if the user executes the delete procedure by setting the ```WantToDeleteFromOrders``` = 1, it will be executed in the same way as in 1. or 2. (depending on the validity of ```OldID```).
 
+In this case, the procedure will ```UPDATE``` the records from ```dbo.Orders``` where the ```FOREIGN KEY``` (```courierID``` in the given example), which is linked to a specific table, is equal to ```OldID``` and set that ```FOREIGN KEY``` to ```NULL```
+
+```sql
+EXEC dbo.delete_couriers OldID, WantToDeleteFromOrders;
+```
+
+Example:
+
 ```sql
 EXEC dbo.delete_couriers 2, 0;
 ```
 
-In this case, the procedure will ```UPDATE``` the records from ```dbo.Orders``` where the ```FOREIGN KEY``` (```courierID``` in the given example), which is linked to a specific table, is equal to ```OldID``` and set that ```FOREIGN KEY``` to ```NULL```
-
 ### **4. If the user enters ```OldID```, ```WantToDeleteFromOrders```, and a valid ```NewID```** 
 
->NOTE: ```NewID``` is the ```ID``` which the new value of the ```FOREIGN KEY``` (```courierID``` in the given example) is set to. ```NewID``` is ```NULL``` by default. ```NewID``` is considered valid when a specific parent table (```dbo.Couriers``` in the given example) which has ```ID``` equal to ```NewID```. In all other cases ```NewID``` is invalid and the specific ```FOREIGN KEY``` (```courierID``` in the given example) will be set to ```NULL```.
-
-```sql
-EXEC dbo.delete_couriers 3, 0, 4;
-```
+>NOTE: ```NewID``` is the ```ID``` which the new value of the ```FOREIGN KEY``` (```courierID``` in the given example) is set to. ```NewID``` is ```NULL``` by default. ```NewID``` is considered valid when a specific parent table (```dbo.Couriers``` in the given example) which has ```ID``` equal to ```NewID```. In all other cases ```NewID``` is invalid.
 
 In this case, the procedure will ```UPDATE``` the records from ```dbo.Orders``` where the ```FOREIGN KEY``` (```courierID``` in the given example), which is linked to a specific table, is equal to ```OldID``` and set that ```FOREIGN KEY``` to ```NewID```
 
-### **5. If the user enters ```@OldID```, ```@WantToDeleteFromOrders```, and a invalid ```@NewID```**
+```sql
+EXEC dbo.delete_couriers OldID, WantToDeleteFromOrders, NewID;
+```
+
+Example:
 
 ```sql
 EXEC dbo.delete_couriers 3, 0, 4;
 ```
 
+### **5. If the user enters ```@OldID```, ```@WantToDeleteFromOrders```, and an invalid ```@NewID```**
+
 In this case, the procedure will ```UPDATE``` the records from ```dbo.Orders``` where the ```FOREIGN KEY``` (```courierID``` in the given example) that is linked to a specific table is equal to ```@OldID``` and set that ```FOREIGN KEY``` to ```NULL```
+
+```sql
+EXEC dbo.delete_couriers OldID, WantToDeleteFromOrders, NewID;
+```
+
+Example:
+
+```sql
+EXEC dbo.delete_couriers 3, 0, 4;
+```
 
 ### ***Type 2: Delete procedure for ```dbo.Orders```***
 
-The delete procedure ```dbo.delete_orders``` deletes a record from ```dbo.Orders``` by a given ```ID``` (unless the given ```ID``` is invalid; in this case, the procedure will ```PRINT``` a 'No such order exists' message and exit without making any alterations to ```dbo.Orders```)
+The delete procedure ```dbo.delete_orders``` deletes a record from ```dbo.Orders``` by a given ```OldID``` (unless the given ```OldID``` is invalid; in this case, the procedure will ```PRINT``` a 'No such order exists' message and exit without making any alterations to ```dbo.Orders```)
+
+```sql
+EXEC dbo.delete_orders OldID;
+```
+
+Example:
 
 ```sql
 EXEC dbo.delete_orders 1;
@@ -369,9 +405,9 @@ EXEC dbo.delete_orders 1;
 
 In this part you can learn more about the development process (work principles of the procedures, problems we encountered while writing the queries, etc.).
 
-### **Create Procedures**
+## *Create Procedures*
 
-### **Read Procedures**
+## *Read Procedures*
 
 TODO: Roomba, add your stuff here
 
@@ -488,9 +524,9 @@ END
 
 The ```SELECT``` statement displays ```Name```, ```PhoneNumber```, and ```Category```. The data is fetched from the union of three tables (```dbo.Courier```, ```dbo.Client```, and ```dbo.Dispatcher```).
 
-### **Update Procedures**
+## *Update Procedures*
 
-### **Delete Procedures**
+## *Delete Procedures*
 
 ```sql
 DELETE FROM Couriers
