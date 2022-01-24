@@ -461,7 +461,7 @@ EXEC dbo.usp_orders_count_by_order_date;
 
 #### **9. dbo.usp_orders_profit_by_tos**
 
-This procedure displays the profit of all the orders grouped by ```Type[^tp]``` (column in ```dbo.TypesOfService```)
+This procedure displays the profit of all the orders grouped by ```Type```[^type] (column in ```dbo.TypesOfService```)
 
 ```sql
 EXEC dbo.usp_orders_profit_by_tos;
@@ -585,7 +585,7 @@ BEGIN
 END
 ```
 
-The ```SELECT``` statement displays the ```Type[^tp]``` and the ```SUM``` of the totals of the orders, grouped by ```Type``` (column in ```dbo.TypesOfService```).
+The ```SELECT``` statement displays the ```Type```[^type] and the ```SUM``` of the totals of the orders, grouped by ```Type``` (column in ```dbo.TypesOfService```).
 
 > **Note:** The function ```FORMAT``` is used to display the ```SUM``` in BGN[^bgn].
 
@@ -615,7 +615,7 @@ The delete procedures are divided into two types:
 1. Delete procedures that alter a specific parent table and the ```FOREIGN KEY``` in ```dbo.Orders```, which is linked to that parent table.
 2. Delete procedure which removes a record from ```dbo.Orders``` by a given ```OldID```.
 
-> **Note:** You can find more information about the two types in [**Guide**](#guide)
+>**Note**: You can find more information about the two types in [**Guide**](#guide)
 
 > **Note:** In the following subheading (```Delete Procedures```) of **```Development```** there is going to be an explanation about how the delete procedures work (```dbo.delete_couriers``` is the example delete procedure used below).
 
@@ -693,12 +693,13 @@ ELSE
 ## Credits
 
 
+
 [^1nf]: 1NF - First Normal Form
 
 [^3nf]: 3NF - Third Normal Form
 
-[^tp]: Type - Type of Service
-
 [^bgn]: BGN - Bulgarian Lev
 
 [^crud]: CRUD - Create, Add, Update, Delete
+
+[^type]: Type - Type of Service
