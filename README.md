@@ -200,6 +200,15 @@ In order to facilitate for easier collaboration and overall code development, we
 
 NON BREAKING HYPHEN ‑ (COPY PASTE FROM HERE)
 table generator: https://www.tablesgenerator.com/markdown_tables
+## h2
+## **bold h2**
+
+### h3
+### **bold h3**
+
+#### h4
+#### **bold h4**
+
 
 Here's a brief description of what each of the folders contain:
 | Folder | Contains |
@@ -212,7 +221,7 @@ Here's a brief description of what each of the folders contain:
 
 The folder ```sql-compiler``` contains the source code and executable for a small SQL "compiler", written in C#. All it does is it takes all of the SQL files (in a certain order) and it combines them into a single SQL file. This makes it easy for both the developers and the end-user to execute all of the files at once and immediately have the database up and running, while at the same time allowing for the separation of the SQL code, which as we mentioned earlier facilities for more efficient development and code cleanliness. Another thing that the compiler does is that it creates a single file with all of the examples for each SQL file, which contains such examples. This makes it much easier for the end user to get to grips with the various things that they can do with the database, while also making it easier for developers to write examples as it allows them to do so within the actual file that they are working on at the moment.
 
-To prevent clutter, the actual C# project for the compiler isn't a part of a Visual Studio Solution File (```.sln```) as it was created with the ```dotnet``` CLI tool which only requires a C# Project File (```sql-compiler.csproj```) and a C# Source File (```Program.cs```). The exe is a completely standalone executable that doesn't require the .NET runtime to work as it was created with the very useful .NET tool called [```dotnet-warp```](https://www.nuget.org/packages/dotnet-warp/).
+To prevent clutter, the actual C# project for the compiler isn't a part of a Visual Studio Solution File (```.sln```) as it was created with the ```dotnet``` CLI tool which only requires a C# Project File (```sql-compiler.csproj```) and a C# Source File (```Program.cs```). The exe is a completely standalone executable that doesn't require the .NET runtime to work as it was created with the very useful .NET tool called [```dotnet-warp```](https://www.nuget.org/packages/dotnet-warp/){:target="_blank"}.
 
 To actually use the compiler you can pass arguments to it, but you can simply run the ```compile.bat``` file which will run the compiler with some default arguments. You can configure those arguments within the file and also you can configure which SQL files are compiled and in what order that is done, as that may be important depending on the files (e.g. you'd want the database to be created, before you create the tables). That's not actually passed to the compiler as an argument, but rather the ```compile.bat``` file passes itself as an argument and the compiler reads a comment within the ```bat``` file which contains the names and relative paths of the files which are to be compiled (you can also use glob style wildcards such as `*` and `**`, just like in a `.gitignore` file).
 
