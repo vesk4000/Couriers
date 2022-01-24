@@ -641,6 +641,7 @@ ELSE
 ## Conclusion
 
 
+
 [^1nf]: 1NF - First Normal Form
 
 [^3nf]: 3NF - Third Normal Form
