@@ -565,9 +565,9 @@ The delete procedures are divided into two types:
 1. Delete procedures that alter a specific parent table and the ```FOREIGN KEY``` in ```dbo.Orders```, which is linked to that parent table.
 2. Delete procedure which removes a record from ```dbo.Orders``` by a given ```OldID```.
 
->NOTE: You can find more information about the two types in [**Guide**](#guide)
+>**Note**: You can find more information about the two types in [**Guide**](#guide)
 
->NOTE 2: In the following subheading (```Delete Procedures```) of **```Development```** there is going to be an explanation about how the delete procedures work (```dbo.delete_couriers``` is the example delete procedure used below).
+>**Note 2**: In the following subheading (```Delete Procedures```) of **```Development```** there is going to be an explanation about how the delete procedures work (```dbo.delete_couriers``` is the example delete procedure used below).
 
 Both type-1 and type-2 delete procedures delete a row from the specific table where the ```ID``` of that table equals to ```@OldID```:
 
