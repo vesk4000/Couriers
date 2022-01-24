@@ -9,13 +9,9 @@ BEGIN
 		PRINT 'No such dispatcher exists';
 		RETURN
 	END;
-	
-	DECLARE @DeleteOrUpdate BIT = 0;
 
 	IF (@WantToDeleteFromOrders = 1)
 	BEGIN
-		SET @DeleteOrUpdate = 1;
-
 		DELETE FROM Orders
 		WHERE dispatcherID = @OldID;
 	END;
@@ -37,7 +33,7 @@ BEGIN
 
 	PRINT 'Deleted dispatcher with ID = ' + CAST(@OldID AS VARCHAR);
 
-	IF (@DeleteOrUpdate = 1)
+	IF (@WantToDeleteFromOrders = 1)
 		PRINT 'Deleted rows from Orders with dispatcherID = ' + CAST(@OldID AS VARCHAR);
 	ELSE
 		PRINT 'Updated row(s) in Orders with dispatcherID = ' + CAST(@OldID AS VARCHAR) + ' by setting dispatcherID = ' + IIF(@NewID IS NULL, 'NULL', CAST(@NewID AS VARCHAR));
