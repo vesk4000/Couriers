@@ -22,8 +22,7 @@ This is the given 1FN table with some sample data:
 
 The ```CouriersDB```, which consists of 7 3NF tables has the following schema:
 
--- IMAGE_SCHEMA
-
+![Schema Image](https://github.com/vesk4000/Couriers/blob/8729967a3a62f26637ac1a758e3ba623d23d96cb/schema-screenshot.png)
 
 ### **dbo.Orders**
 
