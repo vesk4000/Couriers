@@ -1,18 +1,15 @@
 # Couriers
-TODO: Add some badges in here
 
-TODO: Add Table of contents
-
-## Overview
+## **Overview**
 
 The goal of the 'Couriers' project is to help a delivery company manage orders by utilizing an SQL database.
 
 The system has the ability to ```create```, ```read```, ```update```, and ```delete``` (CRUD) the data from tables which store information about orders, clients, dispatchers, orders, etc.
 (more info can be found in the Database Design part of this documentation)
 
-## Database Design
+## **Database Design**
 
-We designed the schema of our database ```CouriersDB``` by transforming a table in 1FN[^1] into 7 tables that meet the 3NF[^2] standards.
+We designed the schema of our database ```CouriersDB``` by transforming a table in 1NF[^1nf] into 7 tables that meet the 3NF[^3nf] standards.
 
 This is the given 1FN table with some sample data:
 
@@ -225,17 +222,13 @@ By default, the compiler generates 2 SQL files with the names `couriers.sql` and
 
 ## Guide
 
-## Development
+## *Create procedures*
 
-### **Create Procedures**
+## *Read procedures*
 
-### **Read Procedures**
-
-```CouriersDB``` has 10 read procedures. Each one of them is used as a report, containing information about:
+```CouriersDB``` has 10 read procedures. Each one of them is used as a report. Those procedures are:
 
 1. a client's ```Name``` and ```PhoneNumber``` via searching by part of ```Name``` or ```PhoneNumber``` (columns in ```dbo.Clients```)
-
-TODO:
 
 2. all orders of a specific dispatcher by ```Name``` (column in ```dbo.Dispatchers```) or on a certain ```ReceiveDate``` (column in ```dbo.Order```)
 
@@ -253,8 +246,136 @@ TODO:
 
 TODO:
 
-6. the date(s) with most orders grouped by ```ReceiveDate``` (column in ```dbo.Orders```)
+### **6. dbo.usp_dates_with_most_delivered_orders**
 
+This procedure displays the date(s) with most orders grouped by ```ReceiveDate``` (column in ```dbo.Orders```)
+
+```sql
+EXEC dbo.usp_dates_with_most_delivered_orders;
+```
+
+### **7. usp_names_of_recipients_by_order_count**
+
+This procedure displays the names of all the recipients who have received more orders than [some ```INTEGER``` value]
+
+```sql
+EXEC dbo.usp_names_of_recipients_by_order_count [some INTEGER value];
+```
+
+Examples:
+
+```sql
+EXEC dbo.usp_names_of_recipients_by_order_count 1;
+```
+
+```sql
+EXEC dbo.usp_names_of_recipients_by_order_count 2;
+```
+
+### **8. dbo.usp_orders_count_by_order_date**
+
+This procedure displays the count of all the orders grouped by ```OrderDate``` (column in ```dbo.Order```)
+
+```sql
+EXEC dbo.usp_orders_count_by_order_date;
+```
+
+### **9. dbo.usp_orders_profit_by_tos**
+
+This procedure displays the profit of all the orders grouped by ```Type[^tp]``` (column in ```dbo.TypesOfService```)
+
+```sql
+EXEC dbo.usp_orders_profit_by_tos;
+```
+
+### **10. dbo.usp_name_phonenumber_category**
+
+This procedure displays the names, phone numbers, and categories (client, dispatcher, courier) of all the people registered in ```CouriersDB```
+
+```sql
+EXEC dbo.usp_name_phonenumber_category;
+```
+
+## *Update Procedures*
+
+## *Delete Procedures*
+
+```CouriersDB``` has 2 types of delete procedures:
+
+### ***Type 1: Delete procedures for parent tables***
+
+```CouriersDB``` has 6 parent tables (```dbo.Clients```, ```dbo.Dispatchers```, ```dbo.Couriers```, ```dbo.Recipients```, ```dbo.Addresses```, and ```dbo.TypesOfService```).
+
+>NOTE: The following examples are part of the **delete procedure** ```dbo.delete_couriers```. Given that all delete procedures for the parent tables almost completely overlap, it is unnecessary to show all 6 of them here.
+
+For each one of those parent tables we have created a **delete procedure** (```dbo.delete_couriers```, ```dbo.delete_clients```, ```dbo.delete_dispatchers```, ```dbo.delete_recipients```, ```dbo.delete_addresses```, ```dbo.delete_types```), which deletes the records from a specific **parent table** by a given ```OldID``` (unless ```OldID``` is invalid, which is a case discussed below).
+
+Based on the entered parameters, the type-1 delete procedures can be executed in 5 different ways:
+
+### **1. If the user enters an invalid ```OldID```**
+
+```sql
+EXEC dbo.delete_couriers -1;
+```
+
+In this case, the procedure will ```PRINT``` a message which says: 'No such [some object] exists', and the procedure will exit without making any alterations to any of the tables of ```CouriersDB```
+
+### **2. If the user enters only a valid ```OldID```**
+
+```sql
+EXEC dbo.delete_couriers 1;
+```
+
+In this case, the procedure will ```DELETE``` the records from ```dbo.Orders``` where the ```FOREIGN KEY``` (```courierID``` in the given example), which is linked to a specific table, is equal to ```OldID```
+
+### **3. If the user enters ```OldID``` and ```WantToDeleteFromOrders``` = 0**
+
+>NOTE: ```@WantToDeleteFromOrders``` is a ```BIT``` parameter, which indicates whether the user wants to ```DELETE``` some of the records from ```dbo.Orders``` (like in the example above) **OR** ```UPDATE``` ```dbo.Orders``` by setting a new value to the ```FOREIGN KEY``` (```courierID``` in the given example), which is linked to a specific table. ```WantToDeleteFromOrders``` is set to 1 (```DELETE```) by default.
+ Also, if the user executes the delete procedure by setting the ```WantToDeleteFromOrders``` = 1, it will be executed in the same way as in 1. or 2. (depending on the validity of ```OldID```).
+
+```sql
+EXEC dbo.delete_couriers 2, 0;
+```
+
+In this case, the procedure will ```UPDATE``` the records from ```dbo.Orders``` where the ```FOREIGN KEY``` (```courierID``` in the given example), which is linked to a specific table, is equal to ```OldID``` and set that ```FOREIGN KEY``` to ```NULL```
+
+### **4. If the user enters ```OldID```, ```WantToDeleteFromOrders```, and a valid ```NewID```** 
+
+>NOTE: ```NewID``` is the ```ID``` which the new value of the ```FOREIGN KEY``` (```courierID``` in the given example) is set to. ```NewID``` is ```NULL``` by default. ```NewID``` is considered valid when a specific parent table (```dbo.Couriers``` in the given example) which has ```ID``` equal to ```NewID```. In all other cases ```NewID``` is invalid and the specific ```FOREIGN KEY``` (```courierID``` in the given example) will be set to ```NULL```.
+
+```sql
+EXEC dbo.delete_couriers 3, 0, 4;
+```
+
+In this case, the procedure will ```UPDATE``` the records from ```dbo.Orders``` where the ```FOREIGN KEY``` (```courierID``` in the given example), which is linked to a specific table, is equal to ```OldID``` and set that ```FOREIGN KEY``` to ```NewID```
+
+### **5. If the user enters ```@OldID```, ```@WantToDeleteFromOrders```, and a invalid ```@NewID```**
+
+```sql
+EXEC dbo.delete_couriers 3, 0, 4;
+```
+
+In this case, the procedure will ```UPDATE``` the records from ```dbo.Orders``` where the ```FOREIGN KEY``` (```courierID``` in the given example) that is linked to a specific table is equal to ```@OldID``` and set that ```FOREIGN KEY``` to ```NULL```
+
+### ***Type 2: Delete procedure for ```dbo.Orders```***
+
+The delete procedure ```dbo.delete_orders``` deletes a record from ```dbo.Orders``` by a given ```ID``` (unless the given ```ID``` is invalid; in this case, the procedure will ```PRINT``` a 'No such order exists' message and exit without making any alterations to ```dbo.Orders```)
+
+```sql
+EXEC dbo.delete_orders 1;
+```
+
+## **Development**
+
+In this part you can learn more about the development process (work principles of the procedures, problems we encountered while writing the queries, etc.).
+
+### **Create Procedures**
+
+### **Read Procedures**
+
+TODO: Roomba, add your stuff here
+
+#### **dbo.usp_dates_with_most_delivered_orders**
 ```sql
 CREATE OR ALTER Proc usp_dates_with_most_delivered_orders
 AS
@@ -273,19 +394,31 @@ BEGIN
 END
 ```
 
-### Work Principle
-
 The first ```SELECT``` statement inside ```usp_dates_with_most_delivered_orders``` creates a temporary table (```dbo.TempOrders```) and inserts into that table the ```COUNT``` of all orders grouped by ```ReceiveDate```.
 
 The second ```SELECT``` statement displays the ```COUNT``` of the dates(s), during which most orders were received, as well as the ```ReceiveDate``` themselves. This happens by grouping the records by ```ReceiveDate```. Then, only those records, which have ```COUNT(*)``` greater or equal to all the other records, are shown. Using ```>= ALL``` guarantees that only those date(s), which has/have the largest ```COUNT(*)```, are being shown.
 
-### Usage
+#### **Encountered problems**
+
+At first, the whole procedure included this statement:
 
 ```sql
-EXEC dbo.usp_dates_with_most_delivered_orders;
+SELECT ReceiveDate, COUNT(*) as [Count of delivered orders]
+	FROM Orders AS o1
+	GROUP BY ReceiveDate
+	HAVING COUNT(*) >= ALL (
+		SELECT COUNT(*)
+		FROM Orders AS o2
+		WHERE o1.ReceiveDate <> o2.ReceiveDate
+		GROUP BY ReceiveDate)
 ```
 
-7. the names of all the recipients who have received more orders than ```@MinOrdersCount```
+>NOTE: Yes, the "```WHERE o1.ReceiveDate <> o2.ReceiveDate```" is completely redundant :D
+
+However, this code was highly inefficient due to the fact that the subquery groups the record of ```dbo.Orders``` by ```ReceiveDate``` a lot of times, which is time consuming. That is why we changed the approach and added a temporary table (```dbo.TempOrders```), which stores the ```COUNT``` of all the orders grouped by ```ReceiveDate```. This increases the used memory, but significantly reduces the time of the execution of the procedure (this might not be noted when having a small database such as ```CouriersDB```, but the difference will be apparent when working with a lot of data).
+
+
+#### **dbo.usp_names_of_recipients_by_order_count**
 
 ```sql
 CREATE OR ALTER Proc usp_names_of_recipients_by_order_count @MinOrdersCount INT
@@ -300,22 +433,11 @@ BEGIN
 END
 ```
 
-### Work Principle
-
 The ```SELECT``` statement displays the ```COUNT``` of the orders and ```Name``` (column in ```dbo.Recipients```). Those orders are grouped by ```Name``` (column in ```dbo.Recipients```). Then, only the records with ```COUNT``` greater that ```@MinOrdersCount``` are shown.
 
 >NOTE: ```@MinOrdersCount``` (```INT```) + 1 is the minimum amount of orders that a recipient must receive in order to be displayed when ```usp_names_of_recipients_by_order_count``` is executed
 
-### Usage
-
-```sql
-EXEC dbo.usp_names_of_recipients_by_order_count 1;
-```
-```sql
-EXEC dbo.usp_names_of_recipients_by_order_count 2;
-```
-
-8. the count of all the orders grouped by ```ReceiveDate``` (column in ```dbo.Order```)
+#### **dbo.usp_orders_count_by_order_date**
 
 ```sql
 CREATE OR ALTER Proc usp_orders_count_by_order_date
@@ -327,17 +449,9 @@ BEGIN
 END
 ```
 
-### Work Principle
-
 The ```SELECT``` statement displays the ```COUNT``` of the orders, grouped by ```OrderDate```, as well as the ```OrderDate```.
 
-### Usage
-
-```sql
-EXEC dbo.usp_orders_count_by_order_date;
-```
-
-9. the profit of all the orders grouped by ```Type[^3]``` (column in ```dbo.TypesOfService```)
+### **dbo.usp_orders_profit_by_tos**
 
 ```sql
 CREATE OR ALTER Proc usp_orders_profit_by_tos
@@ -351,19 +465,11 @@ BEGIN
 END
 ```
 
-### Work Principle
+The ```SELECT``` statement displays the ```Type[^tp]``` and the ```SUM``` of the totals of the orders, grouped by ```Type``` (column in ```dbo.TypesOfService```).
 
-The ```SELECT``` statement displays the ```SUM``` of the totals of the orders, grouped by ```Type``` (column in ```dbo.TypesOfService```), as well as the ```Type```.
+>NOTE: The function ```FORMAT``` is used to display the ```SUM``` in BGN[^bgn].
 
->NOTE: The function ```FORMAT``` is used to display the ```SUM``` in BGN[^4].
-
-### Usage
-
-```sql
-EXEC dbo.usp_orders_profit_by_tos;
-```
-
-10. the names, phone numbers, and categories (client, dispatcher, courier) of all the people registered in ```CouriersDB```
+### **dbo.usp_name_phonenumber_category**
 
 ```sql
 CREATE OR ALTER Proc usp_name_phonenumber_category
@@ -380,40 +486,16 @@ BEGIN
 END
 ```
 
-### Work Principle
-
 The ```SELECT``` statement displays ```Name```, ```PhoneNumber```, and ```Category```. The data is fetched from the union of three tables (```dbo.Courier```, ```dbo.Client```, and ```dbo.Dispatcher```).
-
-### Usage
-
-```sql
-EXEC dbo.usp_name_phonenumber_category;
-```
 
 ### **Update Procedures**
 
 ### **Delete Procedures**
 
-```CouriersDB``` has 2 types of delete procedures:
-
-### *Type 1:* Delete procedures for parent tables
-
-```CouriersDB``` has 6 parent tables (```dbo.Clients```, ```dbo.Dispatchers```, ```dbo.Couriers```, ```dbo.Recipients```, ```dbo.Addresses```, and ```dbo.TypesOfService```).
-
->NOTE: The following sql statements are part of the **delete procedure** ```dbo.delete_couriers```. Given that all delete procedures for the parent tables almost completely overlap, it is unnecessary to show all 6 of them here.
-
-For each one of those parent tables we have created a **delete procedure**, which deletes the records from a specific parent table by a given ```@OldID``` (unless ```@OldID``` is invalid, which is a case discussed below).
-
 ```sql
 DELETE FROM Couriers
 WHERE ID = @OldID;
 ```
-
-In addition to the above and based on the entered parameters, the type-1 delete procedures can be executed in 5 different ways:
-
-1. If the user enters an invalid ```@OldID```
-
-In this case, the procedure will ```PRINT``` a message which says: 'No such [some object] exists', and the procedure will exit without making any alterations to any of the tables of ```CouriersDB```
 
 ```sql
 IF NOT EXISTS (SELECT * FROM Couriers WHERE ID = @OldID)
@@ -423,12 +505,6 @@ BEGIN
 END;
 ```
 
-2. If the user enters only a valid ```@OldID```
-```sql
-EXEC dbo.delete_couriers 1;
-```
-
-In this case, the procedure will ```DELETE``` the records from ```dbo.Orders``` where the ```FOREIGN KEY``` (```courierID``` in the given example) linked to a specific table is equal to ```@OldID```
 ```sql
 IF (@WantToDeleteFromOrders = 1)
 BEGIN
@@ -439,15 +515,6 @@ BEGIN
 END;
 ```
 
-3. If the user enters ```@OldID``` and ```@WantToDeleteFromOrders``` 
-
->NOTE: ```@WantToDeleteFromOrders``` is a ```BIT``` variable, which indicates whether the user wants to ```DELETE``` some of the records from ```dbo.Orders``` (like in the example above) **OR** ```UPDATE``` ```dbo.Orders``` by setting a new value to the ```FOREIGN KEY``` (```courierID``` in the given example), which is linked to a specific table. ```@WantToDeleteFromOrders``` is set to 1 (```DELETE```) by default
-
-```sql
-EXEC dbo.delete_couriers 2, 0;
-```
-
-In this case, the procedure will ```UPDATE``` the records from ```dbo.Orders``` where the ```FOREIGN KEY``` (```courierID``` in the given example) linked to a specific table is equal to ```@OldID``` and set that ```FOREIGN KEY``` to ```NULL```
 ```sql
 ELSE IF EXISTS (SELECT * FROM Couriers WHERE ID = @NewID)
 		UPDATE Orders
@@ -455,17 +522,7 @@ ELSE IF EXISTS (SELECT * FROM Couriers WHERE ID = @NewID)
 		WHERE courierID = @OldID;
 ```
 
->NOTE: ```@NewID``` is the ```ID``` which the new value of the ```FOREIGN KEY``` is set to. It is ```NULL``` by default 
-
-4. If the user enters ```@OldID```, ```@WantToDeleteFromOrders```, and a valid ```@NewID``` 
-
->NOTE: ```@NewID``` is considered as valid when a specific parent table (```dbo.Couriers``` in the given example) which has ```ID``` equal to ```@NewID```. In all other cases ```@NewID``` is invalid.
-
-```sql
-EXEC dbo.delete_couriers 3, 0, 4;
-```
-
-In this case, the procedure will ```UPDATE``` the records from ```dbo.Orders``` where the ```FOREIGN KEY``` (```courierID``` in the given example) linked to a specific table is equal to ```@OldID``` and set that ```FOREIGN KEY``` to ```@NewID```
+>NOTE: ```@WantToDeleteFromOrders``` is a ```BIT``` variable, which indicates whether the user wants to ```DELETE``` some of the records from ```dbo.Orders``` (like in the example above) **OR** ```UPDATE``` ```dbo.Orders``` by setting a new value to the ```FOREIGN KEY``` (```courierID``` in the given example), which is linked to a specific table. ```@WantToDeleteFromOrders``` is set to 1 (```DELETE```) by default
 
 The code is the same as in 3.
 ```sql
@@ -474,14 +531,6 @@ ELSE IF EXISTS (SELECT * FROM Couriers WHERE ID = @NewID)
 		SET courierID = @NewID
 		WHERE courierID = @OldID;
 ```
-
-5. If the user enters ```@OldID```, ```@WantToDeleteFromOrders```, and a invalid ```@NewID```
-
-```sql
-EXEC dbo.delete_couriers 3, 0, 4;
-```
-
-In this case, the procedure will ```UPDATE``` the records from ```dbo.Orders``` where the ```FOREIGN KEY``` (```courierID``` in the given example) that is linked to a specific table is equal to ```@OldID``` and set that ```FOREIGN KEY``` to ```NULL```
 
 ```sql
 ELSE
@@ -493,10 +542,6 @@ BEGIN
 	WHERE courierID = @OldID;
 END;
 ```
-
-### *Type 2*: Delete procedure for ```dbo.Orders```
-
-The delete procedure ```dbo.delete_orders``` deletes a record from ```dbo.Orders``` by a given ```@OldID``` (unless the ```@OldID``` is invalid; in that case, the procedure will ```PRINT``` a 'No such order exists' message and exit without making any alterations to ```dbo.Orders```)
 
 ```sql
 CREATE OR ALTER PROC delete_orders @OldID INT
@@ -515,21 +560,13 @@ BEGIN
 END;
 ```
 
-Example:
-
-```sql
-EXEC dbo.delete_orders 1;
-```
-
 ## Conclusion
 
 
-[^1]: 1NF - First Normal Form
+[^1nf]: 1NF - First Normal Form
 
-[^2]: 3NF - Third Normal Form
+[^3nf]: 3NF - Third Normal Form
 
-[^3]: Type - Type of Service
+[^tp]: Type - Type of Service
 
-[^4]: BGN - Bulgarian Lev
-
-[^crud]: 
+[^bgn]: BGN - Bulgarian Lev
