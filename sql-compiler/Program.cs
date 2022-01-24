@@ -41,7 +41,7 @@ class Program {
 		List<string> includedFiles = new List<string>();
 
 		string outputText = "";
-		string exampleText = "";
+		string exampleText = "use CouriersDB" + Environment.NewLine + "go" + Environment.NewLine + Environment.NewLine;
 
 		foreach(string pattern in patterns) {
 			foreach(string file in
