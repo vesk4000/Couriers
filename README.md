@@ -1,4 +1,7 @@
 # Couriers
+TODO: Add some badges in here
+
+TODO: Add Table of contents
 
 ## Overview
 
@@ -157,14 +160,43 @@ CREATE TABLE TypesOfService (
 In order to facilitate for easier collaboration and overall code development, we split up all of the SQL code into many files. All of them are located in the ```source``` folder in the root of the repository. In there you will find the files grouped into the ```crud-procedures```, ```data```, ```private```, ```queries``` and ```schemas``` folders. All of them contain a number of ```.sql``` files, which themselves are all either a definition of a single procedure, function, table or database, or in the case of the files in the ```data``` folder the ```INSERT``` queries used to populate the different tables with their respective data.
 
 Here's a brief description of what each of the folders contain:
-| Folder                | Description |
-|-----------------------|-------------|
-| ```crud-proceduers``` | CR          |
-|                       |             |
-|                       |             |
+| Folder | Contains |
+|---|---|
+| ```crud-procedures``` | CRUD[^crud] procedures, except for the Read part, so basically different procedures for every table, which can each ```Add```, ```Update``` or ```Delete``` any data within that table |
+| ```data``` | SQL queries which insert the original data from the Excel table (```couriers-project_data.xlsx```) into the different tables of the database |
+| ```private``` | Procedures and functions which are not meant to be used by the end user, but rather by other procedures and functions in the database |
+| ```queries``` | Various procedures which read certain data from the database and display it to the user in different ways |
+| ```schemas``` | SQL queries which create each of the tables in the database and the database itself |
 
 table generator: https://www.tablesgenerator.com/markdown_tables
 
+Folder	Contains
+crud-procedures
+CRUD (reference to Create, Raed, Update, Delete procs) type procedures, except for the read part, so only Add, Update and Delete for every table in the database
+
+data
+SQL queries which insert the original data from the Excel table (xlsx file name) into the different tables of the database
+
+private
+Procedures and functions which are not meant to be used by the end user, but rather by other procedures and functions in the database
+
+queries
+Various procedures which read certain data from the database and display it to the user in different ways
+
+schemas
+SQL queries which create each of the tables in the database and the database itself
+
+table generator: https://www.tablesgenerator.com/markdown_tables
+
+(end of table)
+
+The folder ```sql-compiler``` contains the source code and executable for a small SQL "compiler", written in C#. All it does is it takes all of the SQL files (in a certain order) and it combines them into a single SQL file. This way it makes it easy both for the developers and the end-user to execute all of the files at once and immediately have the database up and running, while at the same time allowing for the separation of the SQL code, which as we mentioned earlier facilities for more efficient development. Another thing that the compiler does is that it creates a single file with all of the examples for each SQL file, which contains such examples. This makes it much easier for the end user to get to grips with the various things that they can do with the database, while also making it easier for developers to write examples as it allows them to do so within the actual file that they are working on at the moment.
+
+To prevent clutter, the actual C# project for the compiler isn't a part of a Visual Studio solution file(```.sln```) as it was created with the ```dotnet``` CLI tool which only requires a C# Project File(```sql-compiler.csproj```) and a C# Source File(```Program.cs```). The exe is a completely standalone executable that doesn't require the .NET runtime to work. It was created with the very useful .NET tool [link to the warp tool].
+
+To actually use the compiler you can pass arguments to it, but you can simply run the ```compile.bat``` file which will run the compiler with some default arguments. You can configure those arguments within the file and also you can configure which SQL files are compiled and in what order that is done, as that may be important depending on the files (e.g. you'd want the database to be created, before you create the tables). That's not actually passed to the compiler as an argument, but rather the ```compile.bat``` file passes itself as an argument and the compiler reads a comment within the ```bat``` file which contains the names and relative paths of the files which are to be compiled (you can also use glob style wildcards such as `*` and `**`, just like in a `.gitignore` file).
+
+By default, the compiler generates 2 SQL files with the names `couriers.sql` and `example.sql` in the root directory of the repository. However, they are included in the `.gitignore` of the repo as to not cause any merge conflicts.
 
 ```
 📦Couriers
@@ -515,3 +547,5 @@ EXEC dbo.delete_orders 1;
 [^3]: Type - Type of Service
 
 [^4]: BGN - Bulgarian Lev
+
+[^crud]: 
