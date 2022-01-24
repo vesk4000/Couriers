@@ -213,23 +213,61 @@ table generator: https://www.tablesgenerator.com/markdown_tables
 Here's a brief description of what each of the folders contain:
 | Folder | Contains |
 |:---:|---|
-| ```crud‑procedures``` | CRUD[^crud] procedures, except for the Read part, so basically different procedures for every table, which can each ```Add```, ```Update``` or ```Delete``` any data within that table |
-| ```data``` | SQL queries which insert the original data from the Excel table (```couriers‑project_data.xlsx```) into the different tables of the database |
-| ```private``` | Procedures and functions which are not meant to be used by the end user, but rather by other procedures and functions in the database |
-| ```queries``` | Various procedures which read certain data from the database and display it to the user in different ways |
-| ```schemas``` | SQL queries which create each of the tables in the database and the database itself |
+| ```source/crud‑procedures``` | CRUD[^crud] procedures, except for the Read part, so basically different procedures for every table, which can each ```Add```, ```Update``` or ```Delete``` any data within that table |
+| ```source/data``` | SQL queries which insert the original data from the Excel table (```couriers‑project_data.xlsx```) into the different tables of the database |
+| ```source/private``` | Procedures and functions which are not meant to be used by the end user, but rather by other procedures and functions in the database |
+| ```source/queries``` | Various procedures which read certain data from the database and display it to the user in different ways |
+| ```source/schemas``` | SQL queries which create each of the tables in the database and the database itself |
+
+The ```couriers‑project_data.xlsx``` Excel file, which is contained in the root directory of the repo, includes all of the original data for the database.
+> **Note:** The file is there only for completeness purposes. Changing it does not change the data in the database or what data the ```.sql``` files in the ```source/data``` folder insert into the database when executed. All of that data is hardcoded in those files.
 
 The folder ```sql-compiler``` contains the source code and executable for a small SQL "compiler", written in C#. All it does is it takes all of the SQL files (in a certain order) and it combines them into a single SQL file. This makes it easy for both the developers and the end-user to execute all of the files at once and immediately have the database up and running, while at the same time allowing for the separation of the SQL code, which as we mentioned earlier facilities for more efficient development and code cleanliness. Another thing that the compiler does is that it creates a single file with all of the examples for each SQL file, which contains such examples. This makes it much easier for the end user to get to grips with the various things that they can do with the database, while also making it easier for developers to write examples as it allows them to do so within the actual file that they are working on at the moment.
 
-To prevent clutter, the actual C# project for the compiler isn't a part of a Visual Studio Solution File (```.sln```) as it was created with the ```dotnet``` CLI tool which only requires a C# Project File (```sql-compiler.csproj```) and a C# Source File (```Program.cs```). The exe is a completely standalone executable that doesn't require the .NET runtime to work as it was created with the very useful .NET tool called [```dotnet-warp```](https://www.nuget.org/packages/dotnet-warp/){:target="_blank"}.
+To prevent clutter, the actual C# project for the compiler isn't a part of a Visual Studio Solution File (```.sln```) as it was created with the ```dotnet``` CLI tool which only requires a C# Project File (```sql-compiler.csproj```) and a C# Source File (```Program.cs```). The exe is a completely standalone executable that doesn't require the .NET runtime to work as it was created with the very useful .NET tool called [```dotnet-warp```](https://www.nuget.org/packages/dotnet-warp/).
 
-To actually use the compiler you can pass arguments to it, but you can simply run the ```compile.bat``` file which will run the compiler with some default arguments. You can configure those arguments within the file and also you can configure which SQL files are compiled and in what order that is done, as that may be important depending on the files (e.g. you'd want the database to be created, before you create the tables). That's not actually passed to the compiler as an argument, but rather the ```compile.bat``` file passes itself as an argument and the compiler reads a comment within the ```bat``` file which contains the names and relative paths of the files which are to be compiled (you can also use glob style wildcards such as `*` and `**`, just like in a `.gitignore` file).
+To actually use the compiler you can pass arguments to it, but you can simply run the ```compile.bat``` file which will run the compiler with some default arguments. You can configure those arguments within the file and also you can configure which SQL files are compiled and in what order that is done, as that may be important depending on the files (e.g. you'd want the tables to be created, before you create the database). That particular thing is actually not passed to the compiler as an argument, but rather the ```compile.bat``` file passes itself as an argument and the compiler reads a comment within the ```.bat``` file which contains the names and relative paths of the files which are to be compiled (you can also use glob style wildcards such as `*` and `**`, just like in a `.gitignore` file thanks to the very useful .NET NuGet package [```Glob```](https://www.nuget.org/packages/Glob/1.2.0-alpha0037)).
 
-By default, the compiler generates 2 SQL files with the names `couriers.sql` and `example.sql` in the root directory of the repository. However, they are included in the `.gitignore` of the repo as to not cause any merge conflicts.
+By default, the compiler generates 2 SQL files with the names `couriers.sql` and `example.sql` in the root directory of the repository. However, they are included in the `.gitignore` of the repo as to not cause any merge conflicts...
 
 
+
+
+
+## Setup
+
+*A prerequisite to using the database and its feature is actually setting it up. This section will explain how to do just that.*
+
+### Obtain the Necessary Files
+
+Depending on whether you want to simply generate the database and use its features or develop the database and its features further, you can go one of two ways:
+
+1. Download the ```couriers.sql``` and ```examples.sql``` files from the [Release](link to release) if you simply want to use the database and its features.
+2. Clone or download this repository (click on the green ```Code``` button at the top of this page) if you are interested in the entire source code as it is organized for development.
+
+### Compile the SQL Files
+
+> **Note:** If you chose to just download the SQL files from the [Release](link to release) as the 1st method stated you can skip this step.
+
+Run the ```compile.bat``` file and you should see two new files generated in the root directory of the project - ```couriers.sql``` and ```examples.sql```.
+
+Alternatively, you can run the ```sql-compiler/sql-compiler.exe``` executable with certain arguments. You can find arguments that are used to execute the executable in the ```compile.bat``` file. You can of course edit the file edit the ```.bat``` file or create your own in order to make the compiler suit your needs.
+
+> **Note:** You can find much more about compiling the SQL files in the [Project Structure section](#project-structure).
+
+> **Note:** If you are not using a Windows environment you can of course compile the SQL Compiler yourself, though this has not been tested by us and we cannot guarantee that would work perfectly.
+
+### Generate the Database
+
+To generate the database and all of its components by simply executing the ```couriers.sql``` file all at once on a Microsoft SQL Server.
+
+> **Note:** The ```examples.sql``` file is optional. All it includes are examples for the various functions and procedures that the database has.
+
+## Documentation
 
 ## Guide
+
+*Now that you have the database up and running this section will showcase all of the different features that the database has and how to use them.*
 
 ## *Create procedures*
 
