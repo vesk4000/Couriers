@@ -5,10 +5,24 @@ go
 create or alter procedure usp_OrdersByDateOfOrder( @input nvarchar(50) )
 as
 begin
-	
+
 	if( ISDATE(@input) = 1 )
 	begin
-		select * from Orders as o    --- TODO: Replace * with specific names
+		select o.ID as [Order ID],
+		o.OrderDate as [Order Date],
+		d.Name as [Dispatcher Name], 
+		d.PhoneNumber as [Dispatcher Phone], 
+		cl.Name as [Client Name], 
+		cl.PhoneNumber as [Client Phone], 
+		t.Type as [Type of Service], 
+		o.Total as [Total], 
+		co.Name as [Courier Name], 
+		co.PhoneNumber as [Courier Phone], 
+		a.Address as [Delivery Address],
+		r.Name as [Recipient Name],
+		o.ReceiveDate as [Date of Delivery]
+
+		from Orders as o
 
 		inner join Addresses as a
 		on o.AddressID = a.ID
@@ -27,7 +41,7 @@ begin
 
 		inner join TypesOfService as t
 		on o.TypeID = t.ID
-		
+
 		where CAST( @input as date ) = o.OrderDate
 		return
 	end
@@ -42,8 +56,5 @@ go
 
 /* Example
 -- This returns all orders made on a specific date
-
 exec usp_OrdersByDateOfOrder '9/9/2021'
 exec usp_OrdersByDateOfOrder '8/16/2021'
-
-*/

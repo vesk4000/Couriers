@@ -52,9 +52,6 @@ The system has the ability to ```create```, ```read```, ```update```, and ```del
 
 In order to facilitate for easier collaboration and overall code development, we split up all of the SQL code into many files. All of them are located in the ```source``` folder in the root of the repository. In there you will find the files grouped into the ```crud-procedures```, ```data```, ```private```, ```queries``` and ```schemas``` folders. All of those folders contain a number of ```.sql``` files, which themselves are all either a definition of a single procedure, function, table or database, or in the case of the files in the ```data``` folder - the ```INSERT``` queries used to populate the different tables with their respective data.
 
-NON BREAKING HYPHEN ‑ (COPY PASTE FROM HERE)
-table generator: https://www.tablesgenerator.com/markdown_tables
-
 Here's a brief description of what each of the folders contain:
 | Folder | Contains |
 |:---:|---|
@@ -405,72 +402,125 @@ EXEC dbo.delete_orders 1;
 
 ### Queries
 
-```CouriersDB``` has 10 read procedures. Each one of them is used as a report. Those procedures are:
+#### 1. usp_CheckClientPartOfNameOrPhone
 
-1. a client's ```Name``` and ```PhoneNumber``` via searching by part of ```Name``` or ```PhoneNumber``` (columns in ```dbo.Clients```)
+This procedure displays a client's ```Name``` and ```PhoneNumber``` via searching by part of ```Name``` or ```PhoneNumber``` (columns in ```dbo.Clients```)
 
-2. all orders of a specific dispatcher by ```Name``` (column in ```dbo.Dispatchers```) or on a certain ```ReceiveDate``` (column in ```dbo.Order```)
+#### Syntax
+```sql
+EXEC usp_CheckClientPartOfNameOrPhone [nvarchar input];
+```
 
-TODO:
+#### Examples
+```sql
+EXEC usp_CheckClientPartOfNameOrPhone 'Шон';
+EXEC usp_CheckClientPartOfNameOrPhone '0888';
+```
 
-3. the ```Total``` (column in ```dbo.Order```) of all orders by a specific customer
+### 2. usp_CheckByDispNameOrDateOfDelivery
 
-TODO:
+This procedure displays all orders of a specific dispatcher by ```Name``` (column in ```dbo.Dispatchers```) or on a certain ```ReceiveDate``` (column in ```dbo.Order```)
 
-4. all orders made on a specific ```OrderDate``` (column in ```dbo.Order```)
+#### Syntax
+```sql
+EXEC usp_CheckByDispNameOrDateOfDelivery [nvarchar input];
+```
 
-TODO:
+#### Examples
+```sql
+EXEC usp_CheckByDispNameOrDateOfDelivery '09-15-2021';
+EXEC usp_CheckByDispNameOrDateOfDelivery 'Асен Донев';
+```
 
-5. all orders of a specific courier by ```Name``` (column in ```dbo.Courier```)
+### 3. usp_TotalOfOrdersByClient
 
-TODO:
+This procedure displays the ```Total``` (column in ```dbo.Order```) of all orders by a specific customer
 
-#### **6. dbo.usp_dates_with_most_delivered_orders**
+#### Syntax
+```sql
+EXEC usp_TotalOfOrdersByClient [nvarchar input];
+```
+
+#### Example
+```sql
+EXEC usp_TotalOfOrdersByClient 'Нено Ненов';
+```
+
+### 4. usp_OrdersByDateOfOrder
+
+This procedure displays all orders made on a specific ```OrderDate``` (column in ```dbo.Order```)
+
+#### Syntax
+```sql
+EXEC usp_OrdersByDateOfOrder [nvarchar input];
+```
+
+#### Example
+```sql
+EXEC usp_OrdersByDateOfOrder '8/16/2021';
+```
+
+### 5. usp_PackagesByCourier
+
+This procedure displays all orders of a specific courier by ```Name``` (column in ```dbo.Courier```)
+
+#### Syntax
+```sql
+EXEC usp_PackagesByCourier [nvarchar input];
+```
+
+#### Example
+```sql
+EXEC usp_PackagesByCourier 'Камен Каменов';
+```
+
+### 6. dbo.usp_dates_with_most_delivered_orders
 
 This procedure displays the date(s) with most orders grouped by ```ReceiveDate``` (column in ```dbo.Orders```)
 
+#### Syntax
 ```sql
 EXEC dbo.usp_dates_with_most_delivered_orders;
 ```
 
-#### **7. usp_names_of_recipients_by_order_count**
+### 7. usp_names_of_recipients_by_order_count
 
 This procedure displays the names of all the recipients who have received more orders than [some ```INTEGER``` value]
 
+#### Syntax
 ```sql
 EXEC dbo.usp_names_of_recipients_by_order_count [some INTEGER value];
 ```
 
-Examples:
-
+#### Examples
 ```sql
 EXEC dbo.usp_names_of_recipients_by_order_count 1;
-```
-
-```sql
 EXEC dbo.usp_names_of_recipients_by_order_count 2;
 ```
 
-#### **8. dbo.usp_orders_count_by_order_date**
+#### 8. dbo.usp_orders_count_by_order_date
 
 This procedure displays the count of all the orders grouped by ```OrderDate``` (column in ```dbo.Order```)
 
+#### Syntax
 ```sql
 EXEC dbo.usp_orders_count_by_order_date;
 ```
 
-#### **9. dbo.usp_orders_profit_by_tos**
+### 9. dbo.usp_orders_profit_by_tos
 
 This procedure displays the profit of all the orders grouped by ```Type```[^type] (column in ```dbo.TypesOfService```)
 
+#### Syntax
 ```sql
 EXEC dbo.usp_orders_profit_by_tos;
 ```
 
-#### **10. dbo.usp_name_phonenumber_category**
+### 10. dbo.usp_name_phonenumber_category
 
 This procedure displays the names, phone numbers, and categories (client, dispatcher, courier) of all the people registered in ```CouriersDB```
 
+#### Syntax
 ```sql
 EXEC dbo.usp_name_phonenumber_category;
 ```
@@ -478,22 +528,6 @@ EXEC dbo.usp_name_phonenumber_category;
 ## Development
 
 *In this section you can learn more about the development process (work principles of the procedures, problems we encountered while writing the queries, etc.).*
-
-### Creating the database
-TODO for rumbata: Just write a tiny bit about how you used that one tool to genereate the sql database, even though I rewrote that code later
-
-### Insert 
-TODO for rumbata: Write a bit about how you used SQLizer
-
-### Git
-
-### Add & Update
-
-### Compiler
-
-### Queries
-
-TODO: Roomba, add your stuff here
 
 #### dbo.usp_dates_with_most_delivered_orders
 ```sql
@@ -689,9 +723,7 @@ ELSE
 ```
 
 ## Conclusion
-
-## Credits
-
+In the end, the project turned out well, even though there were some inconveniences and miscommunications. The team started off thinking it wouldn't take long to finish but it ended up taking the full two weeks we were given by higher-ups.
 
 
 [^1nf]: 1NF - First Normal Form
