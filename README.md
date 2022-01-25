@@ -76,6 +76,10 @@ By default, the compiler generates 2 SQL files with the names `couriers.sql` and
 
 We designed the schema of our database ```CouriersDB``` by transforming a table in 1NF[^1nf] into 7 tables that meet the 3NF[^3nf] standards.
 
+The initial design of the table was done by a using a DB designer tool (https://www.dbdesigner.net/). Om that platform the tables have been created and the relations and the other constraints have been set. Then, a MSSQL code was generated and exported.
+
+>**Note:** We have altered the design of the table a bit after their initial creation mentioned above. We have added several ```UNIQUE```, ```IDENTITY```, and ```NOT NULL``` constraints.
+
 This is the given 1FN table with some sample data:
 
 | Order # | Order Date | Dispatcher Name | Phone Number - Dispatcher | Client Name | Phone Number - Client | Type of Service | Total | Courier Name | Phone Number - Courier | Delivery Address | Recipient Name | Delivery Date |
@@ -528,6 +532,16 @@ EXEC dbo.usp_name_phonenumber_category;
 ## Development
 
 *In this section you can learn more about the development process (work principles of the procedures, problems we encountered while writing the queries, etc.).*
+
+### Populating ```CouriersDB```
+
+In order to populate ```CouriersDB``` we had to split the data from the initial 1NF[^1nf] table into several small ones. Then, in order to ```INSERT``` the data into the **database** we used a tool (sqlizer.io), which transforms .xlsx/.xls tables sheets into ```INSERT INTO``` statements.
+
+>**Note:** Due to the fact that **sqlizer** had issues converting .xls sheets into MSSQL statements, we had to convert them into MySQL ones and then alter the code in order to be usable in our MSSQL database.
+
+After the export of those ```INSERT INTO``` statements we had to insert that data into our tables, but due to the necessity of formating that data we had to ```CREATE``` temporary tables, ```INSERT``` the mentioned above data into them and then reinsert that data with some minor changes into the specific tables (```dbo.Orders```, ```dbo.Clients```, ```dbo.Dispatchers```, ```dbo.Couriers```, ```dbo.Recipients```, ```dbo.Addresses```, and ```dbo.TypesOfService```).
+
+### Read Procedures
 
 #### dbo.usp_dates_with_most_delivered_orders
 ```sql
