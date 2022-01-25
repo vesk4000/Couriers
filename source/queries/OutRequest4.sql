@@ -58,3 +58,4 @@ go
 -- This returns all orders made on a specific date
 exec usp_OrdersByDateOfOrder '9/9/2021'
 exec usp_OrdersByDateOfOrder '8/16/2021'
+*/

@@ -40,3 +40,4 @@ go
 -- This displays a client's name and phone number via searching by part of name or phone number
 exec usp_CheckClientPartOfNameOrPhone 'Шон'
 exec usp_CheckClientPartOfNameOrPhone '0888'
+*/
