@@ -4,7 +4,7 @@
 
 The goal of the 'Couriers' project is to help a delivery company manage orders by utilizing an SQL database.
 
-The system has the ability to ```create```, ```read```, ```update```, and ```delete``` (CRUD) the data from tables which store information about orders, clients, dispatchers, orders, etc.
+The system has the ability to ```create```, ```read```, ```update```, and ```delete``` (CRUD) the data from tables which store information about orders, clients, dispatchers, couriers, etc.
 (more info can be found in the Database Design part of this documentation)
 
 ## Project Structure
