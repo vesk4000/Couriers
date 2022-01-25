@@ -226,12 +226,12 @@ CREATE TABLE TypesOfService (
 
 Depending on whether you want to simply generate the database and use its features or develop the database and its features further, you can go one of two ways:
 
-1. Download the ```couriers.sql``` and ```examples.sql``` files from the [Release](link to release) if you simply want to use the database and its features.
+1. Download the ```couriers.sql``` and ```examples.sql``` files from the [Release](https://github.com/vesk4000/Couriers/releases/tag/release) if you simply want to use the database and its features.
 2. Clone or download this repository (click on the green ```Code``` button at the top of this page) if you are interested in the entire source code as it is organized for development.
 
 ### Compile the SQL Files
 
-> **Note:** If you chose to just download the SQL files from the [Release](link to release) as the 1st method stated you can skip this step.
+> **Note:** If you chose to just download the SQL files from the [Release](https://github.com/vesk4000/Couriers/releases/tag/release) as the 1st method stated you can skip this step.
 
 Run the ```compile.bat``` file and you should see two new files generated in the root directory of the project - ```couriers.sql``` and ```examples.sql```.
 
