@@ -535,11 +535,181 @@ EXEC dbo.usp_name_phonenumber_category;
 
 ### Git
 
+In hindsight using Git was definitely not a time save. But considering that Git is and will be the Source Version Control industry standard for the foreseeable future it was definitely beneficial for us to learn it right now on a project where it matters much less if we screw something up. Overall, we did manage to get to grips with many of Git's features, although of course we still have lots to learn.
+
 ### SQL Compiler
+
+Originally I thought that I'd just make the compiler as a Windows Batch File (```*.bat```). Once I started though I realized just how much of a hacky language that was and honestly it was practically impossible to work with, considering that it is not really much of a language. So I, in my opinion correctly, decided to make a small C# program that would do the job of a compiler. Unfortunately that meant that we had to include an binary executable in the repository which is never ideal, but it was our best option, since we didn't have a good environment for compiling C# code on all machines. This was also the reason that I made the executable completely standalone from the .NET framework.
 
 ### Add Procedures
 
+The procedures which add entries in the various tables of the database are pretty simple. For most of the tables all we check for are whether the entry already exists and for the ones that have a phone number we check if the phone number if valid. For the procedure which adds entries into the ```Orders``` table we also check if the IDs which were provided exist in the respective tables.
+
+```sql
+create or alter proc udp_AddClient
+	@Name nvarchar(50),
+	@PhoneNumber nvarchar(50)
+as begin
+	if exists(
+		select * from Clients
+		where Name = @Name and PhoneNumber = @PhoneNumber
+	)
+	begin
+		print 'A client with the same name and phone number already exists!'
+		return
+	end
+	if dbo._udf_CheckPhoneNumber(@PhoneNumber) = 0 begin
+		print 'The phone number provided is not valid!'
+		return
+	end
+	insert into Clients values (@Name, @PhoneNumber);
+	declare @id int = (
+		select top 1 ID from Clients
+		where Name = @Name and PhoneNumber = @PhoneNumber)
+	print 'Client added with ID: ' + cast(@id as nvarchar(50))
+end
+go
+```
+
+```sql
+create or alter proc udp_AddOrder
+	@OrderDate Date,
+	@ReceiveDate Date,
+	@Total money,
+	@AddressID int,
+	@TypeID int,
+	@DispatcherID int,
+	@ClientID int,
+	@CourierID int,
+	@RecipientID int
+as begin
+	if not exists(
+		select * from Addresses
+		where ID = @AddressID
+	) begin
+		print 'Invalid Address ID!'
+		return
+	end
+
+	if not exists(
+		select * from TypesOfService
+		where ID = @TypeID
+	) begin
+		print 'Invalid Type ID!'
+		return
+	end
+
+	if not exists(
+		select * from Dispatchers
+		where ID = @DispatcherID
+	) begin
+		print 'Invalid Dispatcher ID!'
+		return
+	end
+
+	if not exists(
+		select * from Clients
+		where ID = @ClientID
+	) begin
+		print 'Invalid Client ID!'
+		return
+	end
+	
+	if not exists(
+		select * from Couriers
+		where ID = @CourierID
+	) begin
+		print 'Invalid Courier ID!'
+		return
+	end
+
+	if not exists(
+		select * from Recipients
+		where ID = @RecipientID
+	) begin
+		print 'Invalid Recipient ID!'
+		return
+	end
+
+	if exists(
+		select * from Orders
+		where OrderDate = @OrderDate
+		and ReceiveDate = @ReceiveDate
+		and Total = @Total
+		and AddressID = @AddressID
+		and TypeID = @TypeID
+		and DispatcherID = @DispatcherID
+		and ClientID = @ClientID
+		and CourierID = @CourierID
+		and RecipientID = @RecipientID
+	) begin
+		print 'This order is already in the database!'
+		return
+	end
+
+	insert into Orders values (
+		@OrderDate,
+		@ReceiveDate,
+		@Total,
+		@AddressID,
+		@TypeID,
+		@DispatcherID,
+		@ClientID,
+		@CourierID,
+		@RecipientID);
+	declare @id int = (
+		select top 1 ID from Orders
+		where OrderDate = @OrderDate
+		and ReceiveDate = @ReceiveDate
+		and Total = @Total
+		and AddressID = @AddressID
+		and TypeID = @TypeID
+		and DispatcherID = @DispatcherID
+		and ClientID = @ClientID
+		and CourierID = @CourierID
+		and RecipientID = @RecipientID)
+	print 'Order added with ID: ' + cast(@id as nvarchar(50))
+end
+go
+```
+
 ### Update Procedures
+
+The procedures which update entries in the various tables of the database are also quite simple. For all of the tables we of course check if the entry with the given ```ID``` exists. The we check each parameter and if it's not ```NULL``` then we update the respective value of the given entry with that parameter.
+
+```sql
+create or alter proc udp_UpdateClient
+	@ID int,
+	@Name nvarchar(50) = NULL,
+	@PhoneNumber nvarchar(50) = NULL
+as begin
+	if not exists (
+		select * from Clients
+		where ID = @ID
+	)
+	begin
+		print 'No client with this ID exists!'
+		return
+	end
+
+	if @Name is not NULL
+	begin
+		update Clients
+		set Name = @Name
+		where ID = @ID
+	end
+
+	if @PhoneNumber is not NULL
+	begin
+		update Clients
+		set PhoneNumber = @PhoneNumber
+		where ID = @ID
+	end
+
+	print 'Client updated!'
+end
+go
+```
 
 ### Queries
 
