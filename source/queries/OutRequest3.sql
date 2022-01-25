@@ -25,3 +25,4 @@ go
 -- This returns the total of all orders by a specific customer
 exec usp_TotalOfOrdersByClient 'Нено Ненов'
 exec usp_TotalOfOrdersByClient 'Борис Зарев'
+*/
