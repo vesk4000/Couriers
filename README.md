@@ -4,7 +4,7 @@
 
 The goal of the 'Couriers' project is to help a delivery company manage orders by utilizing an SQL database.
 
-The system has the ability to ```create```, ```read```, ```update```, and ```delete``` (CRUD) the data from tables which store information about orders, clients, dispatchers, orders, etc.
+The system has the ability to ```create```, ```read```, ```update```, and ```delete``` (CRUD) the data from tables which store information about orders, clients, dispatchers, couriers, etc.
 (more info can be found in the Database Design part of this documentation)
 
 ## Project Structure
@@ -531,7 +531,19 @@ EXEC dbo.usp_name_phonenumber_category;
 
 ### Designing the Database
 
-### Populating the Database with Data
+The initial design of the table was done by a using a DB designer tool (https://www.dbdesigner.net/). Om that platform the tables have been created and the relations and the other constraints have been set. Then, a MSSQL code was generated and exported.
+
+>**Note:** We have altered the design of the table a bit after their initial creation mentioned above. We have added several ```UNIQUE```, ```IDENTITY```, and ```NOT NULL``` constraints.
+
+### Populating ```CouriersDB```
+
+In order to populate ```CouriersDB``` we had to split the data from the initial 1NF[^1nf] table into several small ones. Then, in order to ```INSERT``` the data into the **database** we used a tool (sqlizer.io), which transforms .xlsx/.xls tables sheets into ```INSERT INTO``` statements.
+
+>**Note:** Due to the fact that **sqlizer** had issues converting .xls sheets into MSSQL statements, we had to convert them into MySQL ones and then alter the code in order to be usable in our MSSQL database.
+
+After the export of those ```INSERT INTO``` statements we had to insert that data into our tables, but due to the necessity of formating that data we had to ```CREATE``` temporary tables, ```INSERT``` the mentioned above data into them and then reinsert that data with some minor changes into the specific tables (```dbo.Orders```, ```dbo.Clients```, ```dbo.Dispatchers```, ```dbo.Couriers```, ```dbo.Recipients```, ```dbo.Addresses```, and ```dbo.TypesOfService```).
+
+To populate the database we used SQLizer, an online tool which generates SQL code from an Excel spreadsheet. At first it was somewhat annoying to use but once we understood how to use it work flowed smoothly.
 
 ### Git
 
@@ -713,7 +725,241 @@ go
 
 ### Queries
 
+#### **dbo.usp_CheckClientPartOfNameOrPhone**
+```sql
+create or alter procedure usp_CheckClientPartOfNameOrPhone( @input nvarchar(50) )
+as
+begin
+
+	if( dbo._udf_CheckPhoneNumber(@input) = 1 )
+	begin
+		select Name as [Client Name], PhoneNumber as [Phone Number] from Clients
+		where CHARINDEX(@input, PhoneNumber) > 0
+		return
+	end
+
+	select Name as [Client Name], PhoneNumber as [Phone Number] from Clients
+	where CHARINDEX(@input, Name) > 0
+	return
+
+end
+```
+
+This procedure uses the predefined function ```dbo._udf_CheckPhoneNumber``` which checks if the input string is a valid phone number. Then a ```SELECT``` statement displays the output.
+
+#### **dbo.usp_CheckByDispNameOrDateOfDelivery**
+```sql
+create or alter procedure usp_CheckByDispNameOrDateOfDelivery( @input nvarchar(50) )
+as
+begin
+
+	if( ISDATE(@input) = 1 )
+	begin
+		select 
+			o.ID as [Order ID],
+			o.OrderDate as [Order Date],
+			d.Name as [Dispatcher Name], 
+			d.PhoneNumber as [Dispatcher Phone], 
+			cl.Name as [Client Name], 
+			cl.PhoneNumber as [Client Phone], 
+			t.Type as [Type of Service], 
+			o.Total as [Total], 
+			co.Name as [Courier Name], 
+			co.PhoneNumber as [Courier Phone], 
+			a.Address as [Delivery Address],
+			r.Name as [Recipient Name],
+			o.ReceiveDate as [Date of Delivery]
+
+		from Orders as o
+
+		inner join Addresses as a
+		on o.AddressID = a.ID
+
+		inner join Clients as cl
+		on o.ClientID = cl.ID
+
+		inner join Couriers as co
+		on o.CourierID = co.ID
+
+		inner join Dispatchers as d
+		on o.DispatcherID = d.ID
+
+		inner join Recipients as r
+		on o.RecipientID = r.ID
+
+		inner join TypesOfService as t
+		on o.TypeID = t.ID
+
+		where CAST( @input as date ) = o.ReceiveDate
+		return
+	end
+
+	else
+	begin
+		select 
+			o.ID as [Order ID],
+			o.OrderDate as [Order Date],
+			d.Name as [Dispatcher Name], 
+			d.PhoneNumber as [Dispatcher Phone], 
+			cl.Name as [Client Name], 
+			cl.PhoneNumber as [Client Phone], 
+			t.Type as [Type of Service], 
+			o.Total as [Total], 
+			co.Name as [Courier Name], 
+			co.PhoneNumber as [Courier Phone], 
+			a.Address as [Delivery Address],
+			r.Name as [Recipient Name],
+			o.ReceiveDate as [Date of Delivery]
+
+		from Orders as o
+
+		inner join Addresses as a
+		on o.AddressID = a.ID
+
+		inner join Clients as cl
+		on o.ClientID = cl.ID
+
+		inner join Couriers as co
+		on o.CourierID = co.ID
+
+		inner join Dispatchers as d
+		on o.DispatcherID = d.ID
+
+		inner join Recipients as r
+		on o.RecipientID = r.ID
+
+		inner join TypesOfService as t
+		on o.TypeID = t.ID
+
+		where @input = d.Name
+
+		return
+	end
+
+end
+```
+
+This procedure checks if the input is a date to determine which mode it should use. Then a ```SELECT``` statement displays the output using mass ```INNER JOIN```.
+
+#### **dbo.usp_TotalOfOrdersByClient**
+```sql
+create or alter procedure usp_TotalOfOrdersByClient( @input nvarchar(50) )
+as
+begin
+
+	select SUM(o.Total) as 'Total by client' from Clients as c
+
+	inner join Orders as o
+	on c.ID = o.ClientID
+
+	where @input = c.Name
+
+end
+```
+
+This procedure uses a simple ```SELECT``` statement to display the output.
+
+#### **dbo.usp_OrdersByDateOfOrder**
+```sql
+create or alter procedure usp_OrdersByDateOfOrder( @input nvarchar(50) )
+as
+begin
+
+	if( ISDATE(@input) = 1 )
+	begin
+		select o.ID as [Order ID],
+		o.OrderDate as [Order Date],
+		d.Name as [Dispatcher Name], 
+		d.PhoneNumber as [Dispatcher Phone], 
+		cl.Name as [Client Name], 
+		cl.PhoneNumber as [Client Phone], 
+		t.Type as [Type of Service], 
+		o.Total as [Total], 
+		co.Name as [Courier Name], 
+		co.PhoneNumber as [Courier Phone], 
+		a.Address as [Delivery Address],
+		r.Name as [Recipient Name],
+		o.ReceiveDate as [Date of Delivery]
+
+		from Orders as o
+
+		inner join Addresses as a
+		on o.AddressID = a.ID
+
+		inner join Clients as cl
+		on o.ClientID = cl.ID
+
+		inner join Couriers as co
+		on o.CourierID = co.ID
+
+		inner join Dispatchers as d
+		on o.DispatcherID = d.ID
+
+		inner join Recipients as r
+		on o.RecipientID = r.ID
+
+		inner join TypesOfService as t
+		on o.TypeID = t.ID
+
+		where CAST( @input as date ) = o.OrderDate
+		return
+	end
+
+end
+```
+
+This procedure checks if the input is a valid date then uses a ```SELECT``` statement to display the output using mass ```INNER JOIN```.
+
+#### **dbo.usp_PackagesByCourier**
+```sql
+create or alter procedure usp_PackagesByCourier( @input nvarchar(50) )
+as
+begin
+
+	select 
+		o.ID as [Order ID],
+		o.OrderDate as [Order Date],
+		d.Name as [Dispatcher Name], 
+		d.PhoneNumber as [Dispatcher Phone], 
+		cl.Name as [Client Name], 
+		cl.PhoneNumber as [Client Phone], 
+		t.Type as [Type of Service], 
+		o.Total as [Total], 
+		co.Name as [Courier Name], 
+		co.PhoneNumber as [Courier Phone], 
+		a.Address as [Delivery Address],
+		r.Name as [Recipient Name],
+		o.ReceiveDate as [Date of Delivery]
+
+	from Orders as o
+
+	inner join Addresses as a
+	on o.AddressID = a.ID
+
+	inner join Clients as cl
+	on o.ClientID = cl.ID
+
+	inner join Couriers as co
+	on o.CourierID = co.ID
+
+	inner join Dispatchers as d
+	on o.DispatcherID = d.ID
+
+	inner join Recipients as r
+	on o.RecipientID = r.ID
+
+	inner join TypesOfService as t
+	on o.TypeID = t.ID
+
+	where @input = co.Name
+
+end
+```
+
+This procedure uses a ```SELECT``` statement to display the output using mass ```INNER JOIN```.
+
 ### dbo.usp_dates_with_most_delivered_orders
+>>>>>>> d21a908e06e935c62d548a9f153eaba91155cdcd
 ```sql
 CREATE OR ALTER Proc usp_dates_with_most_delivered_orders
 AS
