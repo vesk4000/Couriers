@@ -417,7 +417,7 @@ EXEC usp_CheckClientPartOfNameOrPhone 'Шон';
 EXEC usp_CheckClientPartOfNameOrPhone '0888';
 ```
 
-### 2. usp_CheckByDispNameOrDateOfDelivery
+#### 2. usp_CheckByDispNameOrDateOfDelivery
 
 This procedure displays all orders of a specific dispatcher by ```Name``` (column in ```dbo.Dispatchers```) or on a certain ```ReceiveDate``` (column in ```dbo.Order```)
 
@@ -432,7 +432,7 @@ EXEC usp_CheckByDispNameOrDateOfDelivery '09-15-2021';
 EXEC usp_CheckByDispNameOrDateOfDelivery 'Асен Донев';
 ```
 
-### 3. usp_TotalOfOrdersByClient
+#### 3. usp_TotalOfOrdersByClient
 
 This procedure displays the ```Total``` (column in ```dbo.Order```) of all orders by a specific customer
 
@@ -446,7 +446,7 @@ EXEC usp_TotalOfOrdersByClient [nvarchar input];
 EXEC usp_TotalOfOrdersByClient 'Нено Ненов';
 ```
 
-### 4. usp_OrdersByDateOfOrder
+#### 4. usp_OrdersByDateOfOrder
 
 This procedure displays all orders made on a specific ```OrderDate``` (column in ```dbo.Order```)
 
@@ -460,7 +460,7 @@ EXEC usp_OrdersByDateOfOrder [nvarchar input];
 EXEC usp_OrdersByDateOfOrder '8/16/2021';
 ```
 
-### 5. usp_PackagesByCourier
+#### 5. usp_PackagesByCourier
 
 This procedure displays all orders of a specific courier by ```Name``` (column in ```dbo.Courier```)
 
@@ -474,7 +474,7 @@ EXEC usp_PackagesByCourier [nvarchar input];
 EXEC usp_PackagesByCourier 'Камен Каменов';
 ```
 
-### 6. dbo.usp_dates_with_most_delivered_orders
+#### 6. dbo.usp_dates_with_most_delivered_orders
 
 This procedure displays the date(s) with most orders grouped by ```ReceiveDate``` (column in ```dbo.Orders```)
 
@@ -483,7 +483,7 @@ This procedure displays the date(s) with most orders grouped by ```ReceiveDate``
 EXEC dbo.usp_dates_with_most_delivered_orders;
 ```
 
-### 7. usp_names_of_recipients_by_order_count
+#### 7. usp_names_of_recipients_by_order_count
 
 This procedure displays the names of all the recipients who have received more orders than [some ```INTEGER``` value]
 
@@ -507,7 +507,7 @@ This procedure displays the count of all the orders grouped by ```OrderDate``` (
 EXEC dbo.usp_orders_count_by_order_date;
 ```
 
-### 9. dbo.usp_orders_profit_by_tos
+#### 9. dbo.usp_orders_profit_by_tos
 
 This procedure displays the profit of all the orders grouped by ```Type```[^type] (column in ```dbo.TypesOfService```)
 
@@ -516,7 +516,7 @@ This procedure displays the profit of all the orders grouped by ```Type```[^type
 EXEC dbo.usp_orders_profit_by_tos;
 ```
 
-### 10. dbo.usp_name_phonenumber_category
+#### 10. dbo.usp_name_phonenumber_category
 
 This procedure displays the names, phone numbers, and categories (client, dispatcher, courier) of all the people registered in ```CouriersDB```
 
@@ -529,7 +529,21 @@ EXEC dbo.usp_name_phonenumber_category;
 
 *In this section you can learn more about the development process (work principles of the procedures, problems we encountered while writing the queries, etc.).*
 
-#### dbo.usp_dates_with_most_delivered_orders
+### Designing the Database
+
+### Populating the Database with Data
+
+### Git
+
+### SQL Compiler
+
+### Add Procedures
+
+### Update Procedures
+
+### Queries
+
+### dbo.usp_dates_with_most_delivered_orders
 ```sql
 CREATE OR ALTER Proc usp_dates_with_most_delivered_orders
 AS
@@ -552,7 +566,7 @@ The first ```SELECT``` statement inside ```usp_dates_with_most_delivered_orders`
 
 The second ```SELECT``` statement displays the ```COUNT``` of the dates(s), during which most orders were received, as well as the ```ReceiveDate``` themselves. This happens by grouping the records by ```ReceiveDate```. Then, only those records, which have ```COUNT(*)``` greater or equal to all the other records, are shown. Using ```>= ALL``` guarantees that only those date(s), which has/have the largest ```COUNT(*)```, are being shown.
 
-#### Encountered problems
+### Encountered problems
 
 At first, the whole procedure included this statement:
 
@@ -572,7 +586,7 @@ SELECT ReceiveDate, COUNT(*) as [Count of delivered orders]
 However, this code was highly inefficient due to the fact that the subquery groups the record of ```dbo.Orders``` by ```ReceiveDate``` a lot of times, which is time consuming. That is why we changed the approach and added a temporary table (```dbo.TempOrders```), which stores the ```COUNT``` of all the orders grouped by ```ReceiveDate```. This increases the used memory, but significantly reduces the time of the execution of the procedure (this might not be noted when having a small database such as ```CouriersDB```, but the difference will be apparent when working with a lot of data).
 
 
-#### dbo.usp_names_of_recipients_by_order_count
+### dbo.usp_names_of_recipients_by_order_count
 
 ```sql
 CREATE OR ALTER Proc usp_names_of_recipients_by_order_count @MinOrdersCount INT
@@ -591,7 +605,7 @@ The ```SELECT``` statement displays the ```COUNT``` of the orders and ```Name```
 
 > **Note:** ```@MinOrdersCount``` (```INT```) + 1 is the minimum amount of orders that a recipient must receive in order to be displayed when ```usp_names_of_recipients_by_order_count``` is executed
 
-#### dbo.usp_orders_count_by_order_date
+### dbo.usp_orders_count_by_order_date
 
 ```sql
 CREATE OR ALTER Proc usp_orders_count_by_order_date
@@ -605,7 +619,7 @@ END
 
 The ```SELECT``` statement displays the ```COUNT``` of the orders, grouped by ```OrderDate```, as well as the ```OrderDate```.
 
-#### dbo.usp_orders_profit_by_tos
+### dbo.usp_orders_profit_by_tos
 
 ```sql
 CREATE OR ALTER Proc usp_orders_profit_by_tos
@@ -623,7 +637,7 @@ The ```SELECT``` statement displays the ```Type```[^type] and the ```SUM``` of t
 
 > **Note:** The function ```FORMAT``` is used to display the ```SUM``` in BGN[^bgn].
 
-#### dbo.usp_name_phonenumber_category
+### dbo.usp_name_phonenumber_category
 
 ```sql
 CREATE OR ALTER Proc usp_name_phonenumber_category
@@ -649,7 +663,7 @@ The delete procedures are divided into two types:
 1. Delete procedures that alter a specific parent table and the ```FOREIGN KEY``` in ```dbo.Orders```, which is linked to that parent table.
 2. Delete procedure which removes a record from ```dbo.Orders``` by a given ```OldID```.
 
->**Note**: You can find more information about the two types in [**Guide**](#guide)
+>**Note**: You can find more information about the two types in [**Manual**](#manual)
 
 > **Note:** In the following subheading (```Delete Procedures```) of **```Development```** there is going to be an explanation about how the delete procedures work (```dbo.delete_couriers``` is the example delete procedure used below).
 
