@@ -102,3 +102,4 @@ go
 -- This displays all orders of a specific dispatcher by name or on a certain date of delivery
 exec usp_CheckByDispNameOrDateOfDelivery '09-15-2021'
 exec usp_CheckByDispNameOrDateOfDelivery 'Асен Донев'
+*/

@@ -76,10 +76,6 @@ By default, the compiler generates 2 SQL files with the names `couriers.sql` and
 
 We designed the schema of our database ```CouriersDB``` by transforming a table in 1NF[^1nf] into 7 tables that meet the 3NF[^3nf] standards.
 
-The initial design of the table was done by a using a DB designer tool (https://www.dbdesigner.net/). Om that platform the tables have been created and the relations and the other constraints have been set. Then, a MSSQL code was generated and exported.
-
->**Note:** We have altered the design of the table a bit after their initial creation mentioned above. We have added several ```UNIQUE```, ```IDENTITY```, and ```NOT NULL``` constraints.
-
 This is the given 1FN table with some sample data:
 
 | Order # | Order Date | Dispatcher Name | Phone Number - Dispatcher | Client Name | Phone Number - Client | Type of Service | Total | Courier Name | Phone Number - Courier | Delivery Address | Recipient Name | Delivery Date |
@@ -421,7 +417,7 @@ EXEC usp_CheckClientPartOfNameOrPhone 'Шон';
 EXEC usp_CheckClientPartOfNameOrPhone '0888';
 ```
 
-### 2. usp_CheckByDispNameOrDateOfDelivery
+#### 2. usp_CheckByDispNameOrDateOfDelivery
 
 This procedure displays all orders of a specific dispatcher by ```Name``` (column in ```dbo.Dispatchers```) or on a certain ```ReceiveDate``` (column in ```dbo.Order```)
 
@@ -436,7 +432,7 @@ EXEC usp_CheckByDispNameOrDateOfDelivery '09-15-2021';
 EXEC usp_CheckByDispNameOrDateOfDelivery 'Асен Донев';
 ```
 
-### 3. usp_TotalOfOrdersByClient
+#### 3. usp_TotalOfOrdersByClient
 
 This procedure displays the ```Total``` (column in ```dbo.Order```) of all orders by a specific customer
 
@@ -450,7 +446,7 @@ EXEC usp_TotalOfOrdersByClient [nvarchar input];
 EXEC usp_TotalOfOrdersByClient 'Нено Ненов';
 ```
 
-### 4. usp_OrdersByDateOfOrder
+#### 4. usp_OrdersByDateOfOrder
 
 This procedure displays all orders made on a specific ```OrderDate``` (column in ```dbo.Order```)
 
@@ -464,7 +460,7 @@ EXEC usp_OrdersByDateOfOrder [nvarchar input];
 EXEC usp_OrdersByDateOfOrder '8/16/2021';
 ```
 
-### 5. usp_PackagesByCourier
+#### 5. usp_PackagesByCourier
 
 This procedure displays all orders of a specific courier by ```Name``` (column in ```dbo.Courier```)
 
@@ -478,7 +474,7 @@ EXEC usp_PackagesByCourier [nvarchar input];
 EXEC usp_PackagesByCourier 'Камен Каменов';
 ```
 
-### 6. dbo.usp_dates_with_most_delivered_orders
+#### 6. dbo.usp_dates_with_most_delivered_orders
 
 This procedure displays the date(s) with most orders grouped by ```ReceiveDate``` (column in ```dbo.Orders```)
 
@@ -487,7 +483,7 @@ This procedure displays the date(s) with most orders grouped by ```ReceiveDate``
 EXEC dbo.usp_dates_with_most_delivered_orders;
 ```
 
-### 7. usp_names_of_recipients_by_order_count
+#### 7. usp_names_of_recipients_by_order_count
 
 This procedure displays the names of all the recipients who have received more orders than [some ```INTEGER``` value]
 
@@ -511,7 +507,7 @@ This procedure displays the count of all the orders grouped by ```OrderDate``` (
 EXEC dbo.usp_orders_count_by_order_date;
 ```
 
-### 9. dbo.usp_orders_profit_by_tos
+#### 9. dbo.usp_orders_profit_by_tos
 
 This procedure displays the profit of all the orders grouped by ```Type```[^type] (column in ```dbo.TypesOfService```)
 
@@ -520,7 +516,7 @@ This procedure displays the profit of all the orders grouped by ```Type```[^type
 EXEC dbo.usp_orders_profit_by_tos;
 ```
 
-### 10. dbo.usp_name_phonenumber_category
+#### 10. dbo.usp_name_phonenumber_category
 
 This procedure displays the names, phone numbers, and categories (client, dispatcher, courier) of all the people registered in ```CouriersDB```
 
@@ -533,6 +529,12 @@ EXEC dbo.usp_name_phonenumber_category;
 
 *In this section you can learn more about the development process (work principles of the procedures, problems we encountered while writing the queries, etc.).*
 
+### Designing the Database
+
+The initial design of the table was done by a using a DB designer tool (https://www.dbdesigner.net/). Om that platform the tables have been created and the relations and the other constraints have been set. Then, a MSSQL code was generated and exported.
+
+>**Note:** We have altered the design of the table a bit after their initial creation mentioned above. We have added several ```UNIQUE```, ```IDENTITY```, and ```NOT NULL``` constraints.
+
 ### Populating ```CouriersDB```
 
 In order to populate ```CouriersDB``` we had to split the data from the initial 1NF[^1nf] table into several small ones. Then, in order to ```INSERT``` the data into the **database** we used a tool (sqlizer.io), which transforms .xlsx/.xls tables sheets into ```INSERT INTO``` statements.
@@ -541,9 +543,253 @@ In order to populate ```CouriersDB``` we had to split the data from the initial 
 
 After the export of those ```INSERT INTO``` statements we had to insert that data into our tables, but due to the necessity of formating that data we had to ```CREATE``` temporary tables, ```INSERT``` the mentioned above data into them and then reinsert that data with some minor changes into the specific tables (```dbo.Orders```, ```dbo.Clients```, ```dbo.Dispatchers```, ```dbo.Couriers```, ```dbo.Recipients```, ```dbo.Addresses```, and ```dbo.TypesOfService```).
 
-### Read Procedures
+To populate the database we used SQLizer, an online tool which generates SQL code from an Excel spreadsheet. At first it was somewhat annoying to use but once we understood how to use it work flowed smoothly.
 
-#### dbo.usp_dates_with_most_delivered_orders
+### Git
+
+### SQL Compiler
+
+### Add Procedures
+
+### Update Procedures
+
+### Queries
+
+#### **dbo.usp_CheckClientPartOfNameOrPhone**
+```sql
+create or alter procedure usp_CheckClientPartOfNameOrPhone( @input nvarchar(50) )
+as
+begin
+
+	if( dbo._udf_CheckPhoneNumber(@input) = 1 )
+	begin
+		select Name as [Client Name], PhoneNumber as [Phone Number] from Clients
+		where CHARINDEX(@input, PhoneNumber) > 0
+		return
+	end
+
+	select Name as [Client Name], PhoneNumber as [Phone Number] from Clients
+	where CHARINDEX(@input, Name) > 0
+	return
+
+end
+```
+
+This procedure uses the predefined function ```dbo._udf_CheckPhoneNumber``` which checks if the input string is a valid phone number. Then a ```SELECT``` statement displays the output.
+
+#### **dbo.usp_CheckByDispNameOrDateOfDelivery**
+```sql
+create or alter procedure usp_CheckByDispNameOrDateOfDelivery( @input nvarchar(50) )
+as
+begin
+
+	if( ISDATE(@input) = 1 )
+	begin
+		select 
+			o.ID as [Order ID],
+			o.OrderDate as [Order Date],
+			d.Name as [Dispatcher Name], 
+			d.PhoneNumber as [Dispatcher Phone], 
+			cl.Name as [Client Name], 
+			cl.PhoneNumber as [Client Phone], 
+			t.Type as [Type of Service], 
+			o.Total as [Total], 
+			co.Name as [Courier Name], 
+			co.PhoneNumber as [Courier Phone], 
+			a.Address as [Delivery Address],
+			r.Name as [Recipient Name],
+			o.ReceiveDate as [Date of Delivery]
+
+		from Orders as o
+
+		inner join Addresses as a
+		on o.AddressID = a.ID
+
+		inner join Clients as cl
+		on o.ClientID = cl.ID
+
+		inner join Couriers as co
+		on o.CourierID = co.ID
+
+		inner join Dispatchers as d
+		on o.DispatcherID = d.ID
+
+		inner join Recipients as r
+		on o.RecipientID = r.ID
+
+		inner join TypesOfService as t
+		on o.TypeID = t.ID
+
+		where CAST( @input as date ) = o.ReceiveDate
+		return
+	end
+
+	else
+	begin
+		select 
+			o.ID as [Order ID],
+			o.OrderDate as [Order Date],
+			d.Name as [Dispatcher Name], 
+			d.PhoneNumber as [Dispatcher Phone], 
+			cl.Name as [Client Name], 
+			cl.PhoneNumber as [Client Phone], 
+			t.Type as [Type of Service], 
+			o.Total as [Total], 
+			co.Name as [Courier Name], 
+			co.PhoneNumber as [Courier Phone], 
+			a.Address as [Delivery Address],
+			r.Name as [Recipient Name],
+			o.ReceiveDate as [Date of Delivery]
+
+		from Orders as o
+
+		inner join Addresses as a
+		on o.AddressID = a.ID
+
+		inner join Clients as cl
+		on o.ClientID = cl.ID
+
+		inner join Couriers as co
+		on o.CourierID = co.ID
+
+		inner join Dispatchers as d
+		on o.DispatcherID = d.ID
+
+		inner join Recipients as r
+		on o.RecipientID = r.ID
+
+		inner join TypesOfService as t
+		on o.TypeID = t.ID
+
+		where @input = d.Name
+
+		return
+	end
+
+end
+```
+
+This procedure checks if the input is a date to determine which mode it should use. Then a ```SELECT``` statement displays the output using mass ```INNER JOIN```.
+
+#### **dbo.usp_TotalOfOrdersByClient**
+```sql
+create or alter procedure usp_TotalOfOrdersByClient( @input nvarchar(50) )
+as
+begin
+
+	select SUM(o.Total) as 'Total by client' from Clients as c
+
+	inner join Orders as o
+	on c.ID = o.ClientID
+
+	where @input = c.Name
+
+end
+```
+
+This procedure uses a simple ```SELECT``` statement to display the output.
+
+#### **dbo.usp_OrdersByDateOfOrder**
+```sql
+create or alter procedure usp_OrdersByDateOfOrder( @input nvarchar(50) )
+as
+begin
+
+	if( ISDATE(@input) = 1 )
+	begin
+		select o.ID as [Order ID],
+		o.OrderDate as [Order Date],
+		d.Name as [Dispatcher Name], 
+		d.PhoneNumber as [Dispatcher Phone], 
+		cl.Name as [Client Name], 
+		cl.PhoneNumber as [Client Phone], 
+		t.Type as [Type of Service], 
+		o.Total as [Total], 
+		co.Name as [Courier Name], 
+		co.PhoneNumber as [Courier Phone], 
+		a.Address as [Delivery Address],
+		r.Name as [Recipient Name],
+		o.ReceiveDate as [Date of Delivery]
+
+		from Orders as o
+
+		inner join Addresses as a
+		on o.AddressID = a.ID
+
+		inner join Clients as cl
+		on o.ClientID = cl.ID
+
+		inner join Couriers as co
+		on o.CourierID = co.ID
+
+		inner join Dispatchers as d
+		on o.DispatcherID = d.ID
+
+		inner join Recipients as r
+		on o.RecipientID = r.ID
+
+		inner join TypesOfService as t
+		on o.TypeID = t.ID
+
+		where CAST( @input as date ) = o.OrderDate
+		return
+	end
+
+end
+```
+
+This procedure checks if the input is a valid date then uses a ```SELECT``` statement to display the output using mass ```INNER JOIN```.
+
+#### **dbo.usp_PackagesByCourier**
+```sql
+create or alter procedure usp_PackagesByCourier( @input nvarchar(50) )
+as
+begin
+
+	select 
+		o.ID as [Order ID],
+		o.OrderDate as [Order Date],
+		d.Name as [Dispatcher Name], 
+		d.PhoneNumber as [Dispatcher Phone], 
+		cl.Name as [Client Name], 
+		cl.PhoneNumber as [Client Phone], 
+		t.Type as [Type of Service], 
+		o.Total as [Total], 
+		co.Name as [Courier Name], 
+		co.PhoneNumber as [Courier Phone], 
+		a.Address as [Delivery Address],
+		r.Name as [Recipient Name],
+		o.ReceiveDate as [Date of Delivery]
+
+	from Orders as o
+
+	inner join Addresses as a
+	on o.AddressID = a.ID
+
+	inner join Clients as cl
+	on o.ClientID = cl.ID
+
+	inner join Couriers as co
+	on o.CourierID = co.ID
+
+	inner join Dispatchers as d
+	on o.DispatcherID = d.ID
+
+	inner join Recipients as r
+	on o.RecipientID = r.ID
+
+	inner join TypesOfService as t
+	on o.TypeID = t.ID
+
+	where @input = co.Name
+
+end
+```
+
+This procedure uses a ```SELECT``` statement to display the output using mass ```INNER JOIN```.
+
+### dbo.usp_dates_with_most_delivered_orders
+>>>>>>> d21a908e06e935c62d548a9f153eaba91155cdcd
 ```sql
 CREATE OR ALTER Proc usp_dates_with_most_delivered_orders
 AS
@@ -566,7 +812,7 @@ The first ```SELECT``` statement inside ```usp_dates_with_most_delivered_orders`
 
 The second ```SELECT``` statement displays the ```COUNT``` of the dates(s), during which most orders were received, as well as the ```ReceiveDate``` themselves. This happens by grouping the records by ```ReceiveDate```. Then, only those records, which have ```COUNT(*)``` greater or equal to all the other records, are shown. Using ```>= ALL``` guarantees that only those date(s), which has/have the largest ```COUNT(*)```, are being shown.
 
-#### Encountered problems
+### Encountered problems
 
 At first, the whole procedure included this statement:
 
@@ -586,7 +832,7 @@ SELECT ReceiveDate, COUNT(*) as [Count of delivered orders]
 However, this code was highly inefficient due to the fact that the subquery groups the record of ```dbo.Orders``` by ```ReceiveDate``` a lot of times, which is time consuming. That is why we changed the approach and added a temporary table (```dbo.TempOrders```), which stores the ```COUNT``` of all the orders grouped by ```ReceiveDate```. This increases the used memory, but significantly reduces the time of the execution of the procedure (this might not be noted when having a small database such as ```CouriersDB```, but the difference will be apparent when working with a lot of data).
 
 
-#### dbo.usp_names_of_recipients_by_order_count
+### dbo.usp_names_of_recipients_by_order_count
 
 ```sql
 CREATE OR ALTER Proc usp_names_of_recipients_by_order_count @MinOrdersCount INT
@@ -605,7 +851,7 @@ The ```SELECT``` statement displays the ```COUNT``` of the orders and ```Name```
 
 > **Note:** ```@MinOrdersCount``` (```INT```) + 1 is the minimum amount of orders that a recipient must receive in order to be displayed when ```usp_names_of_recipients_by_order_count``` is executed
 
-#### dbo.usp_orders_count_by_order_date
+### dbo.usp_orders_count_by_order_date
 
 ```sql
 CREATE OR ALTER Proc usp_orders_count_by_order_date
@@ -619,7 +865,7 @@ END
 
 The ```SELECT``` statement displays the ```COUNT``` of the orders, grouped by ```OrderDate```, as well as the ```OrderDate```.
 
-#### dbo.usp_orders_profit_by_tos
+### dbo.usp_orders_profit_by_tos
 
 ```sql
 CREATE OR ALTER Proc usp_orders_profit_by_tos
@@ -637,7 +883,7 @@ The ```SELECT``` statement displays the ```Type```[^type] and the ```SUM``` of t
 
 > **Note:** The function ```FORMAT``` is used to display the ```SUM``` in BGN[^bgn].
 
-#### dbo.usp_name_phonenumber_category
+### dbo.usp_name_phonenumber_category
 
 ```sql
 CREATE OR ALTER Proc usp_name_phonenumber_category
@@ -663,7 +909,7 @@ The delete procedures are divided into two types:
 1. Delete procedures that alter a specific parent table and the ```FOREIGN KEY``` in ```dbo.Orders```, which is linked to that parent table.
 2. Delete procedure which removes a record from ```dbo.Orders``` by a given ```OldID```.
 
->**Note**: You can find more information about the two types in [**Guide**](#guide)
+>**Note**: You can find more information about the two types in [**Manual**](#manual)
 
 > **Note:** In the following subheading (```Delete Procedures```) of **```Development```** there is going to be an explanation about how the delete procedures work (```dbo.delete_couriers``` is the example delete procedure used below).
 
