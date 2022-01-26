@@ -1189,7 +1189,7 @@ In the end, the project turned out well, even though there were some inconvenien
 
 <a href="https://github.com/vesk4000/Couriers/graphs/contributors"> <img src="https://contrib.rocks/image?repo=vesk4000/Couriers" height="30" alt="Contributors"/> </a>
 
-@vesk4000
+[@vesk4000](https://github.com/vesk4000)
 - Managing GitHub repository
 - SQL Compiler and associated windows batch file
 - Add procedures
@@ -1197,14 +1197,14 @@ In the end, the project turned out well, even though there were some inconvenien
 - Code reformating
 - README
 
-@icyDenev
+[@icyDenev](https://github.com/icyDenev)
 - Database Design
 - Populating database with data
 - Delete procedures
 - Queries 6 - 10
 - README
 
-@GreenUncle
+[@GreenUncle](https://github.com/GreenUncle)
 - Database Design
 - Populating database with data
 - Queries 1 - 5
