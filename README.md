@@ -259,7 +259,7 @@ Depending on whether you want to simply generate the database and use its featur
 
 ### Compile the SQL Files
 
-> **Note:** If you chose to just download the SQL files from the [Release](https://github.com/vesk4000/Couriers/releases/tag/release) as the 1st method stated you can skip this step.
+> **Note:** If you chose to just download the SQL files from the [Database Release](https://github.com/vesk4000/Couriers/releases/tag/Database) as the 1st method stated you can skip this step.
 
 Run the `compile.bat` file and you should see two new files generated in the root directory of the project - `couriers.sql` and `examples.sql`.
 
