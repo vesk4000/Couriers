@@ -113,9 +113,9 @@ This is the given 1FN table with some sample data:
 | 3                | 9/9/2021        | Колю Колев       | 0888987555         | Джим Шон       | 0888555222       | Колетна пратка над 2 до 5 кг | 6.72 лв. | Мони Иванова  | 0876555222       | ул. Вардар 8              | Шон Джим         | 15.9.2021 г.     |
 | 4                | 9/14/2021       | Маша Малишкина   | 0881122678         | Галин Христов  | 0888555111       | Колетна пратка над 2 до 5 кг | 6.72 лв. | Димана Донева | 0876555555       | ул. Бук 18                | Христо Галев     | 17.9.2021 г.     |
 
-The `CouriersDB`, which consists of 7 3NF tables has the following schema:
+The `CouriersDB`, which consists of 7 3NF tables. Here's a diagram of the whole database:
 
-![Schema Image](https://github.com/vesk4000/Couriers/blob/8729967a3a62f26637ac1a758e3ba623d23d96cb/schema-screenshot.png)
+![Database diagram](https://user-images.githubusercontent.com/30286047/151210917-afedb54c-142b-4d00-bab4-c6c208a7d2ac.png)
 
 ### **dbo.Orders**
 
