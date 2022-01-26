@@ -37,6 +37,8 @@ All in all, the database has 7 tables - `Clients`, `Couriers`, `Dispatchers`, `R
 
 ## Project Structure
 
+*This is an in-depth look into how the project/repository is structured. In the process of development we made some pretty unique decisions and build a tool to help us develop the database better, so we think this section might be helpful for people wishing to do a similair project or even fork this one.*
+
 ```
 📦Couriers
  ┣ 📂source
@@ -63,19 +65,18 @@ All in all, the database has 7 tables - `Clients`, `Couriers`, `Dispatchers`, `R
  ┃ ┃ ┣ 📄usp_orders_count_by_order_date.sql
  ┃ ┃ ┗ 📄usp_orders_profit_by_tos.sql
  ┃ ┗ 📂schemas
- ┃ ┃ ┣ 📄addresses-table.sql
  ┃ ┃ ┣ 📄clients-table.sql
+ ┃ ┃ ┣ 📄couriers-database.sql
+ ┃ ┃ ┣ 📄couriers-table.sql
  ┃ ┃ ┗ ...
  ┣ 📂sql-compiler
  ┃ ┣ 📄Program.cs
  ┃ ┣ 📄sql-compiler.csproj
  ┃ ┗ 📄sql-compiler.exe
- ┣ 📄.gitignore
  ┣ 📄compile.bat
  ┣ 📄couriers-project_data.xlsx
  ┣ 📄couriers.sql
- ┣ 📄examples.sql
- ┗ 📄README.md
+ ┗ 📄examples.sql
 ```
 
 In order to facilitate for easier collaboration and overall code development, we split up all of the SQL code into many files. All of them are located in the `source` folder in the root of the repository. In there you will find the files grouped into the `crud-procedures`, `data`, `private`, `queries` and `schemas` folders. All of those folders contain a number of `.sql` files, which themselves are all either a definition of a single procedure, function, table or database, or in the case of the files in the `data` folder - the `INSERT` queries used to populate the different tables with their respective data.
@@ -90,17 +91,20 @@ Here's a brief description of what each of the folders contain:
 | `source/schemas` | SQL queries which create each of the tables in the database and the database itself |
 
 The `couriers‑project_data.xlsx` Excel file, which is contained in the root directory of the repo, includes all of the original data for the database.
+
 > **Note:** The file is there only for completeness purposes. Changing it does not change the data in the database or what data the `.sql` files in the `source/data` folder insert into the database when executed. All of that data is hardcoded in those files.
 
 The folder `sql-compiler` contains the source code and executable for a small SQL "compiler", written in C#. All it does is it takes all of the SQL files (in a certain order) and it combines them into a single SQL file. This makes it easy for both the developers and the end-user to execute all of the files at once and immediately have the database up and running, while at the same time allowing for the separation of the SQL code, which as we mentioned earlier facilities for more efficient development and code cleanliness. Another thing that the compiler does is that it creates a single file with all of the examples for each SQL file, which contains such examples. This makes it much easier for the end user to get to grips with the various things that they can do with the database, while also making it easier for developers to write examples as it allows them to do so within the actual file that they are working on at the moment.
 
-To prevent clutter, the actual C# project for the compiler isn't a part of a Visual Studio Solution File (`.sln`) as it was created with the `dotnet` CLI tool which only requires a C# Project File (`sql-compiler.csproj`) and a C# Source File (`Program.cs`). The exe is a completely standalone executable that doesn't require the .NET runtime to work as it was created with the very useful .NET tool called [`dotnet-warp`](https://www.nuget.org/packages/dotnet-warp).
+To prevent clutter, the actual C# project for the compiler isn't a part of a Visual Studio Solution File (`.sln`) as it was created with the `dotnet` CLI tool which only requires a C# Project File (`sql-compiler.csproj`) and a C# Source File (`Program.cs`). The `sql-compiler.exe` is not included in the repository (it's ignored as per the `.gitignore` file of the repo). It can be downloaded from [The Latest Release](https://github.com/vesk4000/Couriers/releases/latest) (it is also automatically downloaded from there when `compile.bat` is ran, if it doesn't exist locally). It is a completely standalone executable that doesn't require the .NET runtime to work as it was created with the very useful .NET tool called [`dotnet-warp`](https://www.nuget.org/packages/dotnet-warp).
 
-To actually use the compiler you can pass arguments to it, but you can simply run the `compile.bat` file which will run the compiler with some default arguments. You can configure those arguments within the file and also you can configure which SQL files are compiled and in what order that is done, as that may be important depending on the files (e.g. you'd want the tables to be created, before you create the database). That particular thing is actually not passed to the compiler as an argument, but rather the `compile.bat` file passes itself as an argument and the compiler reads a comment within the `.bat` file which contains the names and relative paths of the files which are to be compiled (you can also use glob style wildcards such as `*` and `**`, just like in a `.gitignore` file thanks to the very useful .NET NuGet package [`Glob`](https://www.nuget.org/packages/Glob/1.2.0-alpha0037)).
+To actually use the compiler you can pass arguments to it, but you can simply run the `compile.bat` file which as we mentioned will download the compiler executable if it doesn't exist locally and it will run the compiler with some default arguments. You can configure those arguments within the file and also you can configure which SQL files are compiled and in what order that is done, as that may be important depending on the files (e.g. you'd want the tables to be created, before you create the database). That particular thing is actually not passed to the compiler as an argument, but rather the `compile.bat` file passes itself as an argument and the compiler reads a comment within the `.bat` file which contains the names and relative paths of the files which are to be compiled (you can also use glob style wildcards such as `*` and `**`, just like in a `.gitignore` file thanks to the very useful .NET NuGet package [`Glob`](https://www.nuget.org/packages/Glob/1.2.0-alpha0037)).
 
-By default, the compiler generates 2 SQL files with the names `couriers.sql` and `example.sql` in the root directory of the repository. However, they are included in the `.gitignore` of the repo as to not cause any merge conflicts. The `couriers.sql` contains all of the code from all of the `.sql` files in the `source` directory. You can run the whole file at once to generete the whole database with all of its tables, data and features. The `examlpes.sql` is just a file with examples to all of the different features of the database.
+By default, the compiler generates 2 SQL files with the names `couriers.sql` and `example.sql` in the root directory of the repository. However, they are included in the `.gitignore` of the repo as to not cause any merge conflicts. The `couriers.sql` contains all of the code from all of the `.sql` files in the `source` directory. You can run the whole file at once to generate the whole database with all of its tables, data and features. The `examlpes.sql` is just a file with examples to all of the different features of the database.
 
 ## Database Design
+
+*The database is not all that complicated, but it is important to understand it, if you want to understand the project and our development of it better.*
 
 We designed the schema of our database `CouriersDB` by transforming a table in 1NF[^1nf] into 7 tables that meet the 3NF[^3nf] standards.
 
@@ -254,14 +258,14 @@ CREATE TABLE TypesOfService (
 
 Depending on whether you want to simply generate the database and use its features or develop the database and its features further, you can go one of two ways:
 
-1. Download the `couriers.sql` and `examples.sql` files from the [Release](https://github.com/vesk4000/Couriers/releases/tag/release) if you simply want to use the database and its features.
+1. Download the `couriers.sql` and `examples.sql` files from the [The Latest Release](https://github.com/vesk4000/Couriers/releases/latest) if you simply want to use the database and its features.
 2. Clone or download this repository (click on the green `Code` button at the top of this page) if you are interested in the entire source code as it is organized for development.
 
 ### Compile the SQL Files
 
-> **Note:** If you chose to just download the SQL files from the [Database Release](https://github.com/vesk4000/Couriers/releases/tag/Database) as the 1st method stated you can skip this step.
+> **Note:** If you chose to just download the SQL files from the [The Latest Release](https://github.com/vesk4000/Couriers/releases/latest) as the 1st method stated you can skip this step.
 
-Run the `compile.bat` file and you should see two new files generated in the root directory of the project - `couriers.sql` and `examples.sql`.
+Run the `compile.bat` file. If you don't yet have the compiler executable `sql-compiler/sql-compiler.exe` it will automatically download it from [The Latest Release](https://github.com/vesk4000/Couriers/releases/latest). Once you have the executable it will be ran and you should see two new files generated in the root directory of the project - `couriers.sql` and `examples.sql`.
 
 Alternatively, you can run the `sql-compiler/sql-compiler.exe` executable with certain arguments. You can find arguments that are used to execute the executable in the `compile.bat` file. You can of course edit the file edit the `.bat` file or create your own in order to make the compiler suit your needs.
 
@@ -281,18 +285,18 @@ To generate the database and all of its components by simply executing the `cour
 
 ### Add
 
-Add an entry into any of the tables in the database using one of the seven `Add` procedures (`udp_AddAddress`, `udp_AddCourier`, `udp_AddRecipient`, `udp_AddDispatcher`, `udp_AddClient`, `udp_AddTypeOfService`). Each of them have different parameters depending on the table. You might get an error message if you try to create an entry which already exists in the specific table or if you pass invalid parameters to the procedure. If successful, the procedure will print out the `ID` of the newly created entry.
+Add an entry into any of the tables in the database using one of the seven `Add` procedures (`udp_AddAddress`, `udp_AddCourier`, `udp_AddRecipient`, `udp_AddDispatcher`, `udp_AddClient`, `udp_AddTypeOfService`, `udp_AddOrder`). Each of them have different parameters depending on the table. You might get an error message if you try to create an entry which already exists in the specific table or if you pass invalid parameters to the procedure. If successful, the procedure will print out the `ID` of the newly created entry.
 
 **Syntax**
 
 ```sql
-exec udp_AddAddress @Address
-exec udp_AddCourier @Name, @PhoneNumber
-exec udp_AddDispatcher @Name, @PhoneNumber
-exec udp_AddClient @Name, @PhoneNumber
-exec udp_AddRecipient @Name
-exec udp_AddTypeOfService @Type
-exec udp_AddOrder @OrderDate, @ReceiveDate, @Total, @AddressID, @CourierID, @DispatcherID, @ClientID, @RecipientID, @Type
+exec udp_AddAddress @Address nvarchar
+exec udp_AddCourier @Name nvarchar, @PhoneNumber nvarchar
+exec udp_AddDispatcher @Name nvarchar, @PhoneNumber nvarchar
+exec udp_AddClient @Name nvarchar, @PhoneNumber nvarchar
+exec udp_AddRecipient @Name nvarchar
+exec udp_AddTypeOfService @Type nvarchar
+exec udp_AddOrder @OrderDate Date, @ReceiveDate Date, @Total int, @AddressID int, @CourierID int, @DispatcherID int, @ClientID int, @RecipientID int, @TypeID int
 ```
 
 **Examples**
@@ -306,17 +310,18 @@ exec udp_AddOrder '01-25-2022', '01-30-2022', 5000, 5, 2, 4, 1, 2, 3
 
 ### Update
 
-Update an entry from any of the tables in the database using one of the seven `Update` procedures (`udp_AddAddress`, `udp_AddCourier`, `udp_AddRecipient`, `udp_AddDispatcher`, `udp_AddClient`, `udp_AddTypeOfService`). All you have to do is pass on the `ID` of the entry that you are trying to update and the values that you want to update. If you leave any of the parameters `NULL`, those values will simply not be updated. If you enter an invalid `ID` or any other invalid value, you may receive an error message.
+Update an entry from any of the tables in the database using one of the seven `Update` procedures (`udp_UpdateAddress`, `udp_UpdateCourier`, `udp_UpdateRecipient`, `udp_UpdateDispatcher`, `udp_UpdateClient`, `udp_UpdateTypeOfService`, `udp_UpdateOrder`). All you have to do is pass on the `ID` of the entry that you are trying to update and the values that you want to update. If you leave any of the parameters `NULL`, those values will simply not be updated. If you enter an invalid `ID` or any other invalid value, you may receive an error message.
 
 **Syntax**
 
 ```sql
-exec udp_UpdateAddress @ID, @Address
-exec udp_UpdateCourier @ID, @Name, @PhoneNumber
-exec udp_UpdateDispatcher @ID, @Name, @PhoneNumber
-exec udp_UpdateClient @ID, @Name, @PhoneNumber
-exec udp_UpdateRecipient @ID, @Name
-exec udp_UpdateTypeOfService @ID, @Type
+exec udp_UpdateAddress @ID int, @Address nvarchar = NULL
+exec udp_UpdateCourier @ID int, @Name nvarchar = NULL, @PhoneNumber nvarchar = NULL
+exec udp_UpdateDispatcher @ID int, @Name nvarchar = NULL, @PhoneNumber nvarchar = NULL
+exec udp_UpdateClient @ID int, @Name nvarchar = NULL, @PhoneNumber nvarchar = NULL
+exec udp_UpdateRecipient @ID int, @Name nvarchar = NULL
+exec udp_UpdateTypeOfService @ID int, @Type nvarchar = NULL
+exec udp_UpdateOrder @ID int, @OrderDate Date = NULL, @ReceiveDate Date = NULL, @Total int = NULL, @AddressID int = NULL, @CourierID int = NULL, @DispatcherID int = NULL, @ClientID int = NULL, @RecipientID int = NULL, @TypeID int = NULL
 ```
 
 **Examples**
@@ -565,11 +570,11 @@ The initial design of the table was done by a using a DB designer tool (https://
 
 ### Populating `CouriersDB`
 
-To populate the database we used SQLizer, an online tool which generates SQL code from an Excel spreadsheet. At first it was somewhat annoying to use but once we understood how to use it work flowed smoothly.
+To populate the database we used **SQLizer**, an online tool which generates SQL code from an Excel spreadsheet. At first it was somewhat annoying to use but once we understood how to use it work flowed smoothly.
 
-In order to populate `CouriersDB` we had to split the data from the initial 1NF[^1nf] table into several small ones. Then, as we said, in order to `INSERT` the data into the **database** we used a tool (sqlizer.io), which transforms .xlsx/.xls tables sheets into `INSERT INTO` statements.
+In order to populate `CouriersDB` we had to split the data from the initial 1NF[^1nf] table into several small ones. Then, as we said, in order to `INSERT` the data into the **database** we used **SQLizer**, which transforms `.xlsx/.xls` tables sheets into `INSERT INTO` statements.
 
->**Note:** Due to the fact that **sqlizer** had issues converting .xls sheets into MSSQL statements, we had to convert them into MySQL ones and then alter the code in order to be usable in our MSSQL database.
+>**Note:** Due to the fact that **SQLizer** had issues converting .xls sheets into MSSQL statements, we had to convert them into MySQL ones and then alter the code in order to be usable in our MSSQL database.
 
 After the export of those `INSERT INTO` statements we had to insert that data into our tables, but due to the necessity of formating that data we had to `CREATE` temporary tables, `INSERT` the mentioned above data into them and then reinsert that data with some minor changes into the specific tables (`dbo.Orders`, `dbo.Clients`, `dbo.Dispatchers`, `dbo.Couriers`, `dbo.Recipients`, `dbo.Addresses`, and `dbo.TypesOfService`).
 
@@ -583,7 +588,7 @@ Originally I thought that I'd just make the compiler as a Windows Batch File (`*
 
 ### Add Procedures
 
-The procedures which add entries in the various tables of the database are pretty simple. For most of the tables all we check for are whether the entry already exists and for the ones that have a phone number we check if the phone number if valid. For the procedure which adds entries into the `Orders` table we also check if the IDs which were provided exist in the respective tables.
+The procedures which add entries in the various tables of the database are pretty simple. For most of the tables all we check for are whether the entry already exists and for the ones that have a phone number we check if the phone number if valid. For the procedure which adds entries into the `Orders` table we check if the IDs which were provided exist in the respective tables.
 
 ```sql
 create or alter proc udp_AddClient
@@ -715,7 +720,7 @@ go
 
 ### Update Procedures
 
-The procedures which update entries in the various tables of the database are also quite simple. For all of the tables we of course check if the entry with the given `ID` exists. The we check each parameter and if it's not `NULL` then we update the respective value of the given entry with that parameter.
+The procedures which update entries in the various tables of the database are also quite simple. For all of the tables we of course check if the entry with the given `ID` exists. The we check each parameter and if it's not `NULL` we update the respective value of the given entry with that parameter.
 
 ```sql
 create or alter proc udp_UpdateClient
