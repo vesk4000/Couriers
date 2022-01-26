@@ -94,7 +94,7 @@ The `couriers‑project_data.xlsx` Excel file, which is contained in the root di
 
 The folder `sql-compiler` contains the source code and executable for a small SQL "compiler", written in C#. All it does is it takes all of the SQL files (in a certain order) and it combines them into a single SQL file. This makes it easy for both the developers and the end-user to execute all of the files at once and immediately have the database up and running, while at the same time allowing for the separation of the SQL code, which as we mentioned earlier facilities for more efficient development and code cleanliness. Another thing that the compiler does is that it creates a single file with all of the examples for each SQL file, which contains such examples. This makes it much easier for the end user to get to grips with the various things that they can do with the database, while also making it easier for developers to write examples as it allows them to do so within the actual file that they are working on at the moment.
 
-To prevent clutter, the actual C# project for the compiler isn't a part of a Visual Studio Solution File (`.sln`) as it was created with the `dotnet` CLI tool which only requires a C# Project File (`sql-compiler.csproj`) and a C# Source File (`Program.cs`). The exe is a completely standalone executable that doesn't require the .NET runtime to work as it was created with the very useful .NET tool called [`dotnet-warp`](https://www.nuget.org/packages/dotnet-warp/).
+To prevent clutter, the actual C# project for the compiler isn't a part of a Visual Studio Solution File (`.sln`) as it was created with the `dotnet` CLI tool which only requires a C# Project File (`sql-compiler.csproj`) and a C# Source File (`Program.cs`). The exe is a completely standalone executable that doesn't require the .NET runtime to work as it was created with the very useful .NET tool called [`dotnet-warp`](https://www.nuget.org/packages/dotnet-warp).
 
 To actually use the compiler you can pass arguments to it, but you can simply run the `compile.bat` file which will run the compiler with some default arguments. You can configure those arguments within the file and also you can configure which SQL files are compiled and in what order that is done, as that may be important depending on the files (e.g. you'd want the tables to be created, before you create the database). That particular thing is actually not passed to the compiler as an argument, but rather the `compile.bat` file passes itself as an argument and the compiler reads a comment within the `.bat` file which contains the names and relative paths of the files which are to be compiled (you can also use glob style wildcards such as `*` and `**`, just like in a `.gitignore` file thanks to the very useful .NET NuGet package [`Glob`](https://www.nuget.org/packages/Glob/1.2.0-alpha0037)).
 
@@ -157,7 +157,7 @@ CREATE TABLE Clients (
 )
 ```
 
-> **Note:** The `Name` and `PhoneNumber` columns are combined into a composite `unique` key to ensure that there are not any duplicate records when inserting values into `dbo.Clients```
+> **Note:** The `Name` and `PhoneNumber` columns are combined into a composite `unique` key to ensure that there are not any duplicate records when inserting values into `dbo.Clients`
 
 | Column Name | Data Type | Descriprtion |
 | ---------------- | --------------- | ----------- |
@@ -176,7 +176,7 @@ CREATE TABLE Dispatchers (
 )
 ```
 
-> **Note:** The `Name` and `PhoneNumber` columns are combined into a composite `unique` key to ensure that there are not any duplicate records when inserting values into `dbo.Dispatchers```
+> **Note:** The `Name` and `PhoneNumber` columns are combined into a composite `unique` key to ensure that there are not any duplicate records when inserting values into `dbo.Dispatchers`
 
 | Column Name | Data Type | Descriprtion |
 | ---------------- | --------------- | ----------- |
@@ -195,7 +195,7 @@ CREATE TABLE Couriers (
 )
 ```
 
-> **Note:** The `Name` and `PhoneNumber` columns are combined into a composite `unique` key to ensure that there are not any duplicate records when inserting values into `dbo.Couriers```
+> **Note:** The `Name` and `PhoneNumber` columns are combined into a composite `unique` key to ensure that there are not any duplicate records when inserting values into `dbo.Couriers`
 
 | Column Name | Data Type | Descriprtion |
 | ---------------- | --------------- | ----------- |
@@ -340,9 +340,9 @@ For each one of those parent tables there is a **delete procedure** (`dbo.delete
 
 In addition to the deletion mentioned above and based on the entered parameters, the type-1 delete procedures can be executed in 5 different ways.
 
-#### 1. If the user enters an invalid `OldID```
+#### 1. If the user enters an invalid `OldID`
 
-In this case, the procedure will `PRINT` a message which says: 'No such [some object] exists', and the procedure will exit without making any alterations to any of the tables of `CouriersDB```
+In this case, the procedure will `PRINT` a message which says: 'No such [some object] exists', and the procedure will exit without making any alterations to any of the tables of `CouriersDB`
 
 ```sql
 EXEC dbo.delete_couriers OldID;
@@ -354,9 +354,9 @@ Example:
 EXEC dbo.delete_couriers -1;
 ```
 
-#### 2. If the user enters only a valid `OldID```
+#### 2. If the user enters only a valid `OldID`
 
-In this case, the procedure will `DELETE` the records from `dbo.Orders` where the `FOREIGN KEY` (`courierID` in the given example), which is linked to a specific table, is equal to `OldID```
+In this case, the procedure will `DELETE` the records from `dbo.Orders` where the `FOREIGN KEY` (`courierID` in the given example), which is linked to a specific table, is equal to `OldID`
 
 ```sql
 EXEC dbo.delete_couriers OldID;
@@ -372,7 +372,7 @@ EXEC dbo.delete_couriers 1;
 
 > **Note:** `WantToDeleteFromOrders` is a `BIT` parameter, which indicates whether the user wants to `DELETE` some of the records from `dbo.Orders` (like in the example above) **OR** `UPDATE` `dbo.Orders` by setting a new value to the `FOREIGN KEY` (`courierID` in the given example), which is linked to a specific table. `WantToDeleteFromOrders` is set to 1 (`DELETE`) by default. Also, if the user executes the delete procedure by setting the `WantToDeleteFromOrders` = 1, it will be executed in the same way as in 1. or 2. (depending on the validity of `OldID`).
 
-In this case, the procedure will `UPDATE` the records from `dbo.Orders` where the `FOREIGN KEY` (`courierID` in the given example), which is linked to a specific table, is equal to `OldID` and set that `FOREIGN KEY` to `NULL```
+In this case, the procedure will `UPDATE` the records from `dbo.Orders` where the `FOREIGN KEY` (`courierID` in the given example), which is linked to a specific table, is equal to `OldID` and set that `FOREIGN KEY` to `NULL`
 
 ```sql
 EXEC dbo.delete_couriers OldID, WantToDeleteFromOrders;
@@ -384,11 +384,11 @@ Example:
 EXEC dbo.delete_couriers 2, 0;
 ```
 
-#### 4. If the user enters `OldID`, `WantToDeleteFromOrders`, and a valid `NewID```
+#### 4. If the user enters `OldID`, `WantToDeleteFromOrders`, and a valid `NewID`
 
 > **Note:** `NewID` is the `ID` which the new value of the `FOREIGN KEY` (`courierID` in the given example) is set to. `NewID` is `NULL` by default. `NewID` is considered valid when a specific parent table (`dbo.Couriers` in the given example) which has `ID` equal to `NewID`. In all other cases `NewID` is invalid.
 
-In this case, the procedure will `UPDATE` the records from `dbo.Orders` where the `FOREIGN KEY` (`courierID` in the given example), which is linked to a specific table, is equal to `OldID` and set that `FOREIGN KEY` to `NewID```
+In this case, the procedure will `UPDATE` the records from `dbo.Orders` where the `FOREIGN KEY` (`courierID` in the given example), which is linked to a specific table, is equal to `OldID` and set that `FOREIGN KEY` to `NewID`
 
 ```sql
 EXEC dbo.delete_couriers OldID, WantToDeleteFromOrders, NewID;
@@ -400,9 +400,9 @@ Example:
 EXEC dbo.delete_couriers 3, 0, 4;
 ```
 
-#### 5. If the user enters `@OldID`, `@WantToDeleteFromOrders`, and an invalid `@NewID```
+#### 5. If the user enters `@OldID`, `@WantToDeleteFromOrders`, and an invalid `@NewID`
 
-In this case, the procedure will `UPDATE` the records from `dbo.Orders` where the `FOREIGN KEY` (`courierID` in the given example) that is linked to a specific table is equal to `@OldID` and set that `FOREIGN KEY` to `NULL```
+In this case, the procedure will `UPDATE` the records from `dbo.Orders` where the `FOREIGN KEY` (`courierID` in the given example) that is linked to a specific table is equal to `@OldID` and set that `FOREIGN KEY` to `NULL`
 
 ```sql
 EXEC dbo.delete_couriers OldID, WantToDeleteFromOrders, NewID;
@@ -546,7 +546,7 @@ EXEC dbo.usp_orders_profit_by_tos;
 
 #### 10. dbo.usp_name_phonenumber_category
 
-This procedure displays the names, phone numbers, and categories (client, dispatcher, courier) of all the people registered in `CouriersDB```
+This procedure displays the names, phone numbers, and categories (client, dispatcher, courier) of all the people registered in `CouriersDB`
 
 #### Syntax
 ```sql
@@ -563,7 +563,7 @@ The initial design of the table was done by a using a DB designer tool (https://
 
 >**Note:** We have altered the design of the table a bit after their initial creation mentioned above. We have added several `UNIQUE`, `IDENTITY`, and `NOT NULL` constraints.
 
-### Populating `CouriersDB```
+### Populating `CouriersDB`
 
 To populate the database we used SQLizer, an online tool which generates SQL code from an Excel spreadsheet. At first it was somewhat annoying to use but once we understood how to use it work flowed smoothly.
 
@@ -1120,7 +1120,7 @@ WHERE ID = @OldID;
 
 The type-1 delete procedures are writen in a way, which covers 5 different scenarios:
 
-#### 1. When the user enters an invalid `@OldID```
+#### 1. When the user enters an invalid `@OldID`
 
 ```sql
 IF NOT EXISTS (SELECT * FROM Couriers WHERE ID = @OldID)
@@ -1132,7 +1132,7 @@ END;
 
 The code snippet above checks whether there is a record in `dbo.Couriers` which has an `ID` = `@OldID` and if there isn't one, a 'No such courier exists' is printed. This is the second similarity between type-1 and type-2 delete procedures as in `dbo.delete_orders` (Type 2 delete procedure) there is a similar statement as the one above.
 
-#### 2. When the user enters a valid `@OldID```
+#### 2. When the user enters a valid `@OldID`
 
 ```sql
 IF (@WantToDeleteFromOrders = 1)
@@ -1144,7 +1144,7 @@ END;
 
 The code fragment above checks whether the user wants to delete the records from `dbo.Orders` where the `courierID` (a `FOREIGN KEY` linked to `dbo.Couriers`) is equal to `@OldID` (`@WantToDeleteFromOrders` = 1) **OR** `UPDATE` `dbo.Orders` by setting a new value to `courierID` (`@WantToDeleteFromOrders` = 0). `WantToDeleteFromOrders` is set to 1 (`DELETE`) by default. So, when the user enters only `@OldID`, the code bit above will be executed.
 
-#### 3. When the user enters `OldID`, `WantToDeleteFromOrders`, and a valid `NewID```
+#### 3. When the user enters `OldID`, `WantToDeleteFromOrders`, and a valid `NewID`
 
 ```sql
 ELSE IF EXISTS (SELECT * FROM Couriers WHERE ID = @NewID)
@@ -1184,7 +1184,42 @@ ELSE
 In the end, the project turned out well, even though there were some inconveniences and miscommunications. The team started off thinking it wouldn't take long to finish but it ended up taking the full two weeks we were given by higher-ups.
 
 ## Credits
-something, something, I'll update this
+
+### Contributors
+
+<a href="https://github.com/vesk4000/Couriers/graphs/contributors"> <img src="https://contrib.rocks/image?repo=vesk4000/Couriers" height="30" alt="Contributors"/> </a>
+
+@vesk4000:
+- Managing GitHub repository
+- SQL Compiler and associated windows batch file
+- Add procedures
+- Update procedures
+- Code reformating
+- README
+
+@icyDenev:
+- Database Design
+- Populating database with data
+- Delete procedures
+- Queries 6 - 10
+- README
+
+@GreenUncle: 
+- Database Design
+- Populating database with data
+- Queries 1 - 5
+- Big fixing
+- README
+
+### External tools and resources
+
+- [DBDesigner](https://dbdesigner.net)
+- [SQLizer](https://sqlizer.io)
+- [Glob](https://www.nuget.org/packages/Glob)
+- [dotnet-warp](https://www.nuget.org/packages/dotnet-warp)
+- [Check Number of Arguments in Windows Batch](https://stackoverflow.com/a/63233227/6431494)
+- [Download a file using Windows Batch](https://stackoverflow.com/a/47361106/6431494)
+
 
 [^1nf]: 1NF - First Normal Form
 
