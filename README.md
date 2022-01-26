@@ -2,6 +2,18 @@
 
 # 📦Couriers
 
+![Lines of code](https://img.shields.io/tokei/lines/github/vesk4000/Couriers?style=for-the-badge)
+
+
+<a href="https://github.com/vesk4000/Couriers/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=vesk4000/Couriers" height="40" alt="Computer Hope" />
+</a>
+
+
+width="200" 
+
+... Some text in here...
+
 
 
 [Overview](#project-structure)
