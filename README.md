@@ -2,32 +2,38 @@
 
 # 📦Couriers
 
+![MicrosoftSQLServer](https://img.shields.io/badge/-MICROSOFT%20SQL%20SEVER-green?style=for-the-badge&logo=microsoftsqlserver)
+![GitHub top language](https://img.shields.io/github/languages/top/vesk4000/Couriers?style=for-the-badge)
+![License](https://img.shields.io/github/license/vesk4000/Couriers?style=for-the-badge)
 ![Lines of code](https://img.shields.io/tokei/lines/github/vesk4000/Couriers?style=for-the-badge)
 
+<a href="https://github.com/vesk4000/Couriers/graphs/contributors"> <img src="https://contrib.rocks/image?repo=vesk4000/Couriers" height="30" alt="Contributors"/> </a>
 
-<a href="https://github.com/vesk4000/Couriers/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=vesk4000/Couriers" height="40" alt="Computer Hope" />
-</a>
+Manage delivery **orders**, **clients**, **couriers**, **recipients**, **addresses** and more.
 
+*A high school database project for **Microsoft SQL Server**, written in **Transact-SQL**.*
 
-width="200" 
-
-... Some text in here...
-
-
-
-[Overview](#project-structure)
+[Overview](#overview)
 •
-
+[Project Structure](#project-structure)
+•
+[Database Design](#database-design)
+•
+[Setup](#setup)
+•
+[Usage](#usage)
+•
+[Development](#development)
+•
+[Credits](#credits)
 
 </div>
 
 ## Overview
 
-The goal of the 'Couriers' project is to help a delivery company manage orders by utilizing an SQL database.
+The goal of **Couriers** is to help a hypothetical **delivery company** manage their operations by utilizing an **SQL database**. The database facilitates the storing and managing of **orders** and all of the information associated with that.
 
-The system has the ability to ```create```, ```read```, ```update```, and ```delete``` (CRUD) the data from tables which store information about orders, clients, dispatchers, couriers, etc.
-(more info can be found in the Database Design part of this documentation)
+All in all, the database has 7 tables - `Clients`, `Couriers`, `Dispatchers`, `Recipients`, `Addresses` and `TypesOfService`, which are each connected to the final table, called `Orders`. The database includes procedures that can **create**, **read**, **update**, and **delete** (**CRUD**[^crud]) data from any of the aformentioned tables.
 
 ## Project Structure
 
@@ -72,31 +78,31 @@ The system has the ability to ```create```, ```read```, ```update```, and ```del
  ┗ 📄README.md
 ```
 
-In order to facilitate for easier collaboration and overall code development, we split up all of the SQL code into many files. All of them are located in the ```source``` folder in the root of the repository. In there you will find the files grouped into the ```crud-procedures```, ```data```, ```private```, ```queries``` and ```schemas``` folders. All of those folders contain a number of ```.sql``` files, which themselves are all either a definition of a single procedure, function, table or database, or in the case of the files in the ```data``` folder - the ```INSERT``` queries used to populate the different tables with their respective data.
+In order to facilitate for easier collaboration and overall code development, we split up all of the SQL code into many files. All of them are located in the `source` folder in the root of the repository. In there you will find the files grouped into the `crud-procedures`, `data`, `private`, `queries` and `schemas` folders. All of those folders contain a number of `.sql` files, which themselves are all either a definition of a single procedure, function, table or database, or in the case of the files in the `data` folder - the `INSERT` queries used to populate the different tables with their respective data.
 
 Here's a brief description of what each of the folders contain:
 | Folder | Contains |
 |:---:|---|
-| ```source/crud‑procedures``` | CRUD[^crud] procedures, except for the Read part, so basically different procedures for every table, which can each ```Add```, ```Update``` or ```Delete``` any data within that table |
-| ```source/data``` | SQL queries which insert the original data from the Excel table (```couriers‑project_data.xlsx```) into the different tables of the database |
-| ```source/private``` | Procedures and functions which are not meant to be used by the end user, but rather by other procedures and functions in the database |
-| ```source/queries``` | Various procedures which read certain data from the database and display it to the user in different ways |
-| ```source/schemas``` | SQL queries which create each of the tables in the database and the database itself |
+| `source/crud‑procedures` | CRUD[^crud] procedures, except for the Read part, so basically different procedures for every table, which can each `Add`, `Update` or `Delete` any data within that table |
+| `source/data` | SQL queries which insert the original data from the Excel table (`couriers‑project_data.xlsx`) into the different tables of the database |
+| `source/private` | Procedures and functions which are not meant to be used by the end user, but rather by other procedures and functions in the database |
+| `source/queries` | Various procedures which read certain data from the database and display it to the user in different ways |
+| `source/schemas` | SQL queries which create each of the tables in the database and the database itself |
 
-The ```couriers‑project_data.xlsx``` Excel file, which is contained in the root directory of the repo, includes all of the original data for the database.
-> **Note:** The file is there only for completeness purposes. Changing it does not change the data in the database or what data the ```.sql``` files in the ```source/data``` folder insert into the database when executed. All of that data is hardcoded in those files.
+The `couriers‑project_data.xlsx` Excel file, which is contained in the root directory of the repo, includes all of the original data for the database.
+> **Note:** The file is there only for completeness purposes. Changing it does not change the data in the database or what data the `.sql` files in the `source/data` folder insert into the database when executed. All of that data is hardcoded in those files.
 
-The folder ```sql-compiler``` contains the source code and executable for a small SQL "compiler", written in C#. All it does is it takes all of the SQL files (in a certain order) and it combines them into a single SQL file. This makes it easy for both the developers and the end-user to execute all of the files at once and immediately have the database up and running, while at the same time allowing for the separation of the SQL code, which as we mentioned earlier facilities for more efficient development and code cleanliness. Another thing that the compiler does is that it creates a single file with all of the examples for each SQL file, which contains such examples. This makes it much easier for the end user to get to grips with the various things that they can do with the database, while also making it easier for developers to write examples as it allows them to do so within the actual file that they are working on at the moment.
+The folder `sql-compiler` contains the source code and executable for a small SQL "compiler", written in C#. All it does is it takes all of the SQL files (in a certain order) and it combines them into a single SQL file. This makes it easy for both the developers and the end-user to execute all of the files at once and immediately have the database up and running, while at the same time allowing for the separation of the SQL code, which as we mentioned earlier facilities for more efficient development and code cleanliness. Another thing that the compiler does is that it creates a single file with all of the examples for each SQL file, which contains such examples. This makes it much easier for the end user to get to grips with the various things that they can do with the database, while also making it easier for developers to write examples as it allows them to do so within the actual file that they are working on at the moment.
 
-To prevent clutter, the actual C# project for the compiler isn't a part of a Visual Studio Solution File (```.sln```) as it was created with the ```dotnet``` CLI tool which only requires a C# Project File (```sql-compiler.csproj```) and a C# Source File (```Program.cs```). The exe is a completely standalone executable that doesn't require the .NET runtime to work as it was created with the very useful .NET tool called [```dotnet-warp```](https://www.nuget.org/packages/dotnet-warp/).
+To prevent clutter, the actual C# project for the compiler isn't a part of a Visual Studio Solution File (`.sln`) as it was created with the `dotnet` CLI tool which only requires a C# Project File (`sql-compiler.csproj`) and a C# Source File (`Program.cs`). The exe is a completely standalone executable that doesn't require the .NET runtime to work as it was created with the very useful .NET tool called [`dotnet-warp`](https://www.nuget.org/packages/dotnet-warp/).
 
-To actually use the compiler you can pass arguments to it, but you can simply run the ```compile.bat``` file which will run the compiler with some default arguments. You can configure those arguments within the file and also you can configure which SQL files are compiled and in what order that is done, as that may be important depending on the files (e.g. you'd want the tables to be created, before you create the database). That particular thing is actually not passed to the compiler as an argument, but rather the ```compile.bat``` file passes itself as an argument and the compiler reads a comment within the ```.bat``` file which contains the names and relative paths of the files which are to be compiled (you can also use glob style wildcards such as `*` and `**`, just like in a `.gitignore` file thanks to the very useful .NET NuGet package [```Glob```](https://www.nuget.org/packages/Glob/1.2.0-alpha0037)).
+To actually use the compiler you can pass arguments to it, but you can simply run the `compile.bat` file which will run the compiler with some default arguments. You can configure those arguments within the file and also you can configure which SQL files are compiled and in what order that is done, as that may be important depending on the files (e.g. you'd want the tables to be created, before you create the database). That particular thing is actually not passed to the compiler as an argument, but rather the `compile.bat` file passes itself as an argument and the compiler reads a comment within the `.bat` file which contains the names and relative paths of the files which are to be compiled (you can also use glob style wildcards such as `*` and `**`, just like in a `.gitignore` file thanks to the very useful .NET NuGet package [`Glob`](https://www.nuget.org/packages/Glob/1.2.0-alpha0037)).
 
-By default, the compiler generates 2 SQL files with the names `couriers.sql` and `example.sql` in the root directory of the repository. However, they are included in the `.gitignore` of the repo as to not cause any merge conflicts. The ```couriers.sql``` contains all of the code from all of the ```.sql``` files in the ```source``` directory. You can run the whole file at once to generete the whole database with all of its tables, data and features. The ```examlpes.sql``` is just a file with examples to all of the different features of the database.
+By default, the compiler generates 2 SQL files with the names `couriers.sql` and `example.sql` in the root directory of the repository. However, they are included in the `.gitignore` of the repo as to not cause any merge conflicts. The `couriers.sql` contains all of the code from all of the `.sql` files in the `source` directory. You can run the whole file at once to generete the whole database with all of its tables, data and features. The `examlpes.sql` is just a file with examples to all of the different features of the database.
 
 ## Database Design
 
-We designed the schema of our database ```CouriersDB``` by transforming a table in 1NF[^1nf] into 7 tables that meet the 3NF[^3nf] standards.
+We designed the schema of our database `CouriersDB` by transforming a table in 1NF[^1nf] into 7 tables that meet the 3NF[^3nf] standards.
 
 This is the given 1FN table with some sample data:
 
@@ -107,7 +113,7 @@ This is the given 1FN table with some sample data:
 | 3                | 9/9/2021        | Колю Колев       | 0888987555         | Джим Шон       | 0888555222       | Колетна пратка над 2 до 5 кг | 6.72 лв. | Мони Иванова  | 0876555222       | ул. Вардар 8              | Шон Джим         | 15.9.2021 г.     |
 | 4                | 9/14/2021       | Маша Малишкина   | 0881122678         | Галин Христов  | 0888555111       | Колетна пратка над 2 до 5 кг | 6.72 лв. | Димана Донева | 0876555555       | ул. Бук 18                | Христо Галев     | 17.9.2021 г.     |
 
-The ```CouriersDB```, which consists of 7 3NF tables has the following schema:
+The `CouriersDB`, which consists of 7 3NF tables has the following schema:
 
 ![Schema Image](https://github.com/vesk4000/Couriers/blob/8729967a3a62f26637ac1a758e3ba623d23d96cb/schema-screenshot.png)
 
@@ -130,15 +136,15 @@ CREATE TABLE Orders (
 
 | Column Name | Data Type | Descriprtion |
 | ---------------- | --------------- | ----------- |
-| ID | INT | The identification number (```PRIMARY KEY```) |
+| ID | INT | The identification number (`PRIMARY KEY`) |
 | OrderDate | DATE | The date of the registration of the order |
 | ReceiveDate | DATE | The date of the delivery of the order |
-| AddressID | INT | The identification number of the Address, where the order has to be delivered to (```FOREIGN KEY``` linked to the ```ID``` of (```dbo.Addresses```) |
-| TypeID | INT | The identification number of the type of service of the order (```FOREIGN KEY``` linked to the ```ID``` of ```dbo.TypesOfService```) |
-| DispatcherID | INT | The identification number of the dispatcher, who works on the coordination of the order (```FOREIGN KEY``` linked to the ```ID``` of ```dbo.Dispatchers```) |
-| ClientID | INT | The identification number of the client, who has made the order (``````FOREIGN KEY`````` linked to the ```ID``` of ```dbo.Clients```) |
-| CourierID | INT | The identification number of the type of service of the courier, who has to deliver the order (```FOREIGN KEY``` linked to the ```ID``` of ```dbo.Couriers```) |
-| RecipientID | INT | The identification number of the recipient, who has to receive the order (```FOREIGN KEY``` linked to the ```ID``` of ```dbo.Recipients```) |
+| AddressID | INT | The identification number of the Address, where the order has to be delivered to (`FOREIGN KEY` linked to the `ID` of (`dbo.Addresses`) |
+| TypeID | INT | The identification number of the type of service of the order (`FOREIGN KEY` linked to the `ID` of `dbo.TypesOfService`) |
+| DispatcherID | INT | The identification number of the dispatcher, who works on the coordination of the order (`FOREIGN KEY` linked to the `ID` of `dbo.Dispatchers`) |
+| ClientID | INT | The identification number of the client, who has made the order (``FOREIGN KEY`` linked to the `ID` of `dbo.Clients`) |
+| CourierID | INT | The identification number of the type of service of the courier, who has to deliver the order (`FOREIGN KEY` linked to the `ID` of `dbo.Couriers`) |
+| RecipientID | INT | The identification number of the recipient, who has to receive the order (`FOREIGN KEY` linked to the `ID` of `dbo.Recipients`) |
 
 ### **dbo.Clients**
 
@@ -151,11 +157,11 @@ CREATE TABLE Clients (
 )
 ```
 
-> **Note:** The ```Name``` and ```PhoneNumber``` columns are combined into a composite ```unique``` key to ensure that there are not any duplicate records when inserting values into ```dbo.Clients```
+> **Note:** The `Name` and `PhoneNumber` columns are combined into a composite `unique` key to ensure that there are not any duplicate records when inserting values into `dbo.Clients```
 
 | Column Name | Data Type | Descriprtion |
 | ---------------- | --------------- | ----------- |
-| ID | INT | The identification number (```PRIMARY KEY```) |
+| ID | INT | The identification number (`PRIMARY KEY`) |
 | Name | VARCHAR(50) | The name of the client |
 | PhoneNumber | VARCHAR(10) | The phone number of the client |
 
@@ -170,11 +176,11 @@ CREATE TABLE Dispatchers (
 )
 ```
 
-> **Note:** The ```Name``` and ```PhoneNumber``` columns are combined into a composite ```unique``` key to ensure that there are not any duplicate records when inserting values into ```dbo.Dispatchers```
+> **Note:** The `Name` and `PhoneNumber` columns are combined into a composite `unique` key to ensure that there are not any duplicate records when inserting values into `dbo.Dispatchers```
 
 | Column Name | Data Type | Descriprtion |
 | ---------------- | --------------- | ----------- |
-| ID | INT | The identification number (```PRIMARY KEY```) |
+| ID | INT | The identification number (`PRIMARY KEY`) |
 | Name | VARCHAR(50) | The name of the dispatcher |
 | PhoneNumber | VARCHAR(10) | The phone number of the dispatcher |
 
@@ -189,11 +195,11 @@ CREATE TABLE Couriers (
 )
 ```
 
-> **Note:** The ```Name``` and ```PhoneNumber``` columns are combined into a composite ```unique``` key to ensure that there are not any duplicate records when inserting values into ```dbo.Couriers```
+> **Note:** The `Name` and `PhoneNumber` columns are combined into a composite `unique` key to ensure that there are not any duplicate records when inserting values into `dbo.Couriers```
 
 | Column Name | Data Type | Descriprtion |
 | ---------------- | --------------- | ----------- |
-| ID | INT | The identification number (```PRIMARY KEY```) |
+| ID | INT | The identification number (`PRIMARY KEY`) |
 | Name | VARCHAR(50) | The name of the courier |
 | PhoneNumber | VARCHAR(10) | The phone number of the courier |
 
@@ -208,7 +214,7 @@ CREATE TABLE Recipients (
 
 | Column Name | Data Type | Descriprtion |
 | ---------------- | --------------- | ----------- |
-| ID | INT | The identification number (```PRIMARY KEY```) |
+| ID | INT | The identification number (`PRIMARY KEY`) |
 | Name | VARCHAR(50) | The name of the recipient |
 
 ### **dbo.Addresses**
@@ -222,7 +228,7 @@ CREATE TABLE Addresses (
 
 | Column Name | Data Type | Descriprtion |
 | ---------------- | --------------- | ----------- |
-| ID | INT | The identification number (```PRIMARY KEY```) |
+| ID | INT | The identification number (`PRIMARY KEY`) |
 | Address | VARCHAR(50) | The details (street, number, etc.) of the address |
 
 ### **dbo.TypesOfService**
@@ -236,7 +242,7 @@ CREATE TABLE TypesOfService (
 
 | Column Name | Data Type | Descriprtion |
 | ---------------- | --------------- | ----------- |
-| ID | INT | The identification number (```PRIMARY KEY```) |
+| ID | INT | The identification number (`PRIMARY KEY`) |
 | Type | VARCHAR(50) | The type of the service that needs to be performed |
 
 
@@ -248,16 +254,16 @@ CREATE TABLE TypesOfService (
 
 Depending on whether you want to simply generate the database and use its features or develop the database and its features further, you can go one of two ways:
 
-1. Download the ```couriers.sql``` and ```examples.sql``` files from the [Release](https://github.com/vesk4000/Couriers/releases/tag/release) if you simply want to use the database and its features.
-2. Clone or download this repository (click on the green ```Code``` button at the top of this page) if you are interested in the entire source code as it is organized for development.
+1. Download the `couriers.sql` and `examples.sql` files from the [Release](https://github.com/vesk4000/Couriers/releases/tag/release) if you simply want to use the database and its features.
+2. Clone or download this repository (click on the green `Code` button at the top of this page) if you are interested in the entire source code as it is organized for development.
 
 ### Compile the SQL Files
 
 > **Note:** If you chose to just download the SQL files from the [Release](https://github.com/vesk4000/Couriers/releases/tag/release) as the 1st method stated you can skip this step.
 
-Run the ```compile.bat``` file and you should see two new files generated in the root directory of the project - ```couriers.sql``` and ```examples.sql```.
+Run the `compile.bat` file and you should see two new files generated in the root directory of the project - `couriers.sql` and `examples.sql`.
 
-Alternatively, you can run the ```sql-compiler/sql-compiler.exe``` executable with certain arguments. You can find arguments that are used to execute the executable in the ```compile.bat``` file. You can of course edit the file edit the ```.bat``` file or create your own in order to make the compiler suit your needs.
+Alternatively, you can run the `sql-compiler/sql-compiler.exe` executable with certain arguments. You can find arguments that are used to execute the executable in the `compile.bat` file. You can of course edit the file edit the `.bat` file or create your own in order to make the compiler suit your needs.
 
 > **Note:** You can find much more about compiling the SQL files in the [Project Structure section](#project-structure).
 
@@ -265,17 +271,17 @@ Alternatively, you can run the ```sql-compiler/sql-compiler.exe``` executable wi
 
 ### Generate the Database
 
-To generate the database and all of its components by simply executing the ```couriers.sql``` file all at once on a Microsoft SQL Server.
+To generate the database and all of its components by simply executing the `couriers.sql` file all at once on a Microsoft SQL Server.
 
-> **Note:** The ```examples.sql``` file is optional. All it includes are examples for the various functions and procedures that the database has.
+> **Note:** The `examples.sql` file is optional. All it includes are examples for the various functions and procedures that the database has.
 
-## Manual
+## Usage
 
 *Now that you have the database up and running this section will showcase all of the different features that the database has and how to use them.*
 
 ### Add
 
-Add an entry into any of the tables in the database using one of the seven ```Add``` procedures (```udp_AddAddress```, ```udp_AddCourier```, ```udp_AddRecipient```, ```udp_AddDispatcher```, ```udp_AddClient```, ```udp_AddTypeOfService```). Each of them have different parameters depending on the table. You might get an error message if you try to create an entry which already exists in the specific table or if you pass invalid parameters to the procedure. If successful, the procedure will print out the ```ID``` of the newly created entry.
+Add an entry into any of the tables in the database using one of the seven `Add` procedures (`udp_AddAddress`, `udp_AddCourier`, `udp_AddRecipient`, `udp_AddDispatcher`, `udp_AddClient`, `udp_AddTypeOfService`). Each of them have different parameters depending on the table. You might get an error message if you try to create an entry which already exists in the specific table or if you pass invalid parameters to the procedure. If successful, the procedure will print out the `ID` of the newly created entry.
 
 #### Syntax
 
@@ -300,7 +306,7 @@ exec udp_AddOrder '01-25-2022', '01-30-2022', 5000, 5, 2, 4, 1, 2, 3
 
 ### Update
 
-Update an entry from any of the tables in the database using one of the seven ```Update``` procedures (```udp_AddAddress```, ```udp_AddCourier```, ```udp_AddRecipient```, ```udp_AddDispatcher```, ```udp_AddClient```, ```udp_AddTypeOfService```). All you have to do is pass on the ```ID``` of the entry that you are trying to update and the values that you want to update. If you leave any of the parameters ```NULL```, those values will simply not be updated. If you enter an invalid ```ID``` or any other invalid value, you may receive an error message.
+Update an entry from any of the tables in the database using one of the seven `Update` procedures (`udp_AddAddress`, `udp_AddCourier`, `udp_AddRecipient`, `udp_AddDispatcher`, `udp_AddClient`, `udp_AddTypeOfService`). All you have to do is pass on the `ID` of the entry that you are trying to update and the values that you want to update. If you leave any of the parameters `NULL`, those values will simply not be updated. If you enter an invalid `ID` or any other invalid value, you may receive an error message.
 
 #### Syntax
 
@@ -326,17 +332,17 @@ exec udp_UpdateOrder 3, @ReceiveDate = '01-31-2022', @TypeID = 2
 
 ### Delete (Parent Tables)
 
-```CouriersDB``` has 6 parent tables (```dbo.Clients```, ```dbo.Dispatchers```, ```dbo.Couriers```, ```dbo.Recipients```, ```dbo.Addresses```, and ```dbo.TypesOfService```).
+`CouriersDB` has 6 parent tables (`dbo.Clients`, `dbo.Dispatchers`, `dbo.Couriers`, `dbo.Recipients`, `dbo.Addresses`, and `dbo.TypesOfService`).
 
-> **Note:** The following examples are part of the **delete procedure** ```dbo.delete_couriers```. Given that all delete procedures for the parent tables almost completely overlap, it is unnecessary to show all 6 of them here.
+> **Note:** The following examples are part of the **delete procedure** `dbo.delete_couriers`. Given that all delete procedures for the parent tables almost completely overlap, it is unnecessary to show all 6 of them here.
 
-For each one of those parent tables there is a **delete procedure** (```dbo.delete_couriers```, ```dbo.delete_clients```, ```dbo.delete_dispatchers```, ```dbo.delete_recipients```, ```dbo.delete_addresses```, ```dbo.delete_types```) which deletes the records from a specific **parent table** by a given ```OldID``` (unless ```OldID``` is invalid, which is a case discussed below).
+For each one of those parent tables there is a **delete procedure** (`dbo.delete_couriers`, `dbo.delete_clients`, `dbo.delete_dispatchers`, `dbo.delete_recipients`, `dbo.delete_addresses`, `dbo.delete_types`) which deletes the records from a specific **parent table** by a given `OldID` (unless `OldID` is invalid, which is a case discussed below).
 
 In addition to the deletion mentioned above and based on the entered parameters, the type-1 delete procedures can be executed in 5 different ways.
 
-#### 1. If the user enters an invalid ```OldID```
+#### 1. If the user enters an invalid `OldID```
 
-In this case, the procedure will ```PRINT``` a message which says: 'No such [some object] exists', and the procedure will exit without making any alterations to any of the tables of ```CouriersDB```
+In this case, the procedure will `PRINT` a message which says: 'No such [some object] exists', and the procedure will exit without making any alterations to any of the tables of `CouriersDB```
 
 ```sql
 EXEC dbo.delete_couriers OldID;
@@ -348,9 +354,9 @@ Example:
 EXEC dbo.delete_couriers -1;
 ```
 
-#### 2. If the user enters only a valid ```OldID```
+#### 2. If the user enters only a valid `OldID```
 
-In this case, the procedure will ```DELETE``` the records from ```dbo.Orders``` where the ```FOREIGN KEY``` (```courierID``` in the given example), which is linked to a specific table, is equal to ```OldID```
+In this case, the procedure will `DELETE` the records from `dbo.Orders` where the `FOREIGN KEY` (`courierID` in the given example), which is linked to a specific table, is equal to `OldID```
 
 ```sql
 EXEC dbo.delete_couriers OldID;
@@ -362,11 +368,11 @@ Example:
 EXEC dbo.delete_couriers 1;
 ```
 
-#### 3. If the user enters ```OldID``` and ```WantToDeleteFromOrders``` = 0**
+#### 3. If the user enters `OldID` and `WantToDeleteFromOrders` = 0**
 
-> **Note:** ```WantToDeleteFromOrders``` is a ```BIT``` parameter, which indicates whether the user wants to ```DELETE``` some of the records from ```dbo.Orders``` (like in the example above) **OR** ```UPDATE``` ```dbo.Orders``` by setting a new value to the ```FOREIGN KEY``` (```courierID``` in the given example), which is linked to a specific table. ```WantToDeleteFromOrders``` is set to 1 (```DELETE```) by default. Also, if the user executes the delete procedure by setting the ```WantToDeleteFromOrders``` = 1, it will be executed in the same way as in 1. or 2. (depending on the validity of ```OldID```).
+> **Note:** `WantToDeleteFromOrders` is a `BIT` parameter, which indicates whether the user wants to `DELETE` some of the records from `dbo.Orders` (like in the example above) **OR** `UPDATE` `dbo.Orders` by setting a new value to the `FOREIGN KEY` (`courierID` in the given example), which is linked to a specific table. `WantToDeleteFromOrders` is set to 1 (`DELETE`) by default. Also, if the user executes the delete procedure by setting the `WantToDeleteFromOrders` = 1, it will be executed in the same way as in 1. or 2. (depending on the validity of `OldID`).
 
-In this case, the procedure will ```UPDATE``` the records from ```dbo.Orders``` where the ```FOREIGN KEY``` (```courierID``` in the given example), which is linked to a specific table, is equal to ```OldID``` and set that ```FOREIGN KEY``` to ```NULL```
+In this case, the procedure will `UPDATE` the records from `dbo.Orders` where the `FOREIGN KEY` (`courierID` in the given example), which is linked to a specific table, is equal to `OldID` and set that `FOREIGN KEY` to `NULL```
 
 ```sql
 EXEC dbo.delete_couriers OldID, WantToDeleteFromOrders;
@@ -378,25 +384,11 @@ Example:
 EXEC dbo.delete_couriers 2, 0;
 ```
 
-#### 4. If the user enters ```OldID```, ```WantToDeleteFromOrders```, and a valid ```NewID```
+#### 4. If the user enters `OldID`, `WantToDeleteFromOrders`, and a valid `NewID```
 
-> **Note:** ```NewID``` is the ```ID``` which the new value of the ```FOREIGN KEY``` (```courierID``` in the given example) is set to. ```NewID``` is ```NULL``` by default. ```NewID``` is considered valid when a specific parent table (```dbo.Couriers``` in the given example) which has ```ID``` equal to ```NewID```. In all other cases ```NewID``` is invalid.
+> **Note:** `NewID` is the `ID` which the new value of the `FOREIGN KEY` (`courierID` in the given example) is set to. `NewID` is `NULL` by default. `NewID` is considered valid when a specific parent table (`dbo.Couriers` in the given example) which has `ID` equal to `NewID`. In all other cases `NewID` is invalid.
 
-In this case, the procedure will ```UPDATE``` the records from ```dbo.Orders``` where the ```FOREIGN KEY``` (```courierID``` in the given example), which is linked to a specific table, is equal to ```OldID``` and set that ```FOREIGN KEY``` to ```NewID```
-
-```sql
-EXEC dbo.delete_couriers OldID, WantToDeleteFromOrders, NewID;
-```
-
-Example:
-
-```sql
-EXEC dbo.delete_couriers 3, 0, 4;
-```
-
-#### 5. If the user enters ```@OldID```, ```@WantToDeleteFromOrders```, and an invalid ```@NewID```
-
-In this case, the procedure will ```UPDATE``` the records from ```dbo.Orders``` where the ```FOREIGN KEY``` (```courierID``` in the given example) that is linked to a specific table is equal to ```@OldID``` and set that ```FOREIGN KEY``` to ```NULL```
+In this case, the procedure will `UPDATE` the records from `dbo.Orders` where the `FOREIGN KEY` (`courierID` in the given example), which is linked to a specific table, is equal to `OldID` and set that `FOREIGN KEY` to `NewID```
 
 ```sql
 EXEC dbo.delete_couriers OldID, WantToDeleteFromOrders, NewID;
@@ -408,9 +400,23 @@ Example:
 EXEC dbo.delete_couriers 3, 0, 4;
 ```
 
-### Delete (```dbo.Orders```)
+#### 5. If the user enters `@OldID`, `@WantToDeleteFromOrders`, and an invalid `@NewID```
 
-The delete procedure ```dbo.delete_orders``` deletes a record from ```dbo.Orders``` by a given ```OldID``` (unless the given ```OldID``` is invalid; in this case, the procedure will ```PRINT``` a 'No such order exists' message and exit without making any alterations to ```dbo.Orders```)
+In this case, the procedure will `UPDATE` the records from `dbo.Orders` where the `FOREIGN KEY` (`courierID` in the given example) that is linked to a specific table is equal to `@OldID` and set that `FOREIGN KEY` to `NULL```
+
+```sql
+EXEC dbo.delete_couriers OldID, WantToDeleteFromOrders, NewID;
+```
+
+Example:
+
+```sql
+EXEC dbo.delete_couriers 3, 0, 4;
+```
+
+### Delete (`dbo.Orders`)
+
+The delete procedure `dbo.delete_orders` deletes a record from `dbo.Orders` by a given `OldID` (unless the given `OldID` is invalid; in this case, the procedure will `PRINT` a 'No such order exists' message and exit without making any alterations to `dbo.Orders`)
 
 ```sql
 EXEC dbo.delete_orders OldID;
@@ -426,7 +432,7 @@ EXEC dbo.delete_orders 1;
 
 #### 1. usp_CheckClientPartOfNameOrPhone
 
-This procedure displays a client's ```Name``` and ```PhoneNumber``` via searching by part of ```Name``` or ```PhoneNumber``` (columns in ```dbo.Clients```)
+This procedure displays a client's `Name` and `PhoneNumber` via searching by part of `Name` or `PhoneNumber` (columns in `dbo.Clients`)
 
 #### Syntax
 ```sql
@@ -441,7 +447,7 @@ EXEC usp_CheckClientPartOfNameOrPhone '0888';
 
 #### 2. usp_CheckByDispNameOrDateOfDelivery
 
-This procedure displays all orders of a specific dispatcher by ```Name``` (column in ```dbo.Dispatchers```) or on a certain ```ReceiveDate``` (column in ```dbo.Order```)
+This procedure displays all orders of a specific dispatcher by `Name` (column in `dbo.Dispatchers`) or on a certain `ReceiveDate` (column in `dbo.Order`)
 
 #### Syntax
 ```sql
@@ -456,7 +462,7 @@ EXEC usp_CheckByDispNameOrDateOfDelivery 'Асен Донев';
 
 #### 3. usp_TotalOfOrdersByClient
 
-This procedure displays the ```Total``` (column in ```dbo.Order```) of all orders by a specific customer
+This procedure displays the `Total` (column in `dbo.Order`) of all orders by a specific customer
 
 #### Syntax
 ```sql
@@ -470,7 +476,7 @@ EXEC usp_TotalOfOrdersByClient 'Нено Ненов';
 
 #### 4. usp_OrdersByDateOfOrder
 
-This procedure displays all orders made on a specific ```OrderDate``` (column in ```dbo.Order```)
+This procedure displays all orders made on a specific `OrderDate` (column in `dbo.Order`)
 
 #### Syntax
 ```sql
@@ -484,7 +490,7 @@ EXEC usp_OrdersByDateOfOrder '8/16/2021';
 
 #### 5. usp_PackagesByCourier
 
-This procedure displays all orders of a specific courier by ```Name``` (column in ```dbo.Courier```)
+This procedure displays all orders of a specific courier by `Name` (column in `dbo.Courier`)
 
 #### Syntax
 ```sql
@@ -498,7 +504,7 @@ EXEC usp_PackagesByCourier 'Камен Каменов';
 
 #### 6. dbo.usp_dates_with_most_delivered_orders
 
-This procedure displays the date(s) with most orders grouped by ```ReceiveDate``` (column in ```dbo.Orders```)
+This procedure displays the date(s) with most orders grouped by `ReceiveDate` (column in `dbo.Orders`)
 
 #### Syntax
 ```sql
@@ -507,7 +513,7 @@ EXEC dbo.usp_dates_with_most_delivered_orders;
 
 #### 7. usp_names_of_recipients_by_order_count
 
-This procedure displays the names of all the recipients who have received more orders than [some ```INTEGER``` value]
+This procedure displays the names of all the recipients who have received more orders than [some `INTEGER` value]
 
 #### Syntax
 ```sql
@@ -522,7 +528,7 @@ EXEC dbo.usp_names_of_recipients_by_order_count 2;
 
 #### 8. dbo.usp_orders_count_by_order_date
 
-This procedure displays the count of all the orders grouped by ```OrderDate``` (column in ```dbo.Order```)
+This procedure displays the count of all the orders grouped by `OrderDate` (column in `dbo.Order`)
 
 #### Syntax
 ```sql
@@ -531,7 +537,7 @@ EXEC dbo.usp_orders_count_by_order_date;
 
 #### 9. dbo.usp_orders_profit_by_tos
 
-This procedure displays the profit of all the orders grouped by ```Type```[^type] (column in ```dbo.TypesOfService```)
+This procedure displays the profit of all the orders grouped by `Type`[^type] (column in `dbo.TypesOfService`)
 
 #### Syntax
 ```sql
@@ -540,7 +546,7 @@ EXEC dbo.usp_orders_profit_by_tos;
 
 #### 10. dbo.usp_name_phonenumber_category
 
-This procedure displays the names, phone numbers, and categories (client, dispatcher, courier) of all the people registered in ```CouriersDB```
+This procedure displays the names, phone numbers, and categories (client, dispatcher, courier) of all the people registered in `CouriersDB```
 
 #### Syntax
 ```sql
@@ -555,17 +561,17 @@ EXEC dbo.usp_name_phonenumber_category;
 
 The initial design of the table was done by a using a DB designer tool (https://www.dbdesigner.net/). Om that platform the tables have been created and the relations and the other constraints have been set. Then, a MSSQL code was generated and exported.
 
->**Note:** We have altered the design of the table a bit after their initial creation mentioned above. We have added several ```UNIQUE```, ```IDENTITY```, and ```NOT NULL``` constraints.
+>**Note:** We have altered the design of the table a bit after their initial creation mentioned above. We have added several `UNIQUE`, `IDENTITY`, and `NOT NULL` constraints.
 
-### Populating ```CouriersDB```
+### Populating `CouriersDB```
 
 To populate the database we used SQLizer, an online tool which generates SQL code from an Excel spreadsheet. At first it was somewhat annoying to use but once we understood how to use it work flowed smoothly.
 
-In order to populate ```CouriersDB``` we had to split the data from the initial 1NF[^1nf] table into several small ones. Then, as we said, in order to ```INSERT``` the data into the **database** we used a tool (sqlizer.io), which transforms .xlsx/.xls tables sheets into ```INSERT INTO``` statements.
+In order to populate `CouriersDB` we had to split the data from the initial 1NF[^1nf] table into several small ones. Then, as we said, in order to `INSERT` the data into the **database** we used a tool (sqlizer.io), which transforms .xlsx/.xls tables sheets into `INSERT INTO` statements.
 
 >**Note:** Due to the fact that **sqlizer** had issues converting .xls sheets into MSSQL statements, we had to convert them into MySQL ones and then alter the code in order to be usable in our MSSQL database.
 
-After the export of those ```INSERT INTO``` statements we had to insert that data into our tables, but due to the necessity of formating that data we had to ```CREATE``` temporary tables, ```INSERT``` the mentioned above data into them and then reinsert that data with some minor changes into the specific tables (```dbo.Orders```, ```dbo.Clients```, ```dbo.Dispatchers```, ```dbo.Couriers```, ```dbo.Recipients```, ```dbo.Addresses```, and ```dbo.TypesOfService```).
+After the export of those `INSERT INTO` statements we had to insert that data into our tables, but due to the necessity of formating that data we had to `CREATE` temporary tables, `INSERT` the mentioned above data into them and then reinsert that data with some minor changes into the specific tables (`dbo.Orders`, `dbo.Clients`, `dbo.Dispatchers`, `dbo.Couriers`, `dbo.Recipients`, `dbo.Addresses`, and `dbo.TypesOfService`).
 
 ### Git
 
@@ -573,11 +579,11 @@ In hindsight using Git was definitely not a time save. But considering that Git 
 
 ### SQL Compiler
 
-Originally I thought that I'd just make the compiler as a Windows Batch File (```*.bat```). Once I started though I realized just how much of a hacky language that was and honestly it was practically impossible to work with, considering that it is not really much of a language. So I, in my opinion correctly, decided to make a small C# program that would do the job of a compiler. Unfortunately that meant that we had to include an binary executable in the repository which is never ideal, but it was our best option, since we didn't have a good environment for compiling C# code on all machines. This was also the reason that I made the executable completely standalone from the .NET framework.
+Originally I thought that I'd just make the compiler as a Windows Batch File (`*.bat`). Once I started though I realized just how much of a hacky language that was and honestly it was practically impossible to work with, considering that it is not really much of a language. So I, in my opinion correctly, decided to make a small C# program that would do the job of a compiler. Unfortunately that meant that we had to include an binary executable in the repository which is never ideal, but it was our best option, since we didn't have a good environment for compiling C# code on all machines. This was also the reason that I made the executable completely standalone from the .NET framework.
 
 ### Add Procedures
 
-The procedures which add entries in the various tables of the database are pretty simple. For most of the tables all we check for are whether the entry already exists and for the ones that have a phone number we check if the phone number if valid. For the procedure which adds entries into the ```Orders``` table we also check if the IDs which were provided exist in the respective tables.
+The procedures which add entries in the various tables of the database are pretty simple. For most of the tables all we check for are whether the entry already exists and for the ones that have a phone number we check if the phone number if valid. For the procedure which adds entries into the `Orders` table we also check if the IDs which were provided exist in the respective tables.
 
 ```sql
 create or alter proc udp_AddClient
@@ -709,7 +715,7 @@ go
 
 ### Update Procedures
 
-The procedures which update entries in the various tables of the database are also quite simple. For all of the tables we of course check if the entry with the given ```ID``` exists. The we check each parameter and if it's not ```NULL``` then we update the respective value of the given entry with that parameter.
+The procedures which update entries in the various tables of the database are also quite simple. For all of the tables we of course check if the entry with the given `ID` exists. The we check each parameter and if it's not `NULL` then we update the respective value of the given entry with that parameter.
 
 ```sql
 create or alter proc udp_UpdateClient
@@ -767,7 +773,7 @@ begin
 end
 ```
 
-This procedure uses the predefined function ```dbo._udf_CheckPhoneNumber``` which checks if the input string is a valid phone number. Then a ```SELECT``` statement displays the output.
+This procedure uses the predefined function `dbo._udf_CheckPhoneNumber` which checks if the input string is a valid phone number. Then a `SELECT` statement displays the output.
 
 #### **dbo.usp_CheckByDispNameOrDateOfDelivery**
 ```sql
@@ -861,7 +867,7 @@ begin
 end
 ```
 
-This procedure checks if the input is a date to determine which mode it should use. Then a ```SELECT``` statement displays the output using mass ```INNER JOIN```.
+This procedure checks if the input is a date to determine which mode it should use. Then a `SELECT` statement displays the output using mass `INNER JOIN`.
 
 #### **dbo.usp_TotalOfOrdersByClient**
 ```sql
@@ -879,7 +885,7 @@ begin
 end
 ```
 
-This procedure uses a simple ```SELECT``` statement to display the output.
+This procedure uses a simple `SELECT` statement to display the output.
 
 #### **dbo.usp_OrdersByDateOfOrder**
 ```sql
@@ -930,7 +936,7 @@ begin
 end
 ```
 
-This procedure checks if the input is a valid date then uses a ```SELECT``` statement to display the output using mass ```INNER JOIN```.
+This procedure checks if the input is a valid date then uses a `SELECT` statement to display the output using mass `INNER JOIN`.
 
 #### **dbo.usp_PackagesByCourier**
 ```sql
@@ -978,7 +984,7 @@ begin
 end
 ```
 
-This procedure uses a ```SELECT``` statement to display the output using mass ```INNER JOIN```.
+This procedure uses a `SELECT` statement to display the output using mass `INNER JOIN`.
 
 ### dbo.usp_dates_with_most_delivered_orders
 >>>>>>> d21a908e06e935c62d548a9f153eaba91155cdcd
@@ -1000,9 +1006,9 @@ BEGIN
 END
 ```
 
-The first ```SELECT``` statement inside ```usp_dates_with_most_delivered_orders``` creates a temporary table (```dbo.TempOrders```) and inserts into that table the ```COUNT``` of all orders grouped by ```ReceiveDate```.
+The first `SELECT` statement inside `usp_dates_with_most_delivered_orders` creates a temporary table (`dbo.TempOrders`) and inserts into that table the `COUNT` of all orders grouped by `ReceiveDate`.
 
-The second ```SELECT``` statement displays the ```COUNT``` of the dates(s), during which most orders were received, as well as the ```ReceiveDate``` themselves. This happens by grouping the records by ```ReceiveDate```. Then, only those records, which have ```COUNT(*)``` greater or equal to all the other records, are shown. Using ```>= ALL``` guarantees that only those date(s), which has/have the largest ```COUNT(*)```, are being shown.
+The second `SELECT` statement displays the `COUNT` of the dates(s), during which most orders were received, as well as the `ReceiveDate` themselves. This happens by grouping the records by `ReceiveDate`. Then, only those records, which have `COUNT(*)` greater or equal to all the other records, are shown. Using `>= ALL` guarantees that only those date(s), which has/have the largest `COUNT(*)`, are being shown.
 
 ### Encountered problems
 
@@ -1019,9 +1025,9 @@ SELECT ReceiveDate, COUNT(*) as [Count of delivered orders]
 		GROUP BY ReceiveDate)
 ```
 
-> **Note:** Yes, the "```WHERE o1.ReceiveDate <> o2.ReceiveDate```" is completely redundant :D
+> **Note:** Yes, the "`WHERE o1.ReceiveDate <> o2.ReceiveDate`" is completely redundant :D
 
-However, this code was highly inefficient due to the fact that the subquery groups the record of ```dbo.Orders``` by ```ReceiveDate``` a lot of times, which is time consuming. That is why we changed the approach and added a temporary table (```dbo.TempOrders```), which stores the ```COUNT``` of all the orders grouped by ```ReceiveDate```. This increases the used memory, but significantly reduces the time of the execution of the procedure (this might not be noted when having a small database such as ```CouriersDB```, but the difference will be apparent when working with a lot of data).
+However, this code was highly inefficient due to the fact that the subquery groups the record of `dbo.Orders` by `ReceiveDate` a lot of times, which is time consuming. That is why we changed the approach and added a temporary table (`dbo.TempOrders`), which stores the `COUNT` of all the orders grouped by `ReceiveDate`. This increases the used memory, but significantly reduces the time of the execution of the procedure (this might not be noted when having a small database such as `CouriersDB`, but the difference will be apparent when working with a lot of data).
 
 
 ### dbo.usp_names_of_recipients_by_order_count
@@ -1039,9 +1045,9 @@ BEGIN
 END
 ```
 
-The ```SELECT``` statement displays the ```COUNT``` of the orders and ```Name``` (column in ```dbo.Recipients```). Those orders are grouped by ```Name``` (column in ```dbo.Recipients```). Then, only the records with ```COUNT``` greater that ```@MinOrdersCount``` are shown.
+The `SELECT` statement displays the `COUNT` of the orders and `Name` (column in `dbo.Recipients`). Those orders are grouped by `Name` (column in `dbo.Recipients`). Then, only the records with `COUNT` greater that `@MinOrdersCount` are shown.
 
-> **Note:** ```@MinOrdersCount``` (```INT```) + 1 is the minimum amount of orders that a recipient must receive in order to be displayed when ```usp_names_of_recipients_by_order_count``` is executed
+> **Note:** `@MinOrdersCount` (`INT`) + 1 is the minimum amount of orders that a recipient must receive in order to be displayed when `usp_names_of_recipients_by_order_count` is executed
 
 ### dbo.usp_orders_count_by_order_date
 
@@ -1055,7 +1061,7 @@ BEGIN
 END
 ```
 
-The ```SELECT``` statement displays the ```COUNT``` of the orders, grouped by ```OrderDate```, as well as the ```OrderDate```.
+The `SELECT` statement displays the `COUNT` of the orders, grouped by `OrderDate`, as well as the `OrderDate`.
 
 ### dbo.usp_orders_profit_by_tos
 
@@ -1071,9 +1077,9 @@ BEGIN
 END
 ```
 
-The ```SELECT``` statement displays the ```Type```[^type] and the ```SUM``` of the totals of the orders, grouped by ```Type``` (column in ```dbo.TypesOfService```).
+The `SELECT` statement displays the `Type`[^type] and the `SUM` of the totals of the orders, grouped by `Type` (column in `dbo.TypesOfService`).
 
-> **Note:** The function ```FORMAT``` is used to display the ```SUM``` in BGN[^bgn].
+> **Note:** The function `FORMAT` is used to display the `SUM` in BGN[^bgn].
 
 ### dbo.usp_name_phonenumber_category
 
@@ -1092,20 +1098,20 @@ BEGIN
 END
 ```
 
-The ```SELECT``` statement displays ```Name```, ```PhoneNumber```, and ```Category```. The data is fetched from the union of three tables (```dbo.Courier```, ```dbo.Client```, and ```dbo.Dispatcher```).
+The `SELECT` statement displays `Name`, `PhoneNumber`, and `Category`. The data is fetched from the union of three tables (`dbo.Courier`, `dbo.Client`, and `dbo.Dispatcher`).
 
 ### Delete Procedures
 
 The delete procedures are divided into two types:
 
-1. Delete procedures that alter a specific parent table and the ```FOREIGN KEY``` in ```dbo.Orders```, which is linked to that parent table.
-2. Delete procedure which removes a record from ```dbo.Orders``` by a given ```OldID```.
+1. Delete procedures that alter a specific parent table and the `FOREIGN KEY` in `dbo.Orders`, which is linked to that parent table.
+2. Delete procedure which removes a record from `dbo.Orders` by a given `OldID`.
 
 >**Note**: You can find more information about the two types in [**Manual**](#manual)
 
-> **Note:** In the following subheading (```Delete Procedures```) of **```Development```** there is going to be an explanation about how the delete procedures work (```dbo.delete_couriers``` is the example delete procedure used below).
+> **Note:** In the following subheading (`Delete Procedures`) of **`Development`** there is going to be an explanation about how the delete procedures work (`dbo.delete_couriers` is the example delete procedure used below).
 
-Both type-1 and type-2 delete procedures delete a row from the specific table where the ```ID``` of that table equals to ```@OldID```:
+Both type-1 and type-2 delete procedures delete a row from the specific table where the `ID` of that table equals to `@OldID`:
 
 ```sql
 DELETE FROM Couriers
@@ -1114,7 +1120,7 @@ WHERE ID = @OldID;
 
 The type-1 delete procedures are writen in a way, which covers 5 different scenarios:
 
-#### 1. When the user enters an invalid ```@OldID```
+#### 1. When the user enters an invalid `@OldID```
 
 ```sql
 IF NOT EXISTS (SELECT * FROM Couriers WHERE ID = @OldID)
@@ -1124,9 +1130,9 @@ BEGIN
 END;
 ```
 
-The code snippet above checks whether there is a record in ```dbo.Couriers``` which has an ```ID``` = ```@OldID``` and if there isn't one, a 'No such courier exists' is printed. This is the second similarity between type-1 and type-2 delete procedures as in ```dbo.delete_orders``` (Type 2 delete procedure) there is a similar statement as the one above.
+The code snippet above checks whether there is a record in `dbo.Couriers` which has an `ID` = `@OldID` and if there isn't one, a 'No such courier exists' is printed. This is the second similarity between type-1 and type-2 delete procedures as in `dbo.delete_orders` (Type 2 delete procedure) there is a similar statement as the one above.
 
-#### 2. When the user enters a valid ```@OldID```
+#### 2. When the user enters a valid `@OldID```
 
 ```sql
 IF (@WantToDeleteFromOrders = 1)
@@ -1136,9 +1142,9 @@ BEGIN
 END;
 ```
 
-The code fragment above checks whether the user wants to delete the records from ```dbo.Orders``` where the ```courierID``` (a ```FOREIGN KEY``` linked to ```dbo.Couriers```) is equal to ```@OldID``` (```@WantToDeleteFromOrders``` = 1) **OR** ```UPDATE``` ```dbo.Orders``` by setting a new value to ```courierID``` (```@WantToDeleteFromOrders``` = 0). ```WantToDeleteFromOrders``` is set to 1 (```DELETE```) by default. So, when the user enters only ```@OldID```, the code bit above will be executed.
+The code fragment above checks whether the user wants to delete the records from `dbo.Orders` where the `courierID` (a `FOREIGN KEY` linked to `dbo.Couriers`) is equal to `@OldID` (`@WantToDeleteFromOrders` = 1) **OR** `UPDATE` `dbo.Orders` by setting a new value to `courierID` (`@WantToDeleteFromOrders` = 0). `WantToDeleteFromOrders` is set to 1 (`DELETE`) by default. So, when the user enters only `@OldID`, the code bit above will be executed.
 
-#### 3. When the user enters ```OldID```, ```WantToDeleteFromOrders```, and a valid ```NewID```
+#### 3. When the user enters `OldID`, `WantToDeleteFromOrders`, and a valid `NewID```
 
 ```sql
 ELSE IF EXISTS (SELECT * FROM Couriers WHERE ID = @NewID)
@@ -1147,10 +1153,10 @@ ELSE IF EXISTS (SELECT * FROM Couriers WHERE ID = @NewID)
 		WHERE courierID = @OldID;
 ```
 
-In this case, the procedure will ```UPDATE``` the records from ```dbo.Orders``` where ```courierID``` = ```@OldID``` and set ```courierID``` = ```NewID```.
+In this case, the procedure will `UPDATE` the records from `dbo.Orders` where `courierID` = `@OldID` and set `courierID` = `NewID`.
 
 
-#### 4. When the user enters ```OldID``` and ```WantToDeleteFromOrders``` = 0 *OR* the user enters @OldID, @WantToDeleteFromOrders, and an invalid @NewID
+#### 4. When the user enters `OldID` and `WantToDeleteFromOrders` = 0 *OR* the user enters @OldID, @WantToDeleteFromOrders, and an invalid @NewID
 
 ```sql
 ELSE
@@ -1163,9 +1169,9 @@ BEGIN
 END;
 ```
 
-In this case, the last part of the ```IF...ELSE``` block is executed due to the fact that ```@NewID``` is ```NULL``` (by ```DEFAULT```) or invalid (there is no row in ```dbo.Couriers``` with ```ID``` = ```@NewID```). In both scenarios the ```ELSE IF``` statement cannot to be true, which leads the execution of the procedure to the ```ELSE``` above.
+In this case, the last part of the `IF...ELSE` block is executed due to the fact that `@NewID` is `NULL` (by `DEFAULT`) or invalid (there is no row in `dbo.Couriers` with `ID` = `@NewID`). In both scenarios the `ELSE IF` statement cannot to be true, which leads the execution of the procedure to the `ELSE` above.
 
-The ```SET``` ensures that ```@NewID``` will leave the ```ELSE``` block as ```NULL```. That is done to ensure that the messages at the end of the procedure are going to be accurate:
+The `SET` ensures that `@NewID` will leave the `ELSE` block as `NULL`. That is done to ensure that the messages at the end of the procedure are going to be accurate:
 
 ```sql
 IF (@WantToDeleteFromOrders = 1)
@@ -1174,9 +1180,11 @@ ELSE
 	PRINT 'Updated row(s) in Orders with courierID = ' + CAST(@OldID AS VARCHAR) + ' by setting courierID = ' + IIF(@NewID IS NULL, 'NULL', CAST(@NewID AS VARCHAR));
 ```
 
-## Conclusion
+### Conclusion
 In the end, the project turned out well, even though there were some inconveniences and miscommunications. The team started off thinking it wouldn't take long to finish but it ended up taking the full two weeks we were given by higher-ups.
 
+## Credits
+something, something, I'll update this
 
 [^1nf]: 1NF - First Normal Form
 
