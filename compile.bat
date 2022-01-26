@@ -2,6 +2,12 @@
 setlocal
 pushd %~dp0\sql-compiler
 
+:: Download the latest release of the SQL Compiler from GitHub if it isn't present in the working folder
+if not exist "sql-compiler.exe" (
+	echo No binary executable for the SQL Compiler found. Downloading from the latest release on GitHub before execution...
+	bitsadmin /transfer mydownloadjob /download /priority FOREGROUND "https://github.com/vesk4000/Couriers/releases/download/SQL-Compiler/sql-compiler.exe" %~dp0\sql-compiler\sql-compiler.exe
+)
+
 :: Call the argument-counting subroutine with all arguments received,
 :: without interfering with the ability to reference the arguments
 :: with %1, ... later.
