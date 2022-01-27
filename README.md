@@ -1197,7 +1197,7 @@ In the end, the project turned out well, even though there were some inconvenien
 - SQL Compiler and associated windows batch file
 - Add procedures
 - Update procedures
-- Code reformating
+- Code refactoring
 - README
 
 [@icyDenev](https://github.com/icyDenev)
