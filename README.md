@@ -15,13 +15,13 @@ Manage delivery **orders**, **clients**, **couriers**, **recipients**, **address
 
 [Overview](#overview)
 •
-[Project Structure](#project-structure)
-•
-[Database Design](#database-design)
-•
 [Setup](#setup)
 •
 [Usage](#usage)
+•
+[Project Structure](#project-structure)
+•
+[Database Design](#database-design)
 •
 [Development](#development)
 •
@@ -34,221 +34,6 @@ Manage delivery **orders**, **clients**, **couriers**, **recipients**, **address
 The goal of **Couriers** is to help a hypothetical **delivery company** manage their operations by utilizing an **SQL database**. The database facilitates the storing and managing of **orders** and all of the information associated with that.
 
 All in all, the database has 7 tables - `Clients`, `Couriers`, `Dispatchers`, `Recipients`, `Addresses` and `TypesOfService`, which are each connected to the final table, called `Orders`. The database includes procedures that can **create**, **read**, **update**, and **delete** (**CRUD**[^crud]) data from any of the aformentioned tables.
-
-## Project Structure
-
-*This is an in-depth look into how the project/repository is structured. In the process of development we made some pretty unique decisions and build a tool to help us develop the database better, so we think this section might be helpful for people wishing to do a similair project or even fork this one.*
-
-```
-📦Couriers
- ┣ 📂source
- ┃ ┣ 📂crud-procedures
- ┃ ┃ ┣ 📄add-client.sql
- ┃ ┃ ┣ 📄delete-client.sql
- ┃ ┃ ┣ 📄update-client.sql
- ┃ ┃ ┗ ...
- ┃ ┣ 📂data
- ┃ ┃ ┣ 📄addresses-data.sql
- ┃ ┃ ┣ 📄clients-data.sql
- ┃ ┃ ┗ ...
- ┃ ┣ 📂private
- ┃ ┃ ┗ 📄check-phone-number.sql
- ┃ ┣ 📂queries
- ┃ ┃ ┣ 📄OutRequest1.sql
- ┃ ┃ ┣ 📄OutRequest2.sql
- ┃ ┃ ┣ 📄OutRequest3.sql
- ┃ ┃ ┣ 📄OutRequest4.sql
- ┃ ┃ ┣ 📄OutRequest5.sql
- ┃ ┃ ┣ 📄usp_dates_with_most_delivered_orders.sql
- ┃ ┃ ┣ 📄usp_names_of_recipients_by_order_count.sql
- ┃ ┃ ┣ 📄usp_name_phonenumber_category.sql
- ┃ ┃ ┣ 📄usp_orders_count_by_order_date.sql
- ┃ ┃ ┗ 📄usp_orders_profit_by_tos.sql
- ┃ ┗ 📂schemas
- ┃ ┃ ┣ 📄clients-table.sql
- ┃ ┃ ┣ 📄couriers-database.sql
- ┃ ┃ ┣ 📄couriers-table.sql
- ┃ ┃ ┗ ...
- ┣ 📂sql-compiler
- ┃ ┣ 📄Program.cs
- ┃ ┣ 📄sql-compiler.csproj
- ┃ ┗ 📄sql-compiler.exe
- ┣ 📄compile.bat
- ┣ 📄couriers-project_data.xlsx
- ┣ 📄couriers.sql
- ┗ 📄examples.sql
-```
-
-In order to facilitate for easier collaboration and overall code development, we split up all of the SQL code into many files. All of them are located in the `source` folder in the root of the repository. In there you will find the files grouped into the `crud-procedures`, `data`, `private`, `queries` and `schemas` folders. All of those folders contain a number of `.sql` files, which themselves are all either a definition of a single procedure, function, table or database, or in the case of the files in the `data` folder - the `INSERT` queries used to populate the different tables with their respective data.
-
-Here's a brief description of what each of the folders contain:
-| Folder | Contains |
-|:---:|---|
-| `source/crud‑procedures` | CRUD procedures, except for the Read part, so basically different procedures for every table, which can each `Add`, `Update` or `Delete` any data within that table |
-| `source/data` | SQL queries which insert the original data from the Excel table (`couriers‑project_data.xlsx`) into the different tables of the database |
-| `source/private` | Procedures and functions which are not meant to be used by the end user, but rather by other procedures and functions in the database |
-| `source/queries` | Various procedures which read certain data from the database and display it to the user in different ways |
-| `source/schemas` | SQL queries which create each of the tables in the database and the database itself |
-
-The `couriers‑project_data.xlsx` Excel file, which is contained in the root directory of the repo, includes all of the original data for the database.
-
-> **Note:** The file is there only for completeness purposes. Changing it does not change the data in the database or what data the `.sql` files in the `source/data` folder insert into the database when executed. All of that data is hardcoded in those files.
-
-The folder `sql-compiler` contains the source code and executable for a small SQL "compiler", written in C#. All it does is it takes all of the SQL files (in a certain order) and it combines them into a single SQL file. This makes it easy for both the developers and the end-user to execute all of the files at once and immediately have the database up and running, while at the same time allowing for the separation of the SQL code, which as we mentioned earlier facilities for more efficient development and code cleanliness. Another thing that the compiler does is that it creates a single file with all of the examples for each SQL file, which contains such examples. This makes it much easier for the end user to get to grips with the various things that they can do with the database, while also making it easier for developers to write examples as it allows them to do so within the actual file that they are working on at the moment.
-
-To prevent clutter, the actual C# project for the compiler isn't a part of a Visual Studio Solution File (`.sln`) as it was created with the `dotnet` CLI tool which only requires a C# Project File (`sql-compiler.csproj`) and a C# Source File (`Program.cs`). The `sql-compiler.exe` is not included in the repository (it's ignored as per the `.gitignore` file of the repo). It can be downloaded from [The Latest Release](https://github.com/vesk4000/Couriers/releases/latest) (it is also automatically downloaded from there when `compile.bat` is ran, if it doesn't exist locally). It is a completely standalone executable that doesn't require the .NET runtime to work as it was created with the very useful .NET tool called [`dotnet-warp`](https://www.nuget.org/packages/dotnet-warp).
-
-To actually use the compiler you can pass arguments to it, but you can simply run the `compile.bat` file which as we mentioned will download the compiler executable if it doesn't exist locally and it will run the compiler with some default arguments. You can configure those arguments within the file and also you can configure which SQL files are compiled and in what order that is done, as that may be important depending on the files (e.g. you'd want the tables to be created, before you create the database). That particular thing is actually not passed to the compiler as an argument, but rather the `compile.bat` file passes itself as an argument and the compiler reads a comment within the `.bat` file which contains the names and relative paths of the files which are to be compiled (you can also use glob style wildcards such as `*` and `**`, just like in a `.gitignore` file thanks to the very useful .NET NuGet package [`Glob`](https://www.nuget.org/packages/Glob/1.2.0-alpha0037)).
-
-By default, the compiler generates 2 SQL files with the names `couriers.sql` and `example.sql` in the root directory of the repository. However, they are included in the `.gitignore` of the repo as to not cause any merge conflicts. The `couriers.sql` contains all of the code from all of the `.sql` files in the `source` directory. You can run the whole file at once to generate the whole database with all of its tables, data and features. The `examlpes.sql` is just a file with examples to all of the different features of the database.
-
-## Database Design
-
-*The database is not all that complicated, but it is important to understand it, if you want to understand the project and our development of it better.*
-
-We designed the schema of our database `CouriersDB` by transforming a table in 1NF[^1nf] into 7 tables that meet the 3NF[^3nf] standards.
-
-This is the given 1FN table with some sample data:
-
-| Order # | Order Date | Dispatcher Name | Phone Number - Dispatcher | Client Name | Phone Number - Client | Type of Service | Total | Courier Name | Phone Number - Courier | Delivery Address | Recipient Name | Delivery Date |
-| ---------------- | --------------- | ---------------- | ------------------ | -------------- | ---------------- | ---------------------------- | -------- | ------------- | ---------------- | ------------------------- | ---------------- | ---------------- |
-| 1                | 8/16/2021       | Асен Донев       | 0887897555         | Галин Христов  | 0888555111       | Колетна пратка над 2 до 5 кг | 6.72 лв. | Димана Донева | 0876555555       | ул. Бреза 9               | Галена Халиева   | 20.8.2021 г.     |
-| 2                | 9/9/2021        | Асен Донев       | 0887897555         | Джим Шон       | 0888555222       | Колетна пратка до 2 кг       | 6.00 лв. | Камен Каменов | 0876555111       | ул. Александър Кръстев 22 | Шон Джим         | 15.9.2021 г.     |
-| 3                | 9/9/2021        | Колю Колев       | 0888987555         | Джим Шон       | 0888555222       | Колетна пратка над 2 до 5 кг | 6.72 лв. | Мони Иванова  | 0876555222       | ул. Вардар 8              | Шон Джим         | 15.9.2021 г.     |
-| 4                | 9/14/2021       | Маша Малишкина   | 0881122678         | Галин Христов  | 0888555111       | Колетна пратка над 2 до 5 кг | 6.72 лв. | Димана Донева | 0876555555       | ул. Бук 18                | Христо Галев     | 17.9.2021 г.     |
-
-The `CouriersDB`, which consists of 7 3NF tables. Here's a diagram of the whole database:
-
-![Database diagram](https://user-images.githubusercontent.com/30286047/151210917-afedb54c-142b-4d00-bab4-c6c208a7d2ac.png)
-
-### `dbo.Orders`
-
-```sql
-CREATE TABLE Orders (
-	ID int identity(1, 1) NOT NULL primary key,
-	OrderDate date NOT NULL,
-	ReceiveDate date NOT NULL,
-	Total money NOT NULL,
-	AddressID int FOREIGN KEY references Addresses(ID),
-	TypeID int FOREIGN KEY references TypesOfService(ID),
-	DispatcherID int FOREIGN KEY references Dispatchers(ID),
-	ClientID int FOREIGN KEY references Clients(ID),
-	CourierID int FOREIGN KEY references Couriers(ID),
-	RecipientID int FOREIGN KEY references Recipients(ID),
-)
-```
-
-| Column Name | Data Type | Descriprtion |
-| ---------------- | --------------- | ----------- |
-| ID | INT | The identification number (`PRIMARY KEY`) |
-| OrderDate | DATE | The date of the registration of the order |
-| ReceiveDate | DATE | The date of the delivery of the order |
-| AddressID | INT | The identification number of the Address, where the order has to be delivered to (`FOREIGN KEY` linked to the `ID` of (`dbo.Addresses`) |
-| TypeID | INT | The identification number of the type of service of the order (`FOREIGN KEY` linked to the `ID` of `dbo.TypesOfService`) |
-| DispatcherID | INT | The identification number of the dispatcher, who works on the coordination of the order (`FOREIGN KEY` linked to the `ID` of `dbo.Dispatchers`) |
-| ClientID | INT | The identification number of the client, who has made the order (``FOREIGN KEY`` linked to the `ID` of `dbo.Clients`) |
-| CourierID | INT | The identification number of the type of service of the courier, who has to deliver the order (`FOREIGN KEY` linked to the `ID` of `dbo.Couriers`) |
-| RecipientID | INT | The identification number of the recipient, who has to receive the order (`FOREIGN KEY` linked to the `ID` of `dbo.Recipients`) |
-
-### `dbo.Clients`
-
-```sql
-CREATE TABLE Clients (
-	ID int identity(1, 1) NOT NULL primary key,
-	Name varchar(50) NOT NULL,
-	PhoneNumber varchar(10) NOT NULL,
-	unique(Name, PhoneNumber)
-)
-```
-
-> **Note:** The `Name` and `PhoneNumber` columns are combined into a composite `unique` key to ensure that there are not any duplicate records when inserting values into `dbo.Clients`
-
-| Column Name | Data Type | Descriprtion |
-| ---------------- | --------------- | ----------- |
-| ID | INT | The identification number (`PRIMARY KEY`) |
-| Name | VARCHAR(50) | The name of the client |
-| PhoneNumber | VARCHAR(10) | The phone number of the client |
-
-### `dbo.Dispatchers`
-
-```sql
-CREATE TABLE Dispatchers (
-	ID int identity(1, 1) NOT NULL primary key,
-	Name varchar(50) NOT NULL,
-	PhoneNumber varchar(10) NOT NULL,
-	unique(Name, PhoneNumber)
-)
-```
-
-> **Note:** The `Name` and `PhoneNumber` columns are combined into a composite `unique` key to ensure that there are not any duplicate records when inserting values into `dbo.Dispatchers`
-
-| Column Name | Data Type | Descriprtion |
-| ---------------- | --------------- | ----------- |
-| ID | INT | The identification number (`PRIMARY KEY`) |
-| Name | VARCHAR(50) | The name of the dispatcher |
-| PhoneNumber | VARCHAR(10) | The phone number of the dispatcher |
-
-### `dbo.Couriers`
-
-```sql
-CREATE TABLE Couriers (
-	ID int identity(1, 1) NOT NULL primary key,
-	Name varchar(50) NOT NULL,
-	PhoneNumber varchar(10) NOT NULL,
-	unique(Name, PhoneNumber)
-)
-```
-
-> **Note:** The `Name` and `PhoneNumber` columns are combined into a composite `unique` key to ensure that there are not any duplicate records when inserting values into `dbo.Couriers`
-
-| Column Name | Data Type | Descriprtion |
-| ---------------- | --------------- | ----------- |
-| ID | INT | The identification number (`PRIMARY KEY`) |
-| Name | VARCHAR(50) | The name of the courier |
-| PhoneNumber | VARCHAR(10) | The phone number of the courier |
-
-### `dbo.Recipients`
-
-```sql
-CREATE TABLE Recipients (
-	ID int identity(1, 1) NOT NULL primary key,
-	Name varchar(50) NOT NULL
-)
-```
-
-| Column Name | Data Type | Descriprtion |
-| ---------------- | --------------- | ----------- |
-| ID | INT | The identification number (`PRIMARY KEY`) |
-| Name | VARCHAR(50) | The name of the recipient |
-
-### `dbo.Addresses`
-
-```sql
-CREATE TABLE Addresses (
-	ID int identity(1, 1) NOT NULL primary key,
-	Address varchar(50) NOT NULL unique,
-)
-```
-
-| Column Name | Data Type | Descriprtion |
-| ---------------- | --------------- | ----------- |
-| ID | INT | The identification number (`PRIMARY KEY`) |
-| Address | VARCHAR(50) | The details (street, number, etc.) of the address |
-
-### `dbo.TypesOfService`
-
-```sql
-CREATE TABLE TypesOfService (
-	ID int identity(1, 1) NOT NULL primary key,
-	Type varchar(50) NOT NULL unique,
-)
-```
-
-| Column Name | Data Type | Descriprtion |
-| ---------------- | --------------- | ----------- |
-| ID | INT | The identification number (`PRIMARY KEY`) |
-| Type | VARCHAR(50) | The type of the service that needs to be performed |
-
 
 ## Setup
 
@@ -557,6 +342,221 @@ This procedure displays the names, phone numbers, and categories (client, dispat
 ```sql
 EXEC dbo.usp_name_phonenumber_category;
 ```
+
+## Project Structure
+
+*This is an in-depth look into how the project/repository is structured. In the process of development we made some pretty unique decisions and build a tool to help us develop the database better, so we think this section might be helpful for people wishing to do a similair project or even fork this one.*
+
+```
+📦Couriers
+ ┣ 📂source
+ ┃ ┣ 📂crud-procedures
+ ┃ ┃ ┣ 📄add-client.sql
+ ┃ ┃ ┣ 📄delete-client.sql
+ ┃ ┃ ┣ 📄update-client.sql
+ ┃ ┃ ┗ ...
+ ┃ ┣ 📂data
+ ┃ ┃ ┣ 📄addresses-data.sql
+ ┃ ┃ ┣ 📄clients-data.sql
+ ┃ ┃ ┗ ...
+ ┃ ┣ 📂private
+ ┃ ┃ ┗ 📄check-phone-number.sql
+ ┃ ┣ 📂queries
+ ┃ ┃ ┣ 📄OutRequest1.sql
+ ┃ ┃ ┣ 📄OutRequest2.sql
+ ┃ ┃ ┣ 📄OutRequest3.sql
+ ┃ ┃ ┣ 📄OutRequest4.sql
+ ┃ ┃ ┣ 📄OutRequest5.sql
+ ┃ ┃ ┣ 📄usp_dates_with_most_delivered_orders.sql
+ ┃ ┃ ┣ 📄usp_names_of_recipients_by_order_count.sql
+ ┃ ┃ ┣ 📄usp_name_phonenumber_category.sql
+ ┃ ┃ ┣ 📄usp_orders_count_by_order_date.sql
+ ┃ ┃ ┗ 📄usp_orders_profit_by_tos.sql
+ ┃ ┗ 📂schemas
+ ┃ ┃ ┣ 📄clients-table.sql
+ ┃ ┃ ┣ 📄couriers-database.sql
+ ┃ ┃ ┣ 📄couriers-table.sql
+ ┃ ┃ ┗ ...
+ ┣ 📂sql-compiler
+ ┃ ┣ 📄Program.cs
+ ┃ ┣ 📄sql-compiler.csproj
+ ┃ ┗ 📄sql-compiler.exe
+ ┣ 📄compile.bat
+ ┣ 📄couriers-project_data.xlsx
+ ┣ 📄couriers.sql
+ ┗ 📄examples.sql
+```
+
+In order to facilitate for easier collaboration and overall code development, we split up all of the SQL code into many files. All of them are located in the `source` folder in the root of the repository. In there you will find the files grouped into the `crud-procedures`, `data`, `private`, `queries` and `schemas` folders. All of those folders contain a number of `.sql` files, which themselves are all either a definition of a single procedure, function, table or database, or in the case of the files in the `data` folder - the `INSERT` queries used to populate the different tables with their respective data.
+
+Here's a brief description of what each of the folders contain:
+| Folder | Contains |
+|:---:|---|
+| `source/crud‑procedures` | CRUD procedures, except for the Read part, so basically different procedures for every table, which can each `Add`, `Update` or `Delete` any data within that table |
+| `source/data` | SQL queries which insert the original data from the Excel table (`couriers‑project_data.xlsx`) into the different tables of the database |
+| `source/private` | Procedures and functions which are not meant to be used by the end user, but rather by other procedures and functions in the database |
+| `source/queries` | Various procedures which read certain data from the database and display it to the user in different ways |
+| `source/schemas` | SQL queries which create each of the tables in the database and the database itself |
+
+The `couriers‑project_data.xlsx` Excel file, which is contained in the root directory of the repo, includes all of the original data for the database.
+
+> **Note:** The file is there only for completeness purposes. Changing it does not change the data in the database or what data the `.sql` files in the `source/data` folder insert into the database when executed. All of that data is hardcoded in those files.
+
+The folder `sql-compiler` contains the source code and executable for a small SQL "compiler", written in C#. All it does is it takes all of the SQL files (in a certain order) and it combines them into a single SQL file. This makes it easy for both the developers and the end-user to execute all of the files at once and immediately have the database up and running, while at the same time allowing for the separation of the SQL code, which as we mentioned earlier facilities for more efficient development and code cleanliness. Another thing that the compiler does is that it creates a single file with all of the examples for each SQL file, which contains such examples. This makes it much easier for the end user to get to grips with the various things that they can do with the database, while also making it easier for developers to write examples as it allows them to do so within the actual file that they are working on at the moment.
+
+To prevent clutter, the actual C# project for the compiler isn't a part of a Visual Studio Solution File (`.sln`) as it was created with the `dotnet` CLI tool which only requires a C# Project File (`sql-compiler.csproj`) and a C# Source File (`Program.cs`). The `sql-compiler.exe` is not included in the repository (it's ignored as per the `.gitignore` file of the repo). It can be downloaded from [The Latest Release](https://github.com/vesk4000/Couriers/releases/latest) (it is also automatically downloaded from there when `compile.bat` is ran, if it doesn't exist locally). It is a completely standalone executable that doesn't require the .NET runtime to work as it was created with the very useful .NET tool called [`dotnet-warp`](https://www.nuget.org/packages/dotnet-warp).
+
+To actually use the compiler you can pass arguments to it, but you can simply run the `compile.bat` file which as we mentioned will download the compiler executable if it doesn't exist locally and it will run the compiler with some default arguments. You can configure those arguments within the file and also you can configure which SQL files are compiled and in what order that is done, as that may be important depending on the files (e.g. you'd want the tables to be created, before you create the database). That particular thing is actually not passed to the compiler as an argument, but rather the `compile.bat` file passes itself as an argument and the compiler reads a comment within the `.bat` file which contains the names and relative paths of the files which are to be compiled (you can also use glob style wildcards such as `*` and `**`, just like in a `.gitignore` file thanks to the very useful .NET NuGet package [`Glob`](https://www.nuget.org/packages/Glob/1.2.0-alpha0037)).
+
+By default, the compiler generates 2 SQL files with the names `couriers.sql` and `example.sql` in the root directory of the repository. However, they are included in the `.gitignore` of the repo as to not cause any merge conflicts. The `couriers.sql` contains all of the code from all of the `.sql` files in the `source` directory. You can run the whole file at once to generate the whole database with all of its tables, data and features. The `examlpes.sql` is just a file with examples to all of the different features of the database.
+
+## Database Design
+
+*The database is not all that complicated, but it is important to understand it, if you want to understand the project and our development of it better.*
+
+We designed the schema of our database `CouriersDB` by transforming a table in 1NF[^1nf] into 7 tables that meet the 3NF[^3nf] standards.
+
+This is the given 1FN table with some sample data:
+
+| Order # | Order Date | Dispatcher Name | Phone Number - Dispatcher | Client Name | Phone Number - Client | Type of Service | Total | Courier Name | Phone Number - Courier | Delivery Address | Recipient Name | Delivery Date |
+| ---------------- | --------------- | ---------------- | ------------------ | -------------- | ---------------- | ---------------------------- | -------- | ------------- | ---------------- | ------------------------- | ---------------- | ---------------- |
+| 1                | 8/16/2021       | Асен Донев       | 0887897555         | Галин Христов  | 0888555111       | Колетна пратка над 2 до 5 кг | 6.72 лв. | Димана Донева | 0876555555       | ул. Бреза 9               | Галена Халиева   | 20.8.2021 г.     |
+| 2                | 9/9/2021        | Асен Донев       | 0887897555         | Джим Шон       | 0888555222       | Колетна пратка до 2 кг       | 6.00 лв. | Камен Каменов | 0876555111       | ул. Александър Кръстев 22 | Шон Джим         | 15.9.2021 г.     |
+| 3                | 9/9/2021        | Колю Колев       | 0888987555         | Джим Шон       | 0888555222       | Колетна пратка над 2 до 5 кг | 6.72 лв. | Мони Иванова  | 0876555222       | ул. Вардар 8              | Шон Джим         | 15.9.2021 г.     |
+| 4                | 9/14/2021       | Маша Малишкина   | 0881122678         | Галин Христов  | 0888555111       | Колетна пратка над 2 до 5 кг | 6.72 лв. | Димана Донева | 0876555555       | ул. Бук 18                | Христо Галев     | 17.9.2021 г.     |
+
+The `CouriersDB`, which consists of 7 3NF tables. Here's a diagram of the whole database:
+
+![Database diagram](https://user-images.githubusercontent.com/30286047/151210917-afedb54c-142b-4d00-bab4-c6c208a7d2ac.png)
+
+### `dbo.Orders`
+
+```sql
+CREATE TABLE Orders (
+	ID int identity(1, 1) NOT NULL primary key,
+	OrderDate date NOT NULL,
+	ReceiveDate date NOT NULL,
+	Total money NOT NULL,
+	AddressID int FOREIGN KEY references Addresses(ID),
+	TypeID int FOREIGN KEY references TypesOfService(ID),
+	DispatcherID int FOREIGN KEY references Dispatchers(ID),
+	ClientID int FOREIGN KEY references Clients(ID),
+	CourierID int FOREIGN KEY references Couriers(ID),
+	RecipientID int FOREIGN KEY references Recipients(ID),
+)
+```
+
+| Column Name | Data Type | Descriprtion |
+| ---------------- | --------------- | ----------- |
+| ID | INT | The identification number (`PRIMARY KEY`) |
+| OrderDate | DATE | The date of the registration of the order |
+| ReceiveDate | DATE | The date of the delivery of the order |
+| AddressID | INT | The identification number of the Address, where the order has to be delivered to (`FOREIGN KEY` linked to the `ID` of (`dbo.Addresses`) |
+| TypeID | INT | The identification number of the type of service of the order (`FOREIGN KEY` linked to the `ID` of `dbo.TypesOfService`) |
+| DispatcherID | INT | The identification number of the dispatcher, who works on the coordination of the order (`FOREIGN KEY` linked to the `ID` of `dbo.Dispatchers`) |
+| ClientID | INT | The identification number of the client, who has made the order (``FOREIGN KEY`` linked to the `ID` of `dbo.Clients`) |
+| CourierID | INT | The identification number of the type of service of the courier, who has to deliver the order (`FOREIGN KEY` linked to the `ID` of `dbo.Couriers`) |
+| RecipientID | INT | The identification number of the recipient, who has to receive the order (`FOREIGN KEY` linked to the `ID` of `dbo.Recipients`) |
+
+### `dbo.Clients`
+
+```sql
+CREATE TABLE Clients (
+	ID int identity(1, 1) NOT NULL primary key,
+	Name varchar(50) NOT NULL,
+	PhoneNumber varchar(10) NOT NULL,
+	unique(Name, PhoneNumber)
+)
+```
+
+> **Note:** The `Name` and `PhoneNumber` columns are combined into a composite `unique` key to ensure that there are not any duplicate records when inserting values into `dbo.Clients`
+
+| Column Name | Data Type | Descriprtion |
+| ---------------- | --------------- | ----------- |
+| ID | INT | The identification number (`PRIMARY KEY`) |
+| Name | VARCHAR(50) | The name of the client |
+| PhoneNumber | VARCHAR(10) | The phone number of the client |
+
+### `dbo.Dispatchers`
+
+```sql
+CREATE TABLE Dispatchers (
+	ID int identity(1, 1) NOT NULL primary key,
+	Name varchar(50) NOT NULL,
+	PhoneNumber varchar(10) NOT NULL,
+	unique(Name, PhoneNumber)
+)
+```
+
+> **Note:** The `Name` and `PhoneNumber` columns are combined into a composite `unique` key to ensure that there are not any duplicate records when inserting values into `dbo.Dispatchers`
+
+| Column Name | Data Type | Descriprtion |
+| ---------------- | --------------- | ----------- |
+| ID | INT | The identification number (`PRIMARY KEY`) |
+| Name | VARCHAR(50) | The name of the dispatcher |
+| PhoneNumber | VARCHAR(10) | The phone number of the dispatcher |
+
+### `dbo.Couriers`
+
+```sql
+CREATE TABLE Couriers (
+	ID int identity(1, 1) NOT NULL primary key,
+	Name varchar(50) NOT NULL,
+	PhoneNumber varchar(10) NOT NULL,
+	unique(Name, PhoneNumber)
+)
+```
+
+> **Note:** The `Name` and `PhoneNumber` columns are combined into a composite `unique` key to ensure that there are not any duplicate records when inserting values into `dbo.Couriers`
+
+| Column Name | Data Type | Descriprtion |
+| ---------------- | --------------- | ----------- |
+| ID | INT | The identification number (`PRIMARY KEY`) |
+| Name | VARCHAR(50) | The name of the courier |
+| PhoneNumber | VARCHAR(10) | The phone number of the courier |
+
+### `dbo.Recipients`
+
+```sql
+CREATE TABLE Recipients (
+	ID int identity(1, 1) NOT NULL primary key,
+	Name varchar(50) NOT NULL
+)
+```
+
+| Column Name | Data Type | Descriprtion |
+| ---------------- | --------------- | ----------- |
+| ID | INT | The identification number (`PRIMARY KEY`) |
+| Name | VARCHAR(50) | The name of the recipient |
+
+### `dbo.Addresses`
+
+```sql
+CREATE TABLE Addresses (
+	ID int identity(1, 1) NOT NULL primary key,
+	Address varchar(50) NOT NULL unique,
+)
+```
+
+| Column Name | Data Type | Descriprtion |
+| ---------------- | --------------- | ----------- |
+| ID | INT | The identification number (`PRIMARY KEY`) |
+| Address | VARCHAR(50) | The details (street, number, etc.) of the address |
+
+### `dbo.TypesOfService`
+
+```sql
+CREATE TABLE TypesOfService (
+	ID int identity(1, 1) NOT NULL primary key,
+	Type varchar(50) NOT NULL unique,
+)
+```
+
+| Column Name | Data Type | Descriprtion |
+| ---------------- | --------------- | ----------- |
+| ID | INT | The identification number (`PRIMARY KEY`) |
+| Type | VARCHAR(50) | The type of the service that needs to be performed |
+
 
 ## Development
 
