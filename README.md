@@ -572,7 +572,7 @@ The initial design of the table was done by a using a DB designer tool (https://
 
 To populate the database we used **SQLizer**, an online tool which generates SQL code from an Excel spreadsheet. At first it was somewhat annoying to use but once we understood how to use it work flowed smoothly.
 
-In order to populate `CouriersDB` we had to split the data from the initial 1NF[^1nf] table into several small ones. Then, as we said, in order to `INSERT` the data into the **database** we used **SQLizer**, which transforms `.xlsx/.xls` tables sheets into `INSERT INTO` statements.
+In order to populate `CouriersDB` we had to split the data from the initial 1NF table into several small ones. Then, as we said, in order to `INSERT` the data into the **database** we used **SQLizer**, which transforms `.xlsx/.xls` tables sheets into `INSERT INTO` statements.
 
 >**Note:** Due to the fact that **SQLizer** had issues converting .xls sheets into MSSQL statements, we had to convert them into MySQL ones and then alter the code in order to be usable in our MSSQL database.
 
