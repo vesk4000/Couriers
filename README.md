@@ -566,7 +566,7 @@ CREATE TABLE TypesOfService (
 
 The initial design of the table was done by a using a DB designer tool (https://www.dbdesigner.net/). Om that platform the tables have been created and the relations and the other constraints have been set. Then, a MSSQL code was generated and exported.
 
->**Note:** We have altered the design of the table a bit after their initial creation mentioned above. We have added several `UNIQUE`, `IDENTITY`, and `NOT NULL` constraints.
+>**Note:** We have altered the design of the table a bit after their initial creation mentioned above. We have added several `UNIQUE`, `IDENTITY`, and `NOT NULL` constraints. We also refactored the schema code so that it was a bit more human readable.
 
 ### Populating `CouriersDB`
 
@@ -1111,7 +1111,7 @@ The delete procedures are divided into two types:
 1. Delete procedures that alter a specific parent table and the `FOREIGN KEY` in `dbo.Orders`, which is linked to that parent table.
 2. Delete procedure which removes a record from `dbo.Orders` by a given `OldID`.
 
->**Note**: You can find more information about the two types in [**Manual**](#manual)
+>**Note**: You can find more information about the two types in the [**Usage section**](#usage)
 
 > **Note:** In the following subheading (`Delete Procedures`) of **`Development`** there is going to be an explanation about how the delete procedures work (`dbo.delete_couriers` is the example delete procedure used below).
 
